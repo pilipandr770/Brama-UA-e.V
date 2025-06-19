@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Подати проєкт{% endblock %}
+
+{% block content %}
+<h2>Подати новий соціальний проєкт</h2>
+<form method="POST">
+    <label>Назва проєкту*</label><input name="title" required><br>
+    <label>Опис проблеми*</label><textarea name="problem_description" required></textarea><br>
+    <label>Мета*</label><textarea name="goal" required></textarea><br>
+    <label>Цільова аудиторія*</label><textarea name="target_audience" required></textarea><br>
+    <label>План реалізації*</label><textarea name="implementation_plan" required></textarea><br>
+    <label>Виконавець*</label><textarea name="executor_info" required></textarea><br>
+    <label>Бюджет (€)*</label><input type="number" name="total_budget" required><br>
+    <label>Розподіл бюджету*</label><textarea name="budget_breakdown" required></textarea><br>
+    <label>Очікуваний результат*</label><textarea name="expected_result" required></textarea><br>
+    <label>Можливі ризики*</label><textarea name="risks" required></textarea><br>
+    <label>Тривалість*</label><input name="duration" required><br>
+    <label>Звітність*</label><textarea name="reporting_plan" required></textarea><br>
+
+    <!-- Додатково -->
+    <label>Категорія</label><input name="category"><br>
+    <label>Місце реалізації</label><input name="location"><br>
+    <label>Вебсайт</label><input type="url" name="website"><br>
+    <label>Соцмережі</label><input name="social_links"><br>
+    <label>Зображення (URL)</label><input name="image_url"><br>
+    <label>Документ (URL)</label><input name="document_url"><br>
+
+    <button type="submit">Надіслати</button>
+</form>
+{% endblock %}

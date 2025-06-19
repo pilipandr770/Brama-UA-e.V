@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Мій кабінет{% endblock %}
+
+{% block content %}
+<h2>Вітаємо у кабінеті, {{ user.email }}!</h2>
+
+<!-- Баланс та повідомлення -->
+<div>
+    <h3>Ваш баланс:</h3>
+    <p>&euro;{{ balance or '0.00' }}</p>
+
+    <h3>Останні надходження:</h3>
+    <ul>
+        {% for payment in payments %}
+            <li>{{ payment.date }} - &euro;{{ payment.amount }} - {{ payment.note }}</li>
+        {% else %}
+            <li>Немає записів</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- Голосування -->
+<div>
+    <h3>Активні проєкти для голосування</h3>
+    <ul>
+        {% for project in active_projects %}
+            <li>
+                <strong>{{ project.title }}</strong> - {{ project.goal }}<br>
+                <form method="POST" action="{{ url_for('main.vote', project_id=project.id) }}">
+                    <button type="submit">Проголосувати</button>
+                </form>
+            </li>
+        {% else %}
+            <li>Поки що немає доступних проєктів</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- Мої проєкти -->
+<div>
+    <h3>Мої проєкти</h3>
+    <ul>
+        {% for project in my_projects %}
+            <li>
+                {{ project.title }} - статус: <strong>{{ project.status }}</strong>
+            </li>
+        {% else %}
+            <li>Ви ще не подавали проєктів</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- Подати новий проєкт -->
+<a href="{{ url_for('main.submit_project') }}">Подати новий проєкт</a>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Головна сторінка{% endblock %}
+{% block content %}
+{% if info_block or gallery_block or projects_block %}
+<div class="main-cards-row">
+    {% if info_block %}
+    <div class="main-card info-block" onclick="openModal('info')">
+        {% if info_block.image_url %}
+            <img src="{{ info_block.image_url }}" alt="" class="block-cover">
+        {% endif %}
+        <h3>{{ info_block.title }}</h3>
+        <div class="block-short">{{ info_block.content[:80] }}...</div>
+    </div>
+    {% endif %}
+    {% if gallery_block %}
+    <div class="main-card gallery-block" onclick="openModal('gallery')">
+        {% if gallery_block.image_url %}
+            <img src="{{ gallery_block.image_url }}" alt="" class="block-cover">
+        {% endif %}
+        <h3>{{ gallery_block.title }}</h3>
+        <div class="block-short">{{ gallery_block.content[:80] }}...</div>
+    </div>
+    {% endif %}
+    {% if projects_block %}
+    <div class="main-card projects-block" onclick="openModal('projects')">
+        {% if projects_block.image_url %}
+            <img src="{{ projects_block.image_url }}" alt="" class="block-cover">
+        {% endif %}
+        <h3>{{ projects_block.title }}</h3>
+        <div class="block-short">{{ projects_block.content[:80] }}...</div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<div id="block-modal" class="block-modal" style="display:none;">
+    <div class="block-modal-content">
+        <span class="block-modal-close" onclick="closeModal()">&times;</span>
+        <div id="modal-details-info" class="modal-details" style="display:none;">
+            <h2>{{ info_block.title if info_block else '' }}</h2>
+            <div>{{ info_block.content|safe if info_block else '' }}</div>
+        </div>
+        <div id="modal-details-gallery" class="modal-details" style="display:none;">
+            <h2>{{ gallery_block.title if gallery_block else '' }}</h2>
+            <div>{{ gallery_block.content|safe if gallery_block else '' }}</div>
+            <div class="gallery-carousel">
+                {% for img in gallery_images %}
+                    <img src="{{ img.image_url }}" alt="" class="gallery-img">
+                {% endfor %}
+            </div>
+        </div>
+        <div id="modal-details-projects" class="modal-details" style="display:none;">
+            <h2>{{ projects_block.title if projects_block else '' }}</h2>
+            <div>{{ projects_block.content|safe if projects_block else '' }}</div>
+            <h2>Наші проєкти</h2>
+            {% if projects %}
+                <ul>
+                    {% for project in projects %}
+                        <li style="margin-bottom: 20px;">
+                            <h3>{{ project.title }}</h3>
+                            <p><strong>Мета:</strong> {{ project.goal }}</p>
+                            <p><strong>Проблема:</strong> {{ project.problem_description }}</p>
+                            <p><strong>Очікуваний результат:</strong> {{ project.expected_result }}</p>
+                            <p><strong>Бюджет:</strong> &euro;{{ project.total_budget }}</p>
+                            {% if project.image_url %}
+                                <img src="{{ project.image_url }}" alt="зображення проєкту" style="max-width: 300px;">
+                            {% endif %}
+                            <p><em>Статус:</em> {{ project.status }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Наразі проєкти не додані.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script>
+function openModal(type) {
+    document.getElementById('block-modal').style.display = 'flex';
+    document.getElementById('modal-details-info').style.display = 'none';
+    document.getElementById('modal-details-gallery').style.display = 'none';
+    document.getElementById('modal-details-projects').style.display = 'none';
+    document.getElementById('modal-details-' + type).style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+    document.getElementById('block-modal').style.display = 'none';
+    document.body.style.overflow = '';
+}
+</script>
+{% endblock %}
