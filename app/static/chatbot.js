@@ -132,14 +132,19 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("client_id", clientId);
       appendMessage(text, true);
       input.value = "";
-
-      fetch("/process_text", {
+      const threadId = localStorage.getItem("assistant_thread_id") || null;
+      fetch("/api/assistant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, client_id: clientId })
+        body: JSON.stringify({ message: text, thread_id: threadId })
       })
         .then(res => res.json())
         .then(data => {
+          if (data.error) {
+            appendMessage('⚠️ ' + data.error);
+            return;
+          }
+          if (data.thread_id) localStorage.setItem("assistant_thread_id", data.thread_id);
           appendMessage(data.answer);
           if (autoplay) {
             const audio = new Audio(`/tts?text=${encodeURIComponent(data.answer)}`);
@@ -228,17 +233,24 @@ document.addEventListener("DOMContentLoaded", () => {
       const clientId = localStorage.getItem("client_id") || Math.random().toString(36).substring(2);
       localStorage.setItem("client_id", clientId);
       formData.append("client_id", clientId);
+      const threadId = localStorage.getItem("assistant_thread_id") || null;
+      if (threadId) formData.append("thread_id", threadId);
       appendMessage("🎤 Повідомлення відправлено", true);
-      fetch("/process_audio", {
+      fetch("/api/assistant", {
         method: "POST",
         body: formData
       }).then(async response => {
-        const audioBlob = await response.blob();
-        const assistantText = decodeURIComponent(response.headers.get("X-Assistant-Answer") || "🤖 Немає відповіді");
-        const userText = decodeURIComponent(response.headers.get("X-User-Text") || "");
-        if (userText) appendMessage(userText, true);
-        playAudioFromBlob(audioBlob);
-        appendAudioPlayer(URL.createObjectURL(audioBlob), assistantText);
+        const data = await response.json();
+        if (data.error) {
+          appendMessage('⚠️ ' + data.error);
+          return;
+        }
+        if (data.thread_id) localStorage.setItem("assistant_thread_id", data.thread_id);
+        appendMessage(data.answer);
+        if (autoplay) {
+          const audio = new Audio(`/tts?text=${encodeURIComponent(data.answer)}`);
+          audio.play().catch(() => {});
+        }
       });
     }
 

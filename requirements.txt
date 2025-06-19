@@ -5,3 +5,4 @@ Flask-Babel
 python-dotenv
 psycopg2-binary
 Werkzeug
+openai

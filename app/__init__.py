@@ -25,6 +25,9 @@ def create_app():
     from app.routes.admin import admin_bp
     app.register_blueprint(admin_bp)
 
+    from app.routes.api import api_bp
+    app.register_blueprint(api_bp)
+
     @app.context_processor
     def inject_settings():
         from app.models.settings import Settings

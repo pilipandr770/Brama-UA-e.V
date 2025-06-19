@@ -47,8 +47,8 @@
                 <button id="gallery-prev" style="font-size:2em;">&#8592;</button>
                 <div id="gallery-slide" style="display:inline-block; text-align:center;">
                     {% for img in gallery_images %}
-                        <img src="{% if img.image_data %}{{ url_for('admin.gallery_image_file', image_id=img.id) }}{% else %}{{ img.image_url }}{% endif %}" alt="" class="gallery-img" data-index="{{ loop.index0 }}" style="display:{% if loop.first %}inline{% else %}none{% endif %};">
-                        <div class="gallery-desc" data-index="{{ loop.index0 }}" style="display:{% if loop.first %}block{% else %}none{% endif %};">{{ img.description }}</div>
+                        <img src="{% if img.image_data %}{{ url_for('admin.gallery_image_file', image_id=img.id) }}{% else %}{{ img.image_url }}{% endif %}" alt="" class="gallery-img {% if loop.first %}show{% else %}hide{% endif %}" data-index="{{ loop.index0 }}">
+                        <div class="gallery-desc {% if loop.first %}show{% else %}hide{% endif %}" data-index="{{ loop.index0 }}">{{ img.description }}</div>
                     {% endfor %}
                 </div>
                 <button id="gallery-next" style="font-size:2em;">&#8594;</button>
@@ -127,21 +127,35 @@ function initGalleryCarousel() {
     const imgs = document.querySelectorAll('#gallery-slide .gallery-img');
     const descs = document.querySelectorAll('#gallery-slide .gallery-desc');
     let idx = 0;
-    imgs.forEach((img, i) => { img.style.display = i === 0 ? 'inline' : 'none'; });
-    descs.forEach((d, i) => { d.style.display = i === 0 ? 'block' : 'none'; });
+    imgs.forEach((img, i) => {
+        img.classList.toggle('show', i === 0);
+        img.classList.toggle('hide', i !== 0);
+    });
+    descs.forEach((d, i) => {
+        d.classList.toggle('show', i === 0);
+        d.classList.toggle('hide', i !== 0);
+    });
     document.getElementById('gallery-prev').onclick = function() {
-        imgs[idx].style.display = 'none';
-        descs[idx].style.display = 'none';
+        imgs[idx].classList.remove('show');
+        imgs[idx].classList.add('hide');
+        descs[idx].classList.remove('show');
+        descs[idx].classList.add('hide');
         idx = (idx - 1 + imgs.length) % imgs.length;
-        imgs[idx].style.display = 'inline';
-        descs[idx].style.display = 'block';
+        imgs[idx].classList.remove('hide');
+        imgs[idx].classList.add('show');
+        descs[idx].classList.remove('hide');
+        descs[idx].classList.add('show');
     };
     document.getElementById('gallery-next').onclick = function() {
-        imgs[idx].style.display = 'none';
-        descs[idx].style.display = 'none';
+        imgs[idx].classList.remove('show');
+        imgs[idx].classList.add('hide');
+        descs[idx].classList.remove('show');
+        descs[idx].classList.add('hide');
         idx = (idx + 1) % imgs.length;
-        imgs[idx].style.display = 'inline';
-        descs[idx].style.display = 'block';
+        imgs[idx].classList.remove('hide');
+        imgs[idx].classList.add('show');
+        descs[idx].classList.remove('hide');
+        descs[idx].classList.add('show');
     };
 }
 function openProjectModal(id) {

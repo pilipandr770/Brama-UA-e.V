@@ -404,3 +404,10 @@ form label {
         padding: 12px 2vw;
     }
 }
+
+/* Додаю класи для керування видимістю через Jinja */
+.show { display: inline !important; }
+.hide { display: none !important; }
+
+/* Для gallery-desc краще display:block */
+.gallery-desc.show { display: block !important; }
