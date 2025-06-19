@@ -2,11 +2,10 @@
 {% block title %}Додати фото до галереї{% endblock %}
 {% block content %}
 <h2>Додати фото до галереї</h2>
-<form method="post">
-    <label>URL зображення:</label><br>
-    <input type="url" name="image_url" required><br>
-    <label>Опис:</label><br>
-    <input type="text" name="description"><br>
+<form method="post" enctype="multipart/form-data" id="gallery-upload-form">
+    <label>Виберіть фото (можна кілька):</label><br>
+    <input type="file" name="images" id="images-input" multiple required><br>
+    <div id="descriptions-fields"></div>
     <label>Галерея-блок:</label><br>
     <select name="block_id" required>
         {% for block in blocks %}
@@ -16,4 +15,24 @@
     <button type="submit">Додати</button>
     <a href="{{ url_for('admin.dashboard') }}">Скасувати</a>
 </form>
+<script>
+const imagesInput = document.getElementById('images-input');
+const descFields = document.getElementById('descriptions-fields');
+imagesInput.addEventListener('change', function() {
+    descFields.innerHTML = '';
+    for (let i = 0; i < imagesInput.files.length; i++) {
+        const label = document.createElement('label');
+        label.textContent = `Опис для "${imagesInput.files[i].name}":`;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.name = 'description';
+        input.placeholder = 'Опис (необовʼязково)';
+        input.style.marginBottom = '10px';
+        descFields.appendChild(label);
+        descFields.appendChild(document.createElement('br'));
+        descFields.appendChild(input);
+        descFields.appendChild(document.createElement('br'));
+    }
+});
+</script>
 {% endblock %} 

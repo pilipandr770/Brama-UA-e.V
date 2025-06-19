@@ -31,7 +31,7 @@ body {
 main {
     padding: 20px;
     max-width: 800px;
-    margin: 0 auto 100px auto;
+    margin: 0 auto 0 auto;
     background: white;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -160,8 +160,26 @@ form label {
     display: flex;
     gap: 32px;
     justify-content: center;
-    margin: 0;
+    align-items: center;
     width: 100%;
+    margin: 0;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+}
+@media (max-width: 900px) {
+    .main-center-container {
+        width: calc(100vw - 1cm);
+        min-height: unset;
+        height: unset;
+        padding: 16px 0;
+        border-radius: 10px;
+    }
+    .main-cards-row {
+        flex-direction: column;
+        align-items: center;
+    }
 }
 
 .main-card {
@@ -220,37 +238,29 @@ form label {
     border-radius: 10px;
     box-shadow: 0 1px 6px #0001;
 }
-@media (max-width: 900px) {
-    .main-cards-row {
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-    }
-    .main-card {
-        width: 90vw;
-        min-width: 0;
-    }
-}
 
 .main-center-container {
     background: #fff;
-    border-radius: 24px;
+    border-radius: 32px;
     box-shadow: 0 4px 32px rgba(0,0,0,0.10);
-    width: 100vw;
-    max-width: 100vw;
+    width: calc(100vw - 6cm);
+    max-width: 1920px;
+    min-width: 320px;
+    min-height: calc(100vh - 140px);
+    height: calc(100vh - 140px);
     margin: 0 auto;
-    padding: 32px 0;
+    padding: 48px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-left: 0;
-    margin-right: 0;
+    justify-content: center;
 }
-@media (max-width: 600px) {
+@media (max-width: 900px) {
     .main-center-container {
-        width: calc(100vw - 8px);
-        margin: 4px auto 4px auto;
-        padding: 8px 0 8px 0;
+        width: calc(100vw - 1cm);
+        min-height: unset;
+        height: unset;
+        padding: 16px 0;
         border-radius: 10px;
     }
 }
@@ -306,5 +316,91 @@ form label {
     }
     .block-modal-content {
         padding: 18px 2vw;
+    }
+}
+
+.projects-list-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    justify-content: center;
+    margin: 32px 0 0 0;
+}
+.project-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    width: 300px;
+    min-height: 220px;
+    padding: 18px 12px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.98em;
+    transition: box-shadow 0.2s, transform 0.2s;
+    position: relative;
+}
+.project-card:hover {
+    box-shadow: 0 6px 24px rgba(0,0,0,0.16);
+    transform: translateY(-2px) scale(1.03);
+}
+.project-img {
+    width: 100%;
+    max-width: 180px;
+    max-height: 110px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 6px #0001;
+}
+.project-short {
+    color: #444;
+    margin: 8px 0 10px 0;
+    text-align: center;
+    font-size: 1em;
+}
+.project-details-modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(30, 32, 40, 0.90);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.project-details-modal-content {
+    background: #fff;
+    border-radius: 20px;
+    max-width: 700px;
+    width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 40px 28px 28px 28px;
+    position: relative;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    animation: modalIn 0.25s;
+}
+.project-details-modal-close {
+    position: absolute;
+    top: 18px;
+    right: 28px;
+    font-size: 2.2em;
+    color: #888;
+    cursor: pointer;
+    z-index: 10;
+    transition: color 0.15s;
+}
+.project-details-modal-close:hover {
+    color: #222;
+}
+@media (max-width: 600px) {
+    .project-card {
+        width: 95vw;
+        min-width: 0;
+    }
+    .project-details-modal-content {
+        padding: 12px 2vw;
     }
 }

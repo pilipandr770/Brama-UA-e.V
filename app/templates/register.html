@@ -1,11 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Реєстрація</h2>
-<form method="post">
-  <label>Email:</label>
+<h2>Реєстрація члена ферайну / волонтера</h2>
+<div id="consent-step">
+  <p><strong>Згода на обробку персональних даних (GDPR):</strong></p>
+  <p>Ваша інформація буде використана лише для членства у ферайні, комунікації, організації волонтерської діяльності та звітності. Дані не передаються третім особам, окрім випадків, передбачених законом. Ви маєте право на доступ, зміну та видалення своїх даних. Детальніше — у <a href="/privacy" target="_blank">Політиці конфіденційності</a>.</p>
+  <button onclick="showForm()">Погоджуюсь</button>
+</div>
+<form method="post" id="register-form" style="display:none;">
+  <label>Ім'я*:</label>
+  <input name="first_name" required><br>
+  <label>Прізвище*:</label>
+  <input name="last_name" required><br>
+  <label>Дата народження*:</label>
+  <input type="date" name="birth_date" required><br>
+  <label>Спеціальність:</label>
+  <input name="specialty"><br>
+  <label>Мета приєднання до ферайну*:</label>
+  <input name="join_goal" required><br>
+  <label>Чим можете допомогти?</label>
+  <input name="can_help"><br>
+  <label>Чим хочете займатись?</label>
+  <input name="want_to_do"><br>
+  <label>Телефон*:</label>
+  <input name="phone" required><br>
+  <label>Email*:</label>
   <input type="email" name="email" required><br>
-  <label>Пароль:</label>
+  <label>Пароль*:</label>
   <input type="password" name="password" required><br>
+  <input type="hidden" name="consent_given" value="1">
   <button type="submit">Зареєструватися</button>
 </form>
+<script>
+function showForm() {
+  document.getElementById('consent-step').style.display = 'none';
+  document.getElementById('register-form').style.display = 'block';
+}
+</script>
 {% endblock %}

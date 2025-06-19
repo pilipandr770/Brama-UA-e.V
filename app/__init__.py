@@ -25,4 +25,10 @@ def create_app():
     from app.routes.admin import admin_bp
     app.register_blueprint(admin_bp)
 
+    @app.context_processor
+    def inject_settings():
+        from app.models.settings import Settings
+        settings = Settings.query.first()
+        return dict(settings=settings)
+
     return app

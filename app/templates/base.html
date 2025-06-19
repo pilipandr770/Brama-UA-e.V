@@ -11,10 +11,10 @@
 <header>
     <div class="header">
         <a href="{{ url_for('main.index') }}">&#127969; Головна</a>
-        <a href="https://facebook.com" target="_blank">&#128195; Facebook</a>
-        <a href="https://instagram.com" target="_blank">&#128247; Instagram</a>
-        <a href="https://t.me" target="_blank">&#9992;&#65039; Telegram</a>
-        <a href="mailto:info@example.com">&#128231; Email</a>
+        <a href="{{ settings.facebook or 'https://facebook.com' }}" target="_blank">&#128195; Facebook</a>
+        <a href="{{ settings.instagram or 'https://instagram.com' }}" target="_blank">&#128247; Instagram</a>
+        <a href="{{ settings.telegram or 'https://t.me' }}" target="_blank">&#9992;&#65039; Telegram</a>
+        <a href="mailto:{{ settings.email or 'info@example.com' }}">&#128231; Email</a>
         <a href="/login">&#128274; Вхід</a> | <a href="/register">&#9997;&#65039; Реєстрація</a>
         {% if session.user_id %}
             {% set user = namespace(obj=None) %}
@@ -55,7 +55,7 @@
 </footer>
 
 <!-- Віджет чат-бота -->
-<div id="chatbot-widget"></div>
+
 <script src="{{ url_for('static', filename='chatbot.js') }}"></script>
 
 </body>

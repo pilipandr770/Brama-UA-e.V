@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, session, flash, request
+from flask import Blueprint, render_template, redirect, url_for, session, flash, request, send_file
 from app import db
 from app.models.user import User
 from app.models.block import Block
@@ -7,6 +7,7 @@ from app.models.project import Project
 from app.models.settings import Settings
 from app.models.report import Report
 from functools import wraps
+import io
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -86,16 +87,33 @@ def delete_block(block_id):
 @admin_required
 def add_gallery_image():
     if request.method == 'POST':
-        image_url = request.form['image_url']
-        description = request.form['description']
         block_id = request.form.get('block_id')
-        img = GalleryImage(image_url=image_url, description=description, block_id=block_id)
-        db.session.add(img)
+        descriptions = request.form.getlist('description')
+        files = request.files.getlist('images')
+        for idx, file in enumerate(files):
+            if file and file.filename:
+                img = GalleryImage(
+                    image_data=file.read(),
+                    image_mimetype=file.mimetype,
+                    description=descriptions[idx] if idx < len(descriptions) else '',
+                    block_id=block_id
+                )
+                db.session.add(img)
         db.session.commit()
         flash('Фото додано до галереї!', 'success')
         return redirect(url_for('admin.dashboard'))
     blocks = Block.query.filter_by(type='gallery').all()
     return render_template('admin/add_gallery_image.html', blocks=blocks)
+
+@admin_bp.route('/gallery/image/<int:image_id>')
+def gallery_image_file(image_id):
+    img = GalleryImage.query.get_or_404(image_id)
+    if img.image_data:
+        return send_file(io.BytesIO(img.image_data), mimetype=img.image_mimetype)
+    elif img.image_url:
+        return redirect(img.image_url)
+    else:
+        return '', 404
 
 @admin_bp.route('/gallery/delete/<int:image_id>', methods=['POST'])
 @admin_required
@@ -104,4 +122,53 @@ def delete_gallery_image(image_id):
     db.session.delete(img)
     db.session.commit()
     flash('Фото видалено з галереї!', 'success')
+    return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/approve_project/<int:project_id>', methods=['POST'])
+@admin_required
+def approve_project(project_id):
+    project = Project.query.get_or_404(project_id)
+    project.status = 'approved'
+    db.session.commit()
+    flash('Проєкт підтверджено!', 'success')
+    return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/reject_project/<int:project_id>', methods=['POST'])
+@admin_required
+def reject_project(project_id):
+    project = Project.query.get_or_404(project_id)
+    project.status = 'rejected'
+    db.session.commit()
+    flash('Проєкт відхилено.', 'info')
+    return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/settings/social', methods=['GET', 'POST'])
+@admin_required
+def edit_social_settings():
+    settings = Settings.query.first()
+    if not settings:
+        settings = Settings()
+        db.session.add(settings)
+        db.session.commit()
+    if request.method == 'POST':
+        settings.facebook = request.form.get('facebook')
+        settings.instagram = request.form.get('instagram')
+        settings.telegram = request.form.get('telegram')
+        settings.email = request.form.get('email')
+        db.session.commit()
+        flash('Соцмережі оновлено!', 'success')
+        return redirect(url_for('admin.dashboard'))
+    return render_template('admin/edit_social.html', settings=settings)
+
+@admin_bp.route('/update_contribution/<int:user_id>', methods=['POST'])
+@admin_required
+def update_contribution(user_id):
+    user = User.query.get_or_404(user_id)
+    try:
+        new_contribution = float(request.form.get('contribution', 0))
+        user.contributions = new_contribution
+        db.session.commit()
+        flash(f'Внесок для {user.first_name} {user.last_name} оновлено!', 'success')
+    except Exception as e:
+        flash(f'Помилка при оновленні внеску: {e}', 'danger')
     return redirect(url_for('admin.dashboard')) 

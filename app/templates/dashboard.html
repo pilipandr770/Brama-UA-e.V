@@ -3,7 +3,19 @@
 {% block title %}Мій кабінет{% endblock %}
 
 {% block content %}
-<h2>Вітаємо у кабінеті, {{ user.email }}!</h2>
+<h2>Вітаємо у кабінеті, {{ user.first_name }} {{ user.last_name }}!</h2>
+
+<!-- Баланс ферайну та останній внесок -->
+<div style="margin-bottom: 24px;">
+    <h3>Баланс ферайну:</h3>
+    <p style="font-size:1.2em;"><strong>&euro;{{ total_contributions|round(2) }}</strong></p>
+    <h3>Останній внесок:</h3>
+    {% if last_contributor %}
+        <p>{{ last_contributor.first_name }} {{ last_contributor.last_name }} — <strong>&euro;{{ last_contributor.contributions|round(2) }}</strong></p>
+    {% else %}
+        <p>Ще немає внесків.</p>
+    {% endif %}
+</div>
 
 <!-- Баланс та повідомлення -->
 <div>

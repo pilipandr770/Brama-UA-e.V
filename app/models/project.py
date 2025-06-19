@@ -5,6 +5,13 @@ from flask_sqlalchemy import SQLAlchemy
 
 main_bp = Blueprint('main', __name__)
 
+class Vote(db.Model):
+    __tablename__ = 'votes'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 class Project(db.Model):
     __tablename__ = 'projects'
 
@@ -27,12 +34,14 @@ class Project(db.Model):
     location = db.Column(db.String(100))
     website = db.Column(db.String(200))
     social_links = db.Column(db.Text)  # JSON рядок або список через кому
-    image_url = db.Column(db.String(300))
-    document_url = db.Column(db.String(300))
-
-    status = db.Column(db.String(20), default='draft')
+    image_url = db.Column(db.String(300), nullable=True)
+    image_data = db.Column(db.LargeBinary, nullable=True)
+    image_mimetype = db.Column(db.String(64), nullable=True)
+    document_url = db.String(300)
+    status = db.Column(db.String(20), default='pending')
     user_id = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    votes = db.relationship('Vote', backref='project', lazy='dynamic')
 
 @main_bp.route('/')
 def index():
@@ -62,6 +71,8 @@ def submit_project():
                 website=request.form.get('website'),
                 social_links=request.form.get('social_links'),
                 image_url=request.form.get('image_url'),
+                image_data=request.form.get('image_data'),
+                image_mimetype=request.form.get('image_mimetype'),
                 document_url=request.form.get('document_url'),
                 user_id=1  # тимчасово хардкод, поки немає логіну
             )

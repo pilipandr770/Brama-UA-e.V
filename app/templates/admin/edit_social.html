@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Редагувати соцмережі{% endblock %}
+{% block content %}
+<h2>Редагувати соцмережі</h2>
+<form method="post">
+    <label>Facebook:</label><br>
+    <input type="url" name="facebook" value="{{ settings.facebook or '' }}"><br>
+    <label>Instagram:</label><br>
+    <input type="url" name="instagram" value="{{ settings.instagram or '' }}"><br>
+    <label>Telegram:</label><br>
+    <input type="url" name="telegram" value="{{ settings.telegram or '' }}"><br>
+    <label>Email:</label><br>
+    <input type="email" name="email" value="{{ settings.email or '' }}"><br>
+    <button type="submit">Зберегти</button>
+    <a href="{{ url_for('admin.dashboard') }}">Скасувати</a>
+</form>
+{% endblock %} 

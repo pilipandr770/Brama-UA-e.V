@@ -16,6 +16,34 @@
   {% endfor %}
 </ul>
 <hr>
+<h3>Члени ферайну / Волонтери</h3>
+<table border="1" cellpadding="6" style="border-collapse:collapse; margin-bottom:20px;">
+  <tr>
+    <th>Ім'я</th><th>Прізвище</th><th>Дата нар.</th><th>Спец.</th><th>Мета</th><th>Може допомогти</th><th>Хоче займатись</th><th>Телефон</th><th>Email</th><th>Внески (€)</th><th>Згода</th><th>Статус</th>
+  </tr>
+  {% for user in users if user.is_member %}
+  <tr>
+    <td>{{ user.first_name }}</td>
+    <td>{{ user.last_name }}</td>
+    <td>{{ user.birth_date }}</td>
+    <td>{{ user.specialty }}</td>
+    <td>{{ user.join_goal }}</td>
+    <td>{{ user.can_help }}</td>
+    <td>{{ user.want_to_do }}</td>
+    <td>{{ user.phone }}</td>
+    <td>{{ user.email }}</td>
+    <td>
+      <form method="post" action="{{ url_for('admin.update_contribution', user_id=user.id) }}" style="display:inline;">
+        <input type="number" step="0.01" name="contribution" value="{{ user.contributions or 0 }}" style="width:70px;">
+        <button type="submit">💾</button>
+      </form>
+    </td>
+    <td>{% if user.consent_given %}✅{% else %}❌{% endif %}</td>
+    <td>{% if user.is_blocked %}Заблоковано{% elif user.is_admin %}Адмін{% else %}Активний{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>
+<hr>
 <h3>Блоки на головній</h3>
 <a href="{{ url_for('admin.create_block') }}">+ Додати блок</a>
 <ul>
@@ -44,12 +72,29 @@
 <h3>Проекти</h3>
 <ul>
   {% for project in projects %}
-    <li>{{ project.title }} ({{ project.status }})</li>
+    <li style="margin-bottom: 18px;">
+      <strong>{{ project.title }}</strong> ({{ project.status }})
+      {% if project.image_data or project.image_url %}
+        <br>
+        <img src="{{ url_for('main.project_image_file', project_id=project.id) }}" alt="фото проєкту" style="max-width:120px; max-height:80px; border-radius:8px;">
+      {% endif %}
+      <br>
+      {% if project.status == 'pending' %}
+        <form method="post" action="{{ url_for('admin.approve_project', project_id=project.id) }}" style="display:inline;">
+          <button type="submit" style="color:green;">Підтвердити</button>
+        </form>
+        <form method="post" action="{{ url_for('admin.reject_project', project_id=project.id) }}" style="display:inline;">
+          <button type="submit" style="color:red;">Відхилити</button>
+        </form>
+      {% endif %}
+    </li>
   {% endfor %}
 </ul>
 <hr>
 <h3>Соцмережі</h3>
 <p>Facebook: {{ settings.facebook if settings else '' }}<br>Instagram: {{ settings.instagram if settings else '' }}<br>Telegram: {{ settings.telegram if settings else '' }}<br>Email: {{ settings.email if settings else '' }}</p>
+<hr>
+<a href="{{ url_for('admin.edit_social_settings') }}" style="font-weight:bold; font-size:1.1em; color:#007bb8;">⚙️ Налаштувати соцмережі</a>
 <hr>
 <h3>Звіти</h3>
 <ul>

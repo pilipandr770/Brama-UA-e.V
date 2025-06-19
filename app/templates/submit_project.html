@@ -4,7 +4,7 @@
 
 {% block content %}
 <h2>Подати новий соціальний проєкт</h2>
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
     <label>Назва проєкту*</label><input name="title" required><br>
     <label>Опис проблеми*</label><textarea name="problem_description" required></textarea><br>
     <label>Мета*</label><textarea name="goal" required></textarea><br>
@@ -23,7 +23,7 @@
     <label>Місце реалізації</label><input name="location"><br>
     <label>Вебсайт</label><input type="url" name="website"><br>
     <label>Соцмережі</label><input name="social_links"><br>
-    <label>Зображення (URL)</label><input name="image_url"><br>
+    <label>Фото проєкту (необовʼязково):</label><input type="file" name="image_file" accept="image/*"><br>
     <label>Документ (URL)</label><input name="document_url"><br>
 
     <button type="submit">Надіслати</button>
