@@ -485,17 +485,27 @@ form label {
   gap: 20px;
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
+  padding: 0 20px;
 }
-.main-header a {
+
+.main-header .nav-link {
   color: white;
   text-decoration: none;
   font-weight: 500;
   font-size: 1.3em;
   transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 8px;
 }
-.main-header a:hover {
+
+.main-header .nav-link:hover {
   color: #ffd600;
+  background-color: rgba(255, 255, 255, 0.1);
 }
+
 .main-footer {
   height: 70px;
   background-color: #ffd600;
@@ -511,12 +521,33 @@ form label {
   align-items: center;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
+  padding: 10px 0;
 }
+
+.main-footer .footer-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 5px;
+}
+
 .main-footer a {
   color: #000;
-  text-decoration: underline;
+  text-decoration: none;
   font-weight: 500;
-  margin: 0 10px;
+  transition: color 0.2s;
+}
+
+.main-footer a:hover {
+  text-decoration: underline;
+  color: #333;
+}
+
+.main-footer .copyright {
+  font-size: 0.85rem;
+  margin: 0;
+  color: #333;
 }
 
 /* --- Відновлення стилів для модальних блоків --- */
