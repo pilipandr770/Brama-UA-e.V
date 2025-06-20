@@ -1,170 +1,207 @@
 {% extends "base.html" %}
 {% block title %}Головна сторінка{% endblock %}
+
 {% block content %}
-{% if info_block or gallery_block or projects_block %}
-<div class="main-cards-row">
+<div class="main-center-container">
+
+  {% if info_block or gallery_block or projects_block %}
+  <div class="main-cards-row">
     {% if info_block %}
     <div class="main-card info-block" onclick="openModal('info')">
-        {% if info_block.image_url %}
-            <img src="{{ info_block.image_url }}" alt="" class="block-cover">
-        {% endif %}
-        <h3>{{ info_block.title }}</h3>
-        <div class="block-short">{{ info_block.content[:80] }}...</div>
+      {% if info_block.image_url %}
+      <img src="{{ info_block.image_url }}" alt="" class="block-cover">
+      {% endif %}
+      <h3>{{ info_block.title }}</h3>
+      <div class="block-short">{{ info_block.content[:80] }}...</div>
     </div>
     {% endif %}
+
     {% if gallery_block %}
     <div class="main-card gallery-block" onclick="openModal('gallery')">
-        {% if gallery_block.image_url %}
-            <img src="{{ gallery_block.image_url }}" alt="" class="block-cover">
-        {% endif %}
-        <h3>{{ gallery_block.title }}</h3>
-        <div class="block-short">{{ gallery_block.content[:80] }}...</div>
+      {% if gallery_block.image_url %}
+      <img src="{{ gallery_block.image_url }}" alt="" class="block-cover">
+      {% endif %}
+      <h3>{{ gallery_block.title }}</h3>
+      <div class="block-short">{{ gallery_block.content[:80] }}...</div>
     </div>
     {% endif %}
+
     {% if projects_block %}
     <div class="main-card projects-block" onclick="openModal('projects')">
-        {% if projects_block.image_url %}
-            <img src="{{ projects_block.image_url }}" alt="" class="block-cover">
-        {% endif %}
-        <h3>{{ projects_block.title }}</h3>
-        <div class="block-short">{{ projects_block.content[:80] }}...</div>
+      {% if projects_block.image_url %}
+      <img src="{{ projects_block.image_url }}" alt="" class="block-cover">
+      {% endif %}
+      <h3>{{ projects_block.title }}</h3>
+      <div class="block-short">{{ projects_block.content[:80] }}...</div>
     </div>
     {% endif %}
+  </div>
+  {% endif %}
+
+</div>
+
+<!-- Модальне вікно -->
+{% if info_block or gallery_block or projects_block %}
+<div id="block-modal" class="block-modal" style="display: none;">
+  <div class="block-modal-content">
+    <span class="block-modal-close" onclick="closeModal()">&times;</span>
+
+    {% if info_block %}
+    <div id="modal-details-info" class="modal-details" style="display: none;">
+      <h2>{{ info_block.title }}</h2>
+      <div>{{ info_block.content|safe }}</div>
+    </div>
+    {% endif %}
+
+    {% if gallery_block %}
+    <div id="modal-details-gallery" class="modal-details" style="display: none;">
+      <h2>{{ gallery_block.title }}</h2>
+      <div>{{ gallery_block.content|safe }}</div>
+
+      <div id="gallery-carousel" class="gallery-carousel">
+        <button id="gallery-prev" class="gallery-nav">&#8592;</button>
+        <div id="gallery-slide" class="gallery-slide">
+          {% for img in gallery_images %}
+          <div class="gallery-item" data-index="{{ loop.index0 }}">
+            <img src="{% if img.image_data %}{{ url_for('main.gallery_image_file', image_id=img.id) }}{% else %}{{ img.image_url }}{% endif %}" alt="" class="gallery-img">
+            <div class="gallery-desc">{{ img.description }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        <button id="gallery-next" class="gallery-nav">&#8594;</button>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if projects_block %}
+    <div id="modal-details-projects" class="modal-details" style="display: none;">
+      <h2>{{ projects_block.title }}</h2>
+      <div>{{ projects_block.content|safe }}</div>
+
+      <!-- Проекти як картки в модальному вікні -->
+      {% if projects %}
+      <div class="projects-list-row">
+        {% for project in projects %}
+        <div class="project-card">
+          <h4>{{ project.title }}</h4>
+          {% if project.image_data or project.image_url %}
+          <img src="{{ url_for('main.project_image_file', project_id=project.id) }}" alt="фото проєкту" class="project-img" style="max-width:180px; margin-bottom:10px;">
+          {% endif %}
+          <div><strong>Мета:</strong> {{ project.goal[:60] }}...</div>
+          <div><strong>Виконавець:</strong> {{ project.executor_info }}</div>
+          <div><strong>Бюджет:</strong> &euro;{{ project.total_budget }}</div>
+          <button onclick="openProjectModal({{ project.id }})" class="project-details-btn">Детальніше</button>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div>Немає схвалених проєктів для відображення.</div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
 </div>
 {% endif %}
 
-<div id="block-modal" class="block-modal" style="display:none;">
-    <div class="block-modal-content">
-        <span class="block-modal-close" onclick="closeModal()">&times;</span>
-        <div id="modal-details-info" class="modal-details" style="display:none;">
-            <h2>{{ info_block.title if info_block else '' }}</h2>
-            <div>{{ info_block.content|safe if info_block else '' }}</div>
-        </div>
-        <div id="modal-details-gallery" class="modal-details" style="display:none;">
-            <h2>{{ gallery_block.title if gallery_block else '' }}</h2>
-            <div>{{ gallery_block.content|safe if gallery_block else '' }}</div>
-            <div class="gallery-carousel" id="gallery-carousel">
-                <button id="gallery-prev" style="font-size:2em;">&#8592;</button>
-                <div id="gallery-slide" style="display:inline-block; text-align:center;">
-                    {% for img in gallery_images %}
-                        <img src="{% if img.image_data %}{{ url_for('admin.gallery_image_file', image_id=img.id) }}{% else %}{{ img.image_url }}{% endif %}" alt="" class="gallery-img {% if loop.first %}show{% else %}hide{% endif %}" data-index="{{ loop.index0 }}">
-                        <div class="gallery-desc {% if loop.first %}show{% else %}hide{% endif %}" data-index="{{ loop.index0 }}">{{ img.description }}</div>
-                    {% endfor %}
-                </div>
-                <button id="gallery-next" style="font-size:2em;">&#8594;</button>
-            </div>
-        </div>
-        <div id="modal-details-projects" class="modal-details" style="display:none;">
-            <h2>{{ projects_block.title if projects_block else '' }}</h2>
-            <div>{{ projects_block.content|safe if projects_block else '' }}</div>
-            <h2>Наші проєкти</h2>
-            {% if projects %}
-                <div class="projects-list-row">
-                    {% for project in projects %}
-                    <div class="project-card">
-                        {% if project.image_data or project.image_url %}
-                            <img src="{{ url_for('main.project_image_file', project_id=project.id) }}" alt="фото проєкту" class="project-img">
-                        {% endif %}
-                        <h3>{{ project.title }}</h3>
-                        <div class="project-short">{{ project.goal[:80] }}...</div>
-                        <button onclick="openProjectModal({{ project.id }})">Детальніше</button>
-                        <form method="post" action="/vote/{{ project.id }}" style="display:inline;">
-                            <button type="submit">Голосувати</button>
-                        </form>
-                    </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p>Наразі проєкти не додані.</p>
-            {% endif %}
-        </div>
-    </div>
-</div>
+<!-- Модальні вікна для кожного проєкту -->
 {% if projects %}
 <div class="projects-list-row">
-    {% for project in projects %}
-    <div id="project-modal-{{ project.id }}" class="project-details-modal" style="display:none;">
-        <div class="project-details-modal-content">
-            <span class="project-details-modal-close" onclick="closeProjectModal({{ project.id }})">&times;</span>
-            <h2>{{ project.title }}</h2>
-            {% if project.image_data or project.image_url %}
-                <img src="{{ url_for('main.project_image_file', project_id=project.id) }}" alt="фото проєкту" class="project-img" style="max-width:300px; margin-bottom:18px;">
-            {% endif %}
-            <p><strong>Мета:</strong> {{ project.goal }}</p>
-            <p><strong>Проблема:</strong> {{ project.problem_description }}</p>
-            <p><strong>Очікуваний результат:</strong> {{ project.expected_result }}</p>
-            <p><strong>Бюджет:</strong> &euro;{{ project.total_budget }}</p>
-            <p><strong>Виконавець:</strong> {{ project.executor_info }}</p>
-            <p><strong>Тривалість:</strong> {{ project.duration }}</p>
-            <p><strong>Категорія:</strong> {{ project.category }}</p>
-            <p><strong>Місце реалізації:</strong> {{ project.location }}</p>
-            <p><strong>Соцмережі:</strong> {{ project.social_links }}</p>
-            <p><strong>Статус:</strong> {{ project.status }}</p>
-            <p><strong>Кількість голосів:</strong> {{ project.votes.count() }}</p>
-            <form method="post" action="/vote/{{ project.id }}" style="margin-top:18px;">
-                <button type="submit">Голосувати</button>
-            </form>
-        </div>
+  {% for project in projects %}
+  <div id="project-modal-{{ project.id }}" class="project-details-modal" style="display:none;">
+    <div class="project-details-modal-content">
+      <span class="project-details-modal-close" onclick="closeProjectModal({{ project.id }})">&times;</span>
+      <h2>{{ project.title }}</h2>
+      {% if project.image_data or project.image_url %}
+      <img src="{{ url_for('main.project_image_file', project_id=project.id) }}" alt="фото проєкту"
+        class="project-img" style="max-width:300px; margin-bottom:18px;">
+      {% endif %}
+      <p><strong>Мета:</strong> {{ project.goal }}</p>
+      <p><strong>Проблема:</strong> {{ project.problem_description }}</p>
+      <p><strong>Очікуваний результат:</strong> {{ project.expected_result }}</p>
+      <p><strong>Бюджет:</strong> &euro;{{ project.total_budget }}</p>
+      <p><strong>Виконавець:</strong> {{ project.executor_info }}</p>
+      <p><strong>Тривалість:</strong> {{ project.duration }}</p>
+      <p><strong>Категорія:</strong> {{ project.category }}</p>
+      <p><strong>Місце реалізації:</strong> {{ project.location }}</p>
+      <p><strong>Соцмережі:</strong> {{ project.social_links }}</p>
+      <p><strong>Статус:</strong> {{ project.status }}</p>
+      <p><strong>Кількість голосів:</strong> {{ project.votes.count() }}</p>
+      <form method="post" action="/vote/{{ project.id }}" style="margin-top:18px;">
+        <button type="submit">Голосувати</button>
+      </form>
     </div>
-    {% endfor %}
+  </div>
+  {% endfor %}
 </div>
 {% endif %}
+
+<!-- JS -->
 <script>
 function openModal(type) {
-    document.getElementById('block-modal').style.display = 'flex';
-    document.getElementById('modal-details-info').style.display = 'none';
-    document.getElementById('modal-details-gallery').style.display = 'none';
-    document.getElementById('modal-details-projects').style.display = 'none';
-    document.getElementById('modal-details-' + type).style.display = 'block';
+  const modal = document.getElementById('block-modal');
+  if (modal) {
+    modal.style.display = 'flex';
+    const modalDetails = document.getElementById('modal-details-' + type);
+    if (modalDetails) {
+      modalDetails.style.display = 'block';
+      modalDetails.scrollIntoView({ behavior: 'smooth' });
+      if (type === 'gallery') {
+        initGalleryCarousel();
+      }
+    } else {
+      console.error('Modal details for type "' + type + '" not found');
+    }
     document.body.style.overflow = 'hidden';
-    if(type === 'gallery') initGalleryCarousel();
+  } else {
+    console.error('Modal element not found');
+  }
 }
+
 function closeModal() {
-    document.getElementById('block-modal').style.display = 'none';
+  const modal = document.getElementById('block-modal');
+  if (modal) {
+    modal.style.display = 'none';
+    const modalDetails = modal.querySelectorAll('.modal-details');
+    modalDetails.forEach(detail => detail.style.display = 'none');
     document.body.style.overflow = '';
+  } else {
+    console.error('Modal element not found');
+  }
 }
+
 function initGalleryCarousel() {
-    const imgs = document.querySelectorAll('#gallery-slide .gallery-img');
-    const descs = document.querySelectorAll('#gallery-slide .gallery-desc');
-    let idx = 0;
-    imgs.forEach((img, i) => {
-        img.classList.toggle('show', i === 0);
-        img.classList.toggle('hide', i !== 0);
+  const items = document.querySelectorAll('.gallery-item');
+  let currentIndex = 0;
+
+  function showItem(index) {
+    items.forEach((item, i) => {
+      item.classList.toggle('active', i === index);
     });
-    descs.forEach((d, i) => {
-        d.classList.toggle('show', i === 0);
-        d.classList.toggle('hide', i !== 0);
-    });
-    document.getElementById('gallery-prev').onclick = function() {
-        imgs[idx].classList.remove('show');
-        imgs[idx].classList.add('hide');
-        descs[idx].classList.remove('show');
-        descs[idx].classList.add('hide');
-        idx = (idx - 1 + imgs.length) % imgs.length;
-        imgs[idx].classList.remove('hide');
-        imgs[idx].classList.add('show');
-        descs[idx].classList.remove('hide');
-        descs[idx].classList.add('show');
-    };
-    document.getElementById('gallery-next').onclick = function() {
-        imgs[idx].classList.remove('show');
-        imgs[idx].classList.add('hide');
-        descs[idx].classList.remove('show');
-        descs[idx].classList.add('hide');
-        idx = (idx + 1) % imgs.length;
-        imgs[idx].classList.remove('hide');
-        imgs[idx].classList.add('show');
-        descs[idx].classList.remove('hide');
-        descs[idx].classList.add('show');
-    };
+  }
+
+  document.getElementById('gallery-prev').onclick = () => {
+    currentIndex = (currentIndex - 1 + items.length) % items.length;
+    showItem(currentIndex);
+  };
+
+  document.getElementById('gallery-next').onclick = () => {
+    currentIndex = (currentIndex + 1) % items.length;
+    showItem(currentIndex);
+  };
+
+  showItem(currentIndex);
 }
+
 function openProjectModal(id) {
-    document.getElementById('project-modal-' + id).style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+  const modal = document.getElementById('project-modal-' + id);
+  if (modal) modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
 }
+
 function closeProjectModal(id) {
-    document.getElementById('project-modal-' + id).style.display = 'none';
-    document.body.style.overflow = '';
+  const modal = document.getElementById('project-modal-' + id);
+  if (modal) modal.style.display = 'none';
+  document.body.style.overflow = '';
 }
 </script>
 {% endblock %}

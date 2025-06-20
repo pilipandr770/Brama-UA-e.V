@@ -16,7 +16,9 @@ def index():
     gallery_block = Block.query.filter_by(type='gallery', is_active=True).first()
     gallery_images = GalleryImage.query.filter_by(block_id=gallery_block.id).all() if gallery_block else []
     projects_block = Block.query.filter_by(type='projects', is_active=True).first()
-    projects = Project.query.filter_by(status='approved').order_by(Project.created_at.desc()).all()
+    projects = []
+    if projects_block:
+        projects = Project.query.filter_by(status='approved', block_id=projects_block.id).order_by(Project.created_at.desc()).all()
     settings = Settings.query.first()
     return render_template('index.html', info_block=info_block, gallery_block=gallery_block, gallery_images=gallery_images, projects_block=projects_block, projects=projects, settings=settings)
 
@@ -27,6 +29,9 @@ def submit_project():
             image_file = request.files.get('image_file')
             image_data = image_file.read() if image_file and image_file.filename else None
             image_mimetype = image_file.mimetype if image_file and image_file.filename else None
+            # Встановлюємо block_id для активного блоку проектів
+            projects_block = Block.query.filter_by(type='projects', is_active=True).first()
+            block_id = projects_block.id if projects_block else None
             project = Project(
                 title=request.form['title'],
                 problem_description=request.form['problem_description'],
@@ -48,7 +53,8 @@ def submit_project():
                 user_id=1,  # тимчасово хардкод, поки немає логіну
                 image_data=image_data,
                 image_mimetype=image_mimetype,
-                status='pending'
+                status='pending',
+                block_id=block_id
             )
             db.session.add(project)
             db.session.commit()
@@ -66,6 +72,16 @@ def project_image_file(project_id):
         return send_file(io.BytesIO(project.image_data), mimetype=project.image_mimetype)
     elif project.image_url:
         return redirect(project.image_url)
+    else:
+        return '', 404
+
+@main_bp.route('/gallery/image/<int:image_id>')
+def gallery_image_file(image_id):
+    img = GalleryImage.query.get_or_404(image_id)
+    if img.image_data:
+        return send_file(io.BytesIO(img.image_data), mimetype=img.image_mimetype)
+    elif img.image_url:
+        return redirect(img.image_url)
     else:
         return '', 404
 

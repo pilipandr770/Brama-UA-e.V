@@ -1,62 +1,50 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Brama UA{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <title>{% block title %}Brama UA{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-<!-- Хедер -->
-<header>
-    <div class="header">
-        <a href="{{ url_for('main.index') }}">&#127969; Головна</a>
-        <a href="{{ settings.facebook or 'https://facebook.com' }}" target="_blank">&#128195; Facebook</a>
-        <a href="{{ settings.instagram or 'https://instagram.com' }}" target="_blank">&#128247; Instagram</a>
-        <a href="{{ settings.telegram or 'https://t.me' }}" target="_blank">&#9992;&#65039; Telegram</a>
-        <a href="mailto:{{ settings.email or 'info@example.com' }}">&#128231; Email</a>
-        <a href="/login">&#128274; Вхід</a> | <a href="/register">&#9997;&#65039; Реєстрація</a>
-        {% if session.user_id %}
-            {% set user = namespace(obj=None) %}
-            {% for u in users %}{% if u.id == session.user_id %}{% set user.obj = u %}{% endif %}{% endfor %}
-            {% if user.obj and user.obj.is_admin %}
-                <a href="/admin/">&#9881; Адмінка</a>
-            {% endif %}
-        {% endif %}
-    </div>
+<!-- ХЕДЕР -->
+<header class="main-header">
+  <div class="container d-flex justify-content-center align-items-center gap-4">
+    <a class="nav-link" href="{{ url_for('main.index') }}">🏠</a>
+    <a class="nav-link" href="{{ settings.facebook or '#' }}">📄</a>
+    <a class="nav-link" href="{{ settings.instagram or '#' }}">📷</a>
+    <a class="nav-link" href="{{ settings.telegram or '#' }}">✈️</a>
+    <a class="nav-link" href="/login">🔒</a>
+    <a class="nav-link" href="/register">📝</a>
+  </div>
 </header>
 
-<!-- Основний контент -->
-<main>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul class="flashes">
-          {% for category, message in messages %}
-            <li class="flash-{{ category }}">{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-
-    {% block content %}{% endblock %}
+<!-- КОНТЕНТ -->
+<main class="main-content">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul class="flashes">
+        {% for category, message in messages %}
+          <li class="flash-{{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
 </main>
 
-<!-- Футер -->
-<footer>
-    <hr>
-    <div class="footer-links" style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
-        <div style="display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;">
-            <a href="/privacy">&#128274; Політика конфіденційності</a>
-            <a href="/impressum">&#128196; Імпресум</a>
-            <a href="/contact">&#128222; Контакти</a>
-        </div>
-        <p style="text-align:center; margin: 8px 0 4px 0;">&copy; 2025 Brama UA e.V.</p>
-    </div>
+<!-- ФУТЕР -->
+<footer class="main-footer d-flex flex-column justify-content-center align-items-center">
+  <div class="d-flex gap-4">
+    <a href="/privacy" class="text-dark">Політика конфіденційності</a>
+    <a href="/contact" class="text-dark">Контакти</a>
+    <a href="/impressum" class="text-dark">Імпресум</a>
+  </div>
+  <p class="text-dark small mt-2">© 2025 Brama UA</p>
 </footer>
 
-<!-- Віджет чат-бота -->
-
 <script src="{{ url_for('static', filename='chatbot.js') }}"></script>
-
 </body>
 </html>

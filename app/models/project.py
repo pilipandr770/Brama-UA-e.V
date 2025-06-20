@@ -42,6 +42,8 @@ class Project(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     votes = db.relationship('Vote', backref='project', lazy='dynamic')
+    block_id = db.Column(db.Integer, db.ForeignKey('blocks.id'), nullable=True)
+    block = db.relationship('Block', backref='projects')
 
 @main_bp.route('/')
 def index():

@@ -1,41 +1,110 @@
 body {
-    font-family: sans-serif;
+    font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: #fff700;
-    color: #333;
+    background: #f8f9fa;
+    color: #222;
     min-height: 100vh;
     position: relative;
+    margin-top: 70px; /* Отступ для фиксированного хедера */
+}
+
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1030;
+}
+
+main {
+    margin-top: calc(var(--header-height) + 20px);
+    padding-top: 20px; /* Увеличен отступ для видимости блоков */
+}
+
+:root {
+    --header-height: 60px;
 }
 
 .header, footer {
     background: #00aaff;
-    height: 70px;
+    min-height: 60px;
     display: flex;
     align-items: center;
     gap: 15px;
     justify-content: center;
     color: white;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
-.header a {
+.header a, .header .nav-link {
     color: white;
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 500;
+    margin: 0 8px;
+    transition: color 0.2s;
 }
 
-.header a:hover {
+.header a:hover, .header .nav-link:hover {
     text-decoration: underline;
+    color: #ffd600;
 }
 
-main {
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto 0 auto;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+main, .container {
+    padding: 32px 24px;
+    max-width: 900px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
 }
+
+h1, h2, h3 {
+    font-weight: 600;
+    margin-bottom: 24px;
+}
+
+.btn, button, input[type="submit"] {
+    border-radius: 6px;
+    padding: 8px 24px;
+    font-weight: 500;
+    background: #00aaff;
+    color: #fff;
+    border: none;
+    transition: background 0.2s;
+}
+
+.btn:hover, button:hover, input[type="submit"]:hover {
+    background: #0077aa;
+}
+
+input, select, textarea {
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin-bottom: 16px;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.flashes {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 24px;
+}
+
+.flashes li {
+    padding: 12px 20px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background: #e3f7ff;
+    color: #0077aa;
+    font-weight: 500;
+}
+
+.flash-success { background: #d4edda; color: #155724; }
+.flash-error { background: #f8d7da; color: #721c24; }
+.flash-warning { background: #fff3cd; color: #856404; }
 
 footer {
     text-align: center;
@@ -224,99 +293,79 @@ form label {
     padding: 32px 24px;
     display: none;
 }
+/* --- Горизонтальна карусель галереї --- */
 .gallery-carousel {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 18px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  width: 100%;
+  margin-top: 18px;
+}
+.gallery-slide {
+  width: 320px;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+.gallery-item {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  animation: fadeIn 0.5s;
+}
+.gallery-item.active {
+  display: flex;
 }
 .gallery-img {
-    width: 180px;
+  width: 280px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 1px 6px #0001;
+}
+.gallery-desc {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 1.05em;
+  color: #333;
+}
+.gallery-nav {
+  background-color: #0077aa;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.7em;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  transition: background-color 0.3s, transform 0.2s;
+}
+.gallery-nav:hover {
+  background-color: #005f8a;
+  transform: scale(1.1);
+}
+.gallery-nav:active {
+  transform: scale(0.9);
+}
+@media (max-width: 600px) {
+  .gallery-slide {
+    width: 98vw;
+    min-height: 120px;
+  }
+  .gallery-img {
+    width: 96vw;
     height: 120px;
-    object-fit: cover;
-    border-radius: 10px;
-    box-shadow: 0 1px 6px #0001;
-}
-
-.main-center-container {
-    background: #fff;
-    border-radius: 32px;
-    box-shadow: 0 4px 32px rgba(0,0,0,0.10);
-    width: calc(100vw - 6cm);
-    max-width: 1920px;
-    min-width: 320px;
-    min-height: calc(100vh - 140px);
-    height: calc(100vh - 140px);
-    margin: 0 auto;
-    padding: 48px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-@media (max-width: 900px) {
-    .main-center-container {
-        width: calc(100vw - 1cm);
-        min-height: unset;
-        height: unset;
-        padding: 16px 0;
-        border-radius: 10px;
-    }
-}
-
-.block-modal {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(30, 32, 40, 0.85);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.2s;
-}
-.block-modal-content {
-    background: #fff;
-    border-radius: 20px;
-    max-width: 900px;
-    width: 90vw;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 48px 36px 36px 36px;
-    position: relative;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
-    animation: modalIn 0.25s;
-}
-@keyframes modalIn {
-    from { transform: scale(0.95) translateY(40px); opacity: 0; }
-    to { transform: scale(1) translateY(0); opacity: 1; }
-}
-.block-modal-close {
-    position: absolute;
-    top: 18px;
-    right: 28px;
-    font-size: 2.2em;
-    color: #888;
-    cursor: pointer;
-    z-index: 10;
-    transition: color 0.15s;
-}
-.block-modal-close:hover {
-    color: #222;
-}
-.modal-details {
-    margin-top: 0;
-}
-@media (max-width: 900px) {
-    .main-center-container {
-        padding: 8px 0;
-        border-radius: 10px;
-    }
-    .block-modal-content {
-        padding: 18px 2vw;
-    }
+  }
 }
 
 .projects-list-row {
@@ -411,3 +460,109 @@ form label {
 
 /* Для gallery-desc краще display:block */
 .gallery-desc.show { display: block !important; }
+
+@media (max-width: 768px) {
+    .main-center-container {
+        width: calc(100% - 20px);
+        padding: 16px;
+        border-radius: 12px;
+    }
+}
+
+/* --- Відновлення стилів для main-header та main-footer --- */
+.main-header {
+  height: 70px;
+  background-color: #00aaff;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+.main-header a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.3em;
+  transition: color 0.2s;
+}
+.main-header a:hover {
+  color: #ffd600;
+}
+.main-footer {
+  height: 70px;
+  background-color: #ffd600;
+  color: #000;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+.main-footer a {
+  color: #000;
+  text-decoration: underline;
+  font-weight: 500;
+  margin: 0 10px;
+}
+
+/* --- Відновлення стилів для модальних блоків --- */
+.block-modal, .project-details-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 32, 40, 0.85);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.block-modal-content, .project-details-modal-content {
+  background: #fff;
+  border-radius: 20px;
+  max-width: 900px;
+  width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 40px 30px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  animation: modalIn 0.25s;
+  position: relative;
+}
+.block-modal-close, .project-details-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 28px;
+  font-size: 2.2em;
+  color: #888;
+  cursor: pointer;
+  z-index: 10;
+  transition: color 0.15s;
+}
+.block-modal-close:hover,
+.project-details-modal-close:hover {
+  color: #222;
+}
+@keyframes modalIn {
+  from { transform: scale(0.95) translateY(40px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.main-content {
+  margin-top: 70px;
+  margin-bottom: 70px;
+}
