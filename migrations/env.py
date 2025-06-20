@@ -27,8 +27,16 @@ def run_migrations_offline():
 
 def run_migrations_online():
     """Run migrations in 'online' mode."""
+    # Використовуємо URL з env або з alembic.ini
+    import os
+    url = os.environ.get('DATABASE_URL', config.get_main_option('sqlalchemy.url'))
+    
+    # Якщо URL починається з postgres:// замінюємо на postgresql://
+    if url.startswith('postgres://'):
+        url = url.replace('postgres://', 'postgresql://', 1)
+        
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
+        {"url": url},
         prefix='sqlalchemy.',
         poolclass=pool.NullPool,
     )

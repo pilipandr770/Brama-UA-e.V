@@ -1,3 +1,8 @@
 #!/bin/bash
-flask db upgrade
-python run.py
+# Даємо Flask знати, де знаходиться додаток
+export FLASK_APP=run.py
+export PYTHONPATH=/opt/render/project/src:$PYTHONPATH
+
+# Запускаємо міграції та додаток
+python -m flask db upgrade
+gunicorn --bind 0.0.0.0:$PORT run:app
