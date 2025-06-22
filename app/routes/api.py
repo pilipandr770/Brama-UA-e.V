@@ -97,7 +97,7 @@ def transcribe_audio():
                 'success': True,
                 'warning': 'Audio too short to transcribe'
             })
-        
+
         # Open the file for reading before passing to the API
         with open(temp_file.name, "rb") as audio_data:
             # Use OpenAI Whisper API to transcribe the audio
@@ -105,10 +105,10 @@ def transcribe_audio():
                 model="whisper-1",
                 file=audio_data
             )
-        
+
         # Cleanup temporary file
         os.unlink(temp_file.name)
-        
+
         # Return transcription result
         return jsonify({
             'text': transcript.text,
