@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Brama - Список{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Список записей Brama</h1>
+    
+    <div class="mb-3">
+        <a href="{{ url_for('brama.create') }}" class="btn btn-primary">Создать новую запись</a>
+    </div>
+    
+    <div class="row">
+        {% for item in brama_items %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.title }}</h5>
+                    <p class="card-text">{{ item.description|truncate(100) }}</p>
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('brama.view', id=item.id) }}" class="btn btn-sm btn-info">Просмотр</a>
+                        <a href="{{ url_for('brama.edit', id=item.id) }}" class="btn btn-sm btn-warning">Редактировать</a>
+                        <a href="{{ url_for('brama.delete', id=item.id) }}" class="btn btn-sm btn-danger" 
+                           onclick="return confirm('Вы уверены, что хотите удалить эту запись?')">Удалить</a>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    Создано: {{ item.created_at.strftime('%d.%m.%Y %H:%M') }}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                Записей пока нет. <a href="{{ url_for('brama.create') }}">Создать первую?</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

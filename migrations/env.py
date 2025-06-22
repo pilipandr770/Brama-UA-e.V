@@ -1,8 +1,9 @@
 import logging
 from logging.config import fileConfig
-from sqlalchemy import engine_from_config, pool
+from sqlalchemy import engine_from_config, pool, create_engine
 from alembic import context
 from app import db
+import os
 
 # Alembic Config object
 config = context.config
@@ -27,26 +28,23 @@ def run_migrations_offline():
 
 def run_migrations_online():
     """Run migrations in 'online' mode."""
-    # Використовуємо URL з env або з alembic.ini
-    import os
-    url = os.environ.get('DATABASE_URL', config.get_main_option('sqlalchemy.url'))
-    
-    # Якщо URL починається з postgres:// замінюємо на postgresql://
-    if url.startswith('postgres://'):
-        url = url.replace('postgres://', 'postgresql://', 1)
-        
+    # Використовуємо URL з env, задаем его в Alembic Config
+    db_url = os.environ.get('DATABASE_URL') or config.get_main_option('sqlalchemy.url')
+    if db_url.startswith('postgres://'):
+        db_url = db_url.replace('postgres://', 'postgresql://', 1)
+    # Устанавливаем URL для Alembic
+    config.set_main_option('sqlalchemy.url', db_url)
+    # Создаем connectable через engine_from_config
     connectable = engine_from_config(
-        {"url": url},
+        config.get_section(config.config_ini_section),
         prefix='sqlalchemy.',
-        poolclass=pool.NullPool,
+        poolclass=pool.NullPool
     )
-
     with connectable.connect() as connection:
         context.configure(
             connection=connection,
             target_metadata=target_metadata
         )
-
         with context.begin_transaction():
             context.run_migrations()
 

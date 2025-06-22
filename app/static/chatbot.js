@@ -27,6 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
         <div id="text-input-wrapper">
           <input type="text" id="text-input" placeholder="Напишіть повідомлення...">
           <button id="send-text">📨</button>
+          <button id="voice-btn" class="voice-button">🎤</button>
+        </div>
+        <div id="processing-indicator" style="display: none;">
+          <div class="spinner"></div>
+          <p>Розпізнавання мовлення...</p>
         </div>
       </div>
     `;
@@ -90,6 +95,53 @@ document.addEventListener("DOMContentLoaded", () => {
       .register-button-in-chat:hover {
         background: #45a049;
       }
+
+      .voice-button {
+        background: #2196F3;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        margin-left: 5px;
+      }
+
+      .voice-button.recording {
+        background: #ff4136;
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(255, 65, 54, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(255, 65, 54, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(255, 65, 54, 0);
+        }
+      }
+
+      #processing-indicator {
+        text-align: center;
+        margin-top: 10px;
+      }
+
+      #processing-indicator .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top-color: #2196F3;
+        animation: spin 1s ease-in-out infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
     `;
     document.head.appendChild(chatStyle);
 
@@ -132,10 +184,12 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("client_id", clientId);
       appendMessage(text, true);
       input.value = "";
-      const threadId = localStorage.getItem("assistant_thread_id") || null;
-      fetch("/api/assistant", {
+      const threadId = localStorage.getItem("assistant_thread_id") || null;      fetch("/api/assistant", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
         body: JSON.stringify({ message: text, thread_id: threadId })
       })
         .then(res => res.json())
@@ -174,119 +228,498 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 300); // Час анімації в мс
     }
 
+    // Функції для запису голосу
+    let mediaRecorderVoice;
+    let audioChunksVoice = [];
+    let isRecordingVoice = false;    // Simplify the recording function
+    let audioStream = null;
+    
     function startRecording() {
-      if (isRecording) return;
-
-      navigator.mediaDevices.getUserMedia({ audio: true })
+        console.log("Починаю запис...");
+        audioChunksVoice = [];
+        
+        // Show feedback first
+        document.getElementById('voice-btn').classList.add('recording');
+        document.getElementById('voice-btn').textContent = '⏹️';
+        
+        // Add visual feedback in chat
+        const recordingStartMsg = document.createElement('div');
+        recordingStartMsg.className = 'chat-message system';
+        recordingStartMsg.id = 'recording-status-msg';
+        recordingStartMsg.textContent = '🎤 Запис голосу...';
+        document.getElementById('chat-box').appendChild(recordingStartMsg);
+        document.getElementById('chat-box').scrollTop = 999999;
+        
+        // Get audio with simple settings
+        navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream => {
-          try {
-            isRecording = true;
-            recordButton.classList.add("recording");
-
-            mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.start();
-            audioChunks = [];
-
-            mediaRecorder.addEventListener("dataavailable", event => audioChunks.push(event.data));
-            mediaRecorder.addEventListener("stop", () => {
-              isRecording = false;
-              recordButton.classList.remove("recording");
-              stream.getTracks().forEach(track => track.stop());
-              if (audioChunks.length > 0) {
-                sendRecording();
-              }
-            });
-
-            recordTimeout = setTimeout(() => {
-              if (isRecording) stopRecording();
-            }, 30000);
-
-            showAssistantUI();
-          } catch (err) {
-            console.error("MediaRecorder initialization error:", err);
-            stopRecording();
-            appendMessage("⚠️ Помилка ініціалізації запису. Спробуйте ще раз.");
-          }
+            console.log("Аудіо потік отримано");
+            audioStream = stream;
+            
+            // Create a simple recorder with default settings
+            mediaRecorderVoice = new MediaRecorder(stream);
+            
+            // Log the media recorder info
+            console.log("MediaRecorder створено:", mediaRecorderVoice.mimeType);
+            
+            // Collect audio data
+            mediaRecorderVoice.ondataavailable = function(event) {
+                console.log("Отримано аудіо фрагмент розміром:", event.data.size);
+                
+                // Only add if there's actual data
+                if (event.data && event.data.size > 0) {
+                    audioChunksVoice.push(event.data);
+                    console.log("Додано аудіо фрагмент, всього:", audioChunksVoice.length);
+                    
+                    // Update the recording status message
+                    const statusMsg = document.getElementById('recording-status-msg');
+                    if (statusMsg) {
+                        statusMsg.textContent = `🎤 Запис голосу... (${audioChunksVoice.length} фрагментів)`;
+                    }
+                }
+            };
+            
+            // Start recording with larger chunks
+            mediaRecorderVoice.start(1000); // Collect 1-second chunks
+            isRecordingVoice = true;
+            
+            // Add visual pulse
+            const voiceBtn = document.getElementById('voice-btn');
+            voiceBtn.style.animation = 'pulse 1s infinite';
+            
+            // Set a timeout to prevent infinite recording
+            setTimeout(() => {
+                if (isRecordingVoice) {
+                    console.log("Автоматично зупиняю запис після 15 секунд");
+                    stopRecording();
+                }
+            }, 15000); // Auto-stop after 15 seconds
         })
-        .catch(err => {
-          console.error("getUserMedia error:", err);
-          isRecording = false;
-          recordButton.classList.remove("recording");
-          appendMessage("⚠️ Помилка доступу до мікрофона. Перевірте налаштування браузера.");
+        .catch(error => {
+            console.error("Помилка доступу до мікрофона:", error);
+            
+            // Reset UI
+            document.getElementById('voice-btn').classList.remove('recording');
+            document.getElementById('voice-btn').textContent = '🎤';
+            
+            // Show error
+            const errorMsg = document.getElementById('recording-status-msg') || 
+                document.createElement('div');
+            errorMsg.className = 'chat-message system error';
+            errorMsg.textContent = '⚠️ Помилка доступу до мікрофона. Перевірте налаштування браузера.';
+            if (!document.getElementById('recording-status-msg')) {
+                document.getElementById('chat-box').appendChild(errorMsg);
+            }
+            document.getElementById('chat-box').scrollTop = 999999;
         });
-    }
-
-    function stopRecording() {
-      if (!isRecording) return;
-      isRecording = false;
-      recordButton.classList.remove("recording");
-      clearTimeout(recordTimeout);
-      if (mediaRecorder && mediaRecorder.state === "recording") {
-        mediaRecorder.stop();
-      }
-    }
-
-    function sendRecording() {
-      const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-      const formData = new FormData();
-      formData.append("audio", audioBlob, "recording.webm");
-      const clientId = localStorage.getItem("client_id") || Math.random().toString(36).substring(2);
-      localStorage.setItem("client_id", clientId);
-      formData.append("client_id", clientId);
-      const threadId = localStorage.getItem("assistant_thread_id") || null;
-      if (threadId) formData.append("thread_id", threadId);
-      appendMessage("🎤 Повідомлення відправлено", true);
-      fetch("/api/assistant", {
-        method: "POST",
-        body: formData
-      }).then(async response => {
-        const data = await response.json();
-        if (data.error) {
-          appendMessage('⚠️ ' + data.error);
-          return;
+    }    function stopRecording() {
+        console.log("Зупиняю запис...");
+        
+        // Check if we're actually recording
+        if (!mediaRecorderVoice || !isRecordingVoice) {
+            console.log("Запис не був активний");
+            return;
         }
-        if (data.thread_id) localStorage.setItem("assistant_thread_id", data.thread_id);
-        appendMessage(data.answer);
-        if (autoplay) {
-          const audio = new Audio(`/tts?text=${encodeURIComponent(data.answer)}`);
-          audio.play().catch(() => {});
+        
+        try {
+            // Update UI immediately
+            document.getElementById('voice-btn').classList.remove('recording');
+            document.getElementById('voice-btn').textContent = '🎤';
+            document.getElementById('voice-btn').style.animation = '';
+            
+            // Stop recorder only if it's recording
+            if (mediaRecorderVoice.state === "recording") {
+                console.log("Зупиняю MediaRecorder...");
+                mediaRecorderVoice.stop();
+                
+                // Force a final dataavailable event if we haven't got any data yet
+                if (audioChunksVoice.length === 0) {
+                    console.log("Немає аудіо даних, примусово отримуємо останній фрагмент");
+                    mediaRecorderVoice.requestData();
+                }
+            }
+            
+            // Stop and release the audio stream
+            if (audioStream) {
+                audioStream.getTracks().forEach(track => {
+                    console.log("Зупиняю аудіо трек:", track.kind);
+                    track.stop();
+                });
+                audioStream = null;
+            }
+            
+            isRecordingVoice = false;
+            
+            // Update status message
+            const statusMsg = document.getElementById('recording-status-msg');
+            if (statusMsg) {
+                statusMsg.textContent = '⏳ Розпізнаю мовлення...';
+            }
+            
+            // Show processing indicator
+            document.getElementById('processing-indicator').style.display = 'block';
+            
+            // Check if we have audio data to send
+            console.log("Перевірка аудіо даних:", audioChunksVoice.length);
+            
+            // Add a small delay to ensure all audio chunks are collected
+            setTimeout(() => {
+                console.log("Відправляю аудіо після зупинки...");
+                sendAudioToServer();
+            }, 500);
+            
+        } catch (error) {
+            console.error("Помилка при зупинці запису:", error);
+            
+            // Reset state
+            isRecordingVoice = false;
+            
+            // Show error message
+            const statusMsg = document.getElementById('recording-status-msg');
+            if (statusMsg) {
+                statusMsg.className = 'chat-message system error';
+                statusMsg.textContent = '⚠️ Помилка при зупинці запису. Спробуйте ще раз.';
+            } else {
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'chat-message system error';
+                errorMsg.textContent = '⚠️ Помилка запису. Спробуйте ще раз.';
+                document.getElementById('chat-box').appendChild(errorMsg);
+            }
+            document.getElementById('chat-box').scrollTop = 999999;
         }
-      });
+    }function sendAudioToServer() {
+        console.log("Відправляю аудіо на сервер...");
+        
+        // Verify we have audio data
+        if (!audioChunksVoice.length) {
+            console.warn('Немає записаного аудіо');
+            document.getElementById('processing-indicator').style.display = 'none';
+            
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'chat-message system error';
+            errorMsg.textContent = '⚠️ Запис аудіо не відбувся. Спробуйте ще раз.';
+            document.getElementById('chat-box').appendChild(errorMsg);
+            document.getElementById('chat-box').scrollTop = 999999;
+            return;
+        }
+        
+        console.log(`Отримано ${audioChunksVoice.length} аудіо чанків`);
+        
+        // Determine MIME type from the recorded data if possible
+        let detectedMimeType = null;
+        if (audioChunksVoice[0] && audioChunksVoice[0].type) {
+            detectedMimeType = audioChunksVoice[0].type;
+            console.log(`Визначено MIME тип з даних: ${detectedMimeType}`);
+        }
+        
+        // Choose the best MIME type for OpenAI compatibility
+        let mimeType = detectedMimeType || 'audio/webm';
+        let fileExt = 'webm';  // Default
+        
+        // Set proper extension based on detected mime type
+        if (mimeType.includes('webm')) {
+            fileExt = 'webm';
+        } else if (mimeType.includes('ogg')) {
+            fileExt = 'ogg';
+        } else if (mimeType.includes('mp3')) {
+            fileExt = 'mp3';
+        } else if (mimeType.includes('mp4')) {
+            fileExt = 'mp4';
+        } else if (mimeType.includes('wav')) {
+            fileExt = 'wav';
+        } else {
+            // If we can't determine a compatible type, force MP3 which is widely supported
+            mimeType = 'audio/mp3';
+            fileExt = 'mp3';
+        }
+        
+        console.log(`Використовую MIME тип: ${mimeType}, розширення: ${fileExt}`);
+        
+        // Create audio blob
+        const audioBlob = new Blob(audioChunksVoice, { type: mimeType });
+        console.log(`Створено Blob розміром: ${audioBlob.size} байтів`);
+        
+        // Check if the blob is empty or too small
+        if (audioBlob.size < 1000) {
+            console.warn('Запис аудіо дуже короткий');
+            document.getElementById('processing-indicator').style.display = 'none';
+            
+            const warningMsg = document.createElement('div');
+            warningMsg.className = 'chat-message system';
+            warningMsg.textContent = '⚠️ Запис занадто короткий. Спробуйте говорити довше.';
+            document.getElementById('chat-box').appendChild(warningMsg);
+            document.getElementById('chat-box').scrollTop = 999999;
+            return;
+        }
+        
+        // Create a FormData object
+        const formData = new FormData();
+        
+        // Create a File object with the proper MIME type
+        const audioFile = new File([audioBlob], `recording.${fileExt}`, { 
+            type: mimeType,
+            lastModified: new Date().getTime()
+        });
+        
+        // Check file before appending
+        console.log(`Файл створено: ${audioFile.name}, тип: ${audioFile.type}, розмір: ${audioFile.size} байтів`);
+        
+        // Append to FormData
+        formData.append('audio', audioFile);
+        
+        // Remove any previous processing messages
+        const processingMsgs = document.querySelectorAll('.chat-message.system');
+        processingMsgs.forEach(msg => {
+            if (msg.textContent.includes('Розпізнаю мовлення')) {
+                msg.textContent = '🎤 Відправляю аудіо...';
+            }
+        });
+        
+        // Send request to server
+        console.log('Відправляю запит на сервер...');
+        fetch('/api/whisper', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            console.log(`Отримано відповідь зі статусом: ${response.status}`);
+            if (!response.ok) {
+                throw new Error(`Помилка відправки аудіо: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Hide processing indicator
+            document.getElementById('processing-indicator').style.display = 'none';
+            
+            // Remove processing message
+            const processingMsgs = document.querySelectorAll('.chat-message.system');
+            processingMsgs.forEach(msg => {
+                if (msg.textContent.includes('Відправляю аудіо') || 
+                    msg.textContent.includes('Розпізнаю мовлення')) {
+                    msg.remove();
+                }
+            });
+            
+            console.log('Отримано відповідь від сервера:', data);
+            
+            // Check for warnings
+            if (data.warning) {
+                console.warn('Попередження від транскрипції:', data.warning);
+                const warningMsg = document.createElement('div');
+                warningMsg.className = 'chat-message system';
+                warningMsg.textContent = `⚠️ ${data.warning}`;
+                document.getElementById('chat-box').appendChild(warningMsg);
+            }
+            
+            // Process the transcribed text
+            if (data.text && data.text.trim()) {
+                const transcribedText = data.text.trim();
+                console.log(`Розпізнано текст: ${transcribedText}`);
+                
+                // Add user message with transcribed text
+                appendMessage(`🎤 ${transcribedText}`, true);
+                
+                // Also put in text input (but don't auto-send)
+                document.getElementById('text-input').value = transcribedText;
+                
+                // Send message to the assistant
+                const threadId = localStorage.getItem("assistant_thread_id") || null;
+                
+                console.log(`Відправляю текст асистенту: ${transcribedText}`);
+                fetch("/api/assistant", {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({ 
+                        message: transcribedText, 
+                        thread_id: threadId 
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        appendMessage('⚠️ ' + data.error);
+                        return;
+                    }
+                    if (data.thread_id) localStorage.setItem("assistant_thread_id", data.thread_id);
+                    appendMessage(data.answer);
+                    
+                    if (autoplay) {
+                        const audio = new Audio(`/tts?text=${encodeURIComponent(data.answer)}`);
+                        audio.play().catch(err => {
+                            console.error('Помилка відтворення TTS:', err);
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error('Помилка відправки до асистента:', err);                    appendMessage("⚠️ Помилка з'єднання з асистентом");
+                });
+            } else {
+                console.warn('Не отримано тексту від API');
+                const noTextMsg = document.createElement('div');
+                noTextMsg.className = 'chat-message system';
+                noTextMsg.textContent = '⚠️ Не вдалося розпізнати мовлення. Спробуйте ще раз.';
+                document.getElementById('chat-box').appendChild(noTextMsg);
+                document.getElementById('chat-box').scrollTop = 999999;
+            }
+        })
+        .catch(error => {
+            console.error('Помилка при розпізнаванні мовлення:', error);
+            document.getElementById('processing-indicator').style.display = 'none';
+            
+            // Remove processing message
+            const processingMsgs = document.querySelectorAll('.chat-message.system');
+            processingMsgs.forEach(msg => {
+                if (msg.textContent.includes('Відправляю аудіо') || 
+                    msg.textContent.includes('Розпізнаю мовлення')) {
+                    msg.remove();
+                }
+            });
+            
+            // Show error message
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'chat-message system error';
+            errorMsg.textContent = '❌ Помилка розпізнавання мовлення. Спробуйте використати текстовий ввід.';
+            document.getElementById('chat-box').appendChild(errorMsg);
+            document.getElementById('chat-box').scrollTop = 999999;
+        });
+    }    function toggleRecording() {
+        console.log("Переключення запису. Поточний стан:", isRecordingVoice);
+        
+        // Show the assistant UI if it's not already visible
+        if (assistantUI.style.display === "none") {
+            showAssistantUI();
+            
+            // Give the UI a moment to appear before starting recording
+            setTimeout(() => {
+                if (isRecordingVoice) {
+                    stopRecording();
+                } else {
+                    startRecording();
+                }
+            }, 300);
+        } else {
+            if (isRecordingVoice) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        }
     }
 
-    const recordButton = document.createElement("button");
+    // Додаємо обробник для кнопки голосового вводу
+    function setupVoiceButton() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            console.log('API для запису аудіо не підтримується у цьому браузері');
+            document.getElementById('voice-btn').style.display = 'none';
+            return;
+        }
+        
+        document.getElementById('voice-btn').addEventListener('click', toggleRecording);
+    }
+
+    // Викликаємо setupVoiceButton, щоб налаштувати функціональність голосового вводу
+    setupVoiceButton();    const recordButton = document.createElement("button");
     recordButton.className = "voice-button";
     recordButton.innerHTML = "🎤";
-    recordButton.title = "Утримуйте, щоб записати";
+    recordButton.title = "Натисніть, щоб відкрити чат";
     document.body.appendChild(recordButton);
 
-    recordButton.style.display = "none";
-    assistantUI.style.display = "none";
+    recordButton.style.display = "block";  // Always display the button
+    assistantUI.style.display = "none";    // Add click event to open the chatbot widget
+    recordButton.addEventListener("click", function(e) {
+      e.preventDefault();
+      showAssistantUI();
+    });
+    
+    // Add special double-click event to start recording directly
+    recordButton.addEventListener("dblclick", function(e) {
+      e.preventDefault();
+      showAssistantUI();
+      // Start recording after UI is shown
+      setTimeout(() => {
+        startRecording();
+      }, 300);
+    });
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      // Check microphone access without keeping the stream
       navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream => {
-          recordButton.style.display = "block";
-
-          recordButton.addEventListener("mousedown", startRecording);
-          recordButton.addEventListener("touchstart", startRecording);
-          recordButton.addEventListener("mouseup", stopRecording);
-          recordButton.addEventListener("mouseleave", stopRecording);
-          recordButton.addEventListener("touchend", stopRecording);
-
+          console.log("Доступ до мікрофона отримано для тестування");
+          
+          // Setup long-press for recording
+          let pressTimer;
+          let isLongPress = false;
+          
+          recordButton.addEventListener("mousedown", function(e) {
+            pressTimer = setTimeout(() => {
+              isLongPress = true;
+              showAssistantUI();
+              setTimeout(() => startRecording(), 300);
+            }, 500);  // Long press threshold: 500ms
+          });
+          
+          recordButton.addEventListener("touchstart", function(e) {
+            pressTimer = setTimeout(() => {
+              isLongPress = true;
+              showAssistantUI();
+              setTimeout(() => startRecording(), 300);
+            }, 500);  // Long press threshold: 500ms
+          });
+          
+          recordButton.addEventListener("mouseup", function(e) {
+            clearTimeout(pressTimer);
+            if (isLongPress) {
+              stopRecording();
+              isLongPress = false;
+            }
+          });
+          
+          recordButton.addEventListener("touchend", function(e) {
+            clearTimeout(pressTimer);
+            if (isLongPress) {
+              stopRecording();
+              isLongPress = false;
+            }
+          });
+          
+          recordButton.addEventListener("mouseleave", function(e) {
+            clearTimeout(pressTimer);
+            if (isLongPress) {
+              stopRecording();
+              isLongPress = false;
+            }
+          });
+          
+          // Release microphone
           stream.getTracks().forEach(track => track.stop());
         })
         .catch(err => {
           console.error("Microphone access error:", err);
-          recordButton.style.display = "none";
-          showAssistantUI();
-          appendMessage("⚠️ Немає доступу до мікрофона. Ви можете використовувати текстовий чат.");
+          // Still show button but add a warning when they open the chat
+          document.getElementById("voice-btn").style.display = "none";
+          
+          // Add a listener to show warning when chat opens
+          const showWarningOnce = () => {
+            appendMessage("⚠️ Немає доступу до мікрофона. Ви можете використовувати текстовий чат.");
+            assistantUI.removeEventListener("transitionend", showWarningOnce);
+          };
+          assistantUI.addEventListener("transitionend", showWarningOnce);
         });
     } else {
       console.error("getUserMedia not supported");
-      recordButton.style.display = "none";
-      showAssistantUI();
-      appendMessage("⚠️ Ваш браузер не підтримує запис голосу. Ви можете використовувати текстовий чат.");
+      document.getElementById("voice-btn").style.display = "none";
+      
+      // Add a listener to show warning when chat opens
+      const showWarningOnce = () => {
+        appendMessage("⚠️ Ваш браузер не підтримує запис голосу. Ви можете використовувати текстовий чат.");
+        assistantUI.removeEventListener("transitionend", showWarningOnce);
+      };
+      assistantUI.addEventListener("transitionend", showWarningOnce);
     }
 
     document.getElementById("autoplay-check").addEventListener("change", e => {
@@ -401,12 +834,27 @@ document.addEventListener("DOMContentLoaded", () => {
       align-self: flex-end;
       background: #e3f2fd;
       text-align: right;
-    }
-
-    .chat-message.assistant {
+    }    .chat-message.assistant {
       align-self: flex-start;
       background: #f5f5f5;
       text-align: left;
+    }
+    
+    .chat-message.system {
+      align-self: center;
+      background: #f0f0f0;
+      color: #666;
+      font-size: 0.9em;
+      padding: 5px 10px;
+      border-radius: 10px;
+      max-width: 80%;
+      text-align: center;
+      margin: 5px 0;
+    }
+    
+    .chat-message.error {
+      background: #fff0f0;
+      color: #d32f2f;
     }
 
     .audio-container {

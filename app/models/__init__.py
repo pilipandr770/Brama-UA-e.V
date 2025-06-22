@@ -5,3 +5,4 @@ from app.models.block import Block
 from app.models.gallery_image import GalleryImage
 from app.models.report import Report
 from app.models.settings import Settings
+from app.models.brama import Brama

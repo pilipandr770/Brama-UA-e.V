@@ -14,3 +14,10 @@ class Config:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BABEL_DEFAULT_LOCALE = 'uk'
+    # Engine options to select schema via DB_SCHEMA env var
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "connect_args": {
+            # правильный формат: опция -c и пробел
+            "options": f"-c search_path={os.getenv('DB_SCHEMA', 'public')}"
+        }
+    }

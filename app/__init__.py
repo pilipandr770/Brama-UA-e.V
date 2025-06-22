@@ -19,14 +19,9 @@ def create_app():
     migrate.init_app(app, db)
     babel.init_app(app)
 
-    from app.routes.main import main_bp
-    app.register_blueprint(main_bp)
-
-    from app.routes.admin import admin_bp
-    app.register_blueprint(admin_bp)
-
-    from app.routes.api import api_bp
-    app.register_blueprint(api_bp)
+    # Используем централизованную регистрацию blueprints
+    from app.routes import register_blueprints
+    register_blueprints(app)
 
     @app.context_processor
     def inject_settings():
