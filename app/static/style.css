@@ -1,5 +1,5 @@
 body {
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
     margin: 0;
     padding: 0;
     background: #f8f9fa;
@@ -60,6 +60,7 @@ main, .container {
 }
 
 h1, h2, h3 {
+    font-family: 'Ubuntu', 'Segoe UI', Arial, sans-serif;
     font-weight: 600;
     margin-bottom: 24px;
 }
@@ -232,28 +233,42 @@ form label {
 }
 
 .info-block {
-    border-left: 8px solid #00aaff;
+    border-left: 8px solid #000000; /* Черный цвет немецкого флага */
 }
 
 .gallery-block {
-    border-left: 8px solid #ffb300;
+    border-left: 8px solid #DD0000; /* Красный цвет немецкого флага */
 }
 
 .projects-block {
-    border-left: 8px solid #43a047;
+    border-left: 8px solid #FFCE00; /* Золотой цвет немецкого флага */
+}
+
+.events-block {
+    border-left: 8px solid #000000; /* Черный цвет немецкого флага */
+}
+
+.news-block {
+    border-left: 8px solid #DD0000; /* Красный цвет немецкого флага */
+}
+
+.custom-block {
+    border-left: 8px solid #FFCE00; /* Золотой цвет немецкого флага */
 }
 
 .main-cards-row {
     display: flex;
-    gap: 32px;
-    justify-content: center;
-    align-items: center;
+    flex-wrap: wrap; /* Allow blocks to wrap to next row */
+    gap: 24px;
+    justify-content: center; /* Center blocks when there are fewer than 3 */
+    align-items: stretch;
     width: 100%;
-    margin: 0;
+    margin: 0 auto;
     padding: 0;
     background: none;
     box-shadow: none;
     border-radius: 0;
+    max-width: 1200px;
 }
 @media (max-width: 900px) {
     .main-center-container {
@@ -272,16 +287,17 @@ form label {
 .main-card {
     background: #fff;
     border-radius: 18px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
     padding: 24px 18px 18px 18px;
-    width: 270px;
-    min-height: 320px;
+    width: 320px;
+    min-height: 350px;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: box-shadow 0.2s, transform 0.2s;
+    transition: box-shadow 0.3s, transform 0.3s;
     position: relative;
+    overflow: hidden;
 }
 .main-card:hover {
     box-shadow: 0 6px 24px rgba(0,0,0,0.18);
@@ -289,27 +305,35 @@ form label {
 }
 .block-cover {
     width: 100%;
-    max-width: 180px;
-    max-height: 120px;
+    max-width: 280px;
+    height: 180px;
     object-fit: cover;
     border-radius: 12px;
     margin-bottom: 16px;
-    box-shadow: 0 1px 6px #0001;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: transform 0.5s;
+}
+
+.main-card:hover .block-cover {
+    transform: scale(1.05);
 }
 .block-short {
-    color: #444;
-    margin-top: 10px;
-    font-size: 1.05em;
+    color: #333;
+    margin-top: 16px;
+    font-size: 1.1em;
     text-align: center;
+    line-height: 1.5;
 }
 .block-details {
     background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
-    max-width: 900px;
+    border-radius: 20px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+    max-width: 90%;
+    width: 1200px;
     margin: 32px auto;
-    padding: 32px 24px;
+    padding: 40px 30px;
     display: none;
+    animation: fadeIn 0.4s ease-in-out;
 }
 /* --- Горизонтальна карусель галереї --- */
 .gallery-carousel {
@@ -317,18 +341,21 @@ form label {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 32px;
+  gap: 40px;
   width: 100%;
-  margin-top: 18px;
+  margin-top: 30px;
+  padding-bottom: 20px;
 }
 .gallery-slide {
-  width: 320px;
-  min-height: 180px;
+  width: 600px;
+  min-height: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
 }
 .gallery-item {
   display: none;
@@ -341,71 +368,82 @@ form label {
   display: flex;
 }
 .gallery-img {
-  width: 280px;
-  height: 180px;
+  width: 100%;
+  height: 400px;
   object-fit: cover;
   border-radius: 12px;
-  box-shadow: 0 1px 6px #0001;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+  transition: transform 0.5s ease-in-out;
+}
+.gallery-img:hover {
+  transform: scale(1.03);
 }
 .gallery-desc {
   text-align: center;
-  margin-top: 12px;
-  font-size: 1.05em;
+  margin-top: 16px;
+  font-size: 1.2em;
   color: #333;
+  max-width: 80%;
 }
 .gallery-nav {
-  background-color: #0077aa;
+  background-color: #DD0000; /* Красный цвет из немецкого флага */
   color: white;
   border: none;
   border-radius: 50%;
-  width: 44px;
-  height: 44px;
+  width: 60px;
+  height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.7em;
+  font-size: 1.8em;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
   transition: background-color 0.3s, transform 0.2s;
 }
 .gallery-nav:hover {
-  background-color: #005f8a;
+  background-color: #9A0000; /* Темно-красный при наведении */
   transform: scale(1.1);
 }
 .gallery-nav:active {
   transform: scale(0.9);
 }
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .gallery-slide {
-    width: 98vw;
-    min-height: 120px;
+    width: 90vw;
+    min-height: 250px;
   }
   .gallery-img {
-    width: 96vw;
-    height: 120px;
+    width: 85vw;
+    height: 250px;
+  }
+  .gallery-nav {
+    width: 48px;
+    height: 48px;
+    font-size: 1.5em;
   }
 }
 
 .projects-list-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 28px;
+    gap: 32px;
     justify-content: center;
-    margin: 32px 0 0 0;
+    margin: 40px 0 20px 0;
 }
 .project-card {
     background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
-    width: 300px;
-    min-height: 220px;
-    padding: 18px 12px 14px 12px;
+    border-radius: 18px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    width: 350px;
+    min-height: 260px;
+    padding: 22px 16px 18px 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-size: 0.98em;
-    transition: box-shadow 0.2s, transform 0.2s;
+    font-size: 1.05em;
+    transition: box-shadow 0.3s, transform 0.3s;
     position: relative;
+    border-left: 4px solid #FFCE00; /* Золотой цвет немецкого флага */
 }
 .project-card:hover {
     box-shadow: 0 6px 24px rgba(0,0,0,0.16);
@@ -413,56 +451,91 @@ form label {
 }
 .project-img {
     width: 100%;
-    max-width: 180px;
-    max-height: 110px;
+    max-width: 280px;
+    height: 170px;
     object-fit: cover;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    box-shadow: 0 1px 6px #0001;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    transition: transform 0.5s ease;
+}
+.project-card:hover .project-img {
+    transform: scale(1.05);
 }
 .project-short {
-    color: #444;
-    margin: 8px 0 10px 0;
+    color: #333;
+    margin: 12px 0 14px 0;
     text-align: center;
-    font-size: 1em;
+    font-size: 1.1em;
+    line-height: 1.4;
 }
 .project-details-modal {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(30, 32, 40, 0.90);
+    background: rgba(20, 20, 30, 0.95);
     z-index: 2000;
     display: flex;
+    animation: fadeIn 0.3s ease-in-out;
     align-items: center;
     justify-content: center;
 }
 .project-details-modal-content {
     background: #fff;
-    border-radius: 20px;
-    max-width: 700px;
-    width: 95vw;
+    border-radius: 24px;
+    max-width: 900px;
+    width: 90vw;
     max-height: 90vh;
     overflow-y: auto;
-    padding: 40px 28px 28px 28px;
+    padding: 50px 40px 40px 40px;
     position: relative;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
-    animation: modalIn 0.25s;
+    box-shadow: 0 15px 60px rgba(0,0,0,0.25);
+    animation: modalIn 0.35s;
+    border-left: 6px solid #FFCE00; /* Золотой цвет немецкого флага */
 }
 .project-details-modal-close {
     position: absolute;
-    top: 18px;
-    right: 28px;
-    font-size: 2.2em;
-    color: #888;
+    top: 20px;
+    right: 30px;
+    font-size: 2.4em;
+    color: #999;
     cursor: pointer;
     z-index: 10;
-    transition: color 0.15s;
+    transition: all 0.2s;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
 }
 .project-details-modal-close:hover {
     color: #222;
+    background: rgba(0,0,0,0.05);
 }
-@media (max-width: 600px) {
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalIn {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .main-cards-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+    }
+    
+    .main-card {
+        width: 90%;
+        max-width: none;
+    }
+    
     .project-card {
         width: 95vw;
         min-width: 0;

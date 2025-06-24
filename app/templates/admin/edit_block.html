@@ -5,11 +5,13 @@
 <form method="post">
     <label>Заголовок:</label><br>
     <input type="text" name="title" value="{{ block.title if block else '' }}" required><br>
-    <label>Тип блоку:</label><br>
-    <select name="type" required>
+    <label>Тип блоку:</label><br>    <select name="type" required>
         <option value="info" {% if block and block.type=='info' %}selected{% endif %}>Інформаційний</option>
         <option value="gallery" {% if block and block.type=='gallery' %}selected{% endif %}>Галерея</option>
         <option value="projects" {% if block and block.type=='projects' %}selected{% endif %}>Проекти</option>
+        <option value="events" {% if block and block.type=='events' %}selected{% endif %}>Події</option>
+        <option value="news" {% if block and block.type=='news' %}selected{% endif %}>Новини</option>
+        <option value="custom" {% if block and block.type=='custom' %}selected{% endif %}>Інший блок</option>
     </select><br>
     <label>URL обкладинки (image_url):</label><br>
     <input type="url" name="image_url" value="{{ block.image_url if block else '' }}"><br>

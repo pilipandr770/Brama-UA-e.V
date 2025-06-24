@@ -12,6 +12,7 @@ main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
 def index():
+    # Стандартні блоки
     info_block = Block.query.filter_by(type='info', is_active=True).first()
     gallery_block = Block.query.filter_by(type='gallery', is_active=True).first()
     gallery_images = GalleryImage.query.filter_by(block_id=gallery_block.id).all() if gallery_block else []
@@ -19,8 +20,29 @@ def index():
     projects = []
     if projects_block:
         projects = Project.query.filter_by(status='approved', block_id=projects_block.id).order_by(Project.created_at.desc()).all()
+    
+    # Получаем все другие активные блоки
+    additional_blocks = Block.query.filter(
+        Block.is_active==True,
+        Block.type.notin_(['info', 'gallery', 'projects'])
+    ).all()
+    
+    # Debug print
+    print(f"[DEBUG] Additional blocks found: {len(additional_blocks)}")
+    for block in additional_blocks:
+        print(f"[DEBUG] Block: {block.id}, {block.title}, {block.type}, active: {block.is_active}")
+    
     settings = Settings.query.first()
-    return render_template('index.html', info_block=info_block, gallery_block=gallery_block, gallery_images=gallery_images, projects_block=projects_block, projects=projects, settings=settings)
+    return render_template(
+        'index.html', 
+        info_block=info_block, 
+        gallery_block=gallery_block, 
+        gallery_images=gallery_images, 
+        projects_block=projects_block, 
+        projects=projects,
+        additional_blocks=additional_blocks,
+        settings=settings
+    )
 
 @main_bp.route('/submit-project', methods=['GET', 'POST'])
 def submit_project():
