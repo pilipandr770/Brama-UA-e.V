@@ -45,6 +45,8 @@
   <p class="copyright">© 2025 Brama UA</p>
 </footer>
 
-<script src="{{ url_for('static', filename='chatbot.js') }}"></script>
+<!-- Подключаем чат-виджет -->
+<link rel="stylesheet" href="{{ url_for('static', filename='chat-widget/chat-widget.css') }}">
+<script src="{{ url_for('static', filename='chat-widget/chat-widget.js') }}"></script>
 </body>
 </html>

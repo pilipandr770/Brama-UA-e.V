@@ -9,13 +9,22 @@ import tempfile
 
 api_bp = Blueprint('api', __name__)
 
-# Get API key from environment
+# Get API key and Assistant ID from environment
 api_key = os.getenv('OPENAI_API_KEY')
-openai.api_key = api_key
+ASSISTANT_ID = os.getenv('OPENAI_ASSISTANT_ID')
+
+# Явно задаем ID ассистента, если его нет в переменных окружения
+if not ASSISTANT_ID:
+    ASSISTANT_ID = "asst_Kk4rpHVSHMy91b3Nz162cbcJ"
+    print(f"[assistant] Використовую хардкодний ASSISTANT_ID: {ASSISTANT_ID}")
+
+# Вывод в лог текущих значений
+print(f"[assistant] API ключ: {'Присутній' if api_key else 'Відсутній'}")
+print(f"[assistant] ID асистента: {ASSISTANT_ID}")
 
 # Create a client instance
+openai.api_key = api_key
 client = OpenAI(api_key=api_key)
-ASSISTANT_ID = os.getenv('OPENAI_ASSISTANT_ID')
 
 @api_bp.route('/tts', methods=['GET'])
 def text_to_speech():

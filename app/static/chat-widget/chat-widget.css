@@ -1,0 +1,247 @@
+#brama-chat-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+/* Кнопка открытия/закрытия чата */
+#brama-chat-toggle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+#brama-chat-toggle:hover {
+    background-color: #3367d6;
+    transform: scale(1.05);
+}
+
+#brama-chat-toggle svg {
+    width: 30px;
+    height: 30px;
+}
+
+/* Контейнер чата */
+#brama-chat-container {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 350px;
+    height: 500px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+    pointer-events: none;
+}
+
+#brama-chat-container.brama-chat-open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+}
+
+/* Заголовок чата */
+#brama-chat-header {
+    background-color: #4285f4;
+    color: white;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#brama-chat-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+#brama-chat-close:hover {
+    opacity: 1;
+}
+
+/* Область сообщений */
+#brama-chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #f5f7f9;
+}
+
+/* Стиль сообщений */
+.brama-message {
+    padding: 10px 15px;
+    border-radius: 18px;
+    max-width: 80%;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+.brama-user-message {
+    background-color: #e3f2fd;
+    color: #333;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+.brama-assistant-message {
+    background-color: #f1f1f1;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+
+.brama-system-message {
+    background-color: #fff3cd;
+    color: #856404;
+    font-size: 0.9em;
+    align-self: center;
+    width: 90%;
+    text-align: center;
+    border-radius: 8px;
+}
+
+/* Область ввода сообщения */
+#brama-input-container {
+    padding: 10px 15px;
+    display: flex;
+    background-color: #fff;
+    border-top: 1px solid #e0e0e0;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+#brama-message-input {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 10px 15px;
+    font-size: 14px;
+    resize: none;
+    max-height: 100px;
+    outline: none;
+    font-family: inherit;
+}
+
+#brama-message-input:focus {
+    border-color: #4285f4;
+}
+
+#brama-send-button {
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#brama-send-button:hover {
+    background-color: #3367d6;
+}
+
+#brama-send-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+#brama-clear-chat {
+    padding: 8px;
+    background-color: transparent;
+    color: #777;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    text-align: center;
+    margin: 5px auto;
+    display: block;
+}
+
+#brama-clear-chat:hover {
+    color: #333;
+    text-decoration: underline;
+}
+
+/* Индикатор загрузки */
+.brama-loading {
+    min-height: 30px;
+}
+
+.brama-loading-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 5px;
+}
+
+.brama-loading-dots div {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #999;
+    animation: brama-loading-pulse 1.5s infinite ease-in-out;
+}
+
+.brama-loading-dots div:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.brama-loading-dots div:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.brama-loading-dots div:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+@keyframes brama-loading-pulse {
+    0%, 100% {
+        transform: scale(0.7);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
