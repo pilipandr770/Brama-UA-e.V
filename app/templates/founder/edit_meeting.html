@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='founder-dashboard.css') }}">
+<title>Редагування зустрічі - Brama-UA e.V</title>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Редагувати зустріч</h1>
+        <a href="{{ url_for('founder.dashboard') }}" class="btn btn-secondary">Назад до панелі</a>
+    </div>
+    
+    <div class="content-section">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="title">Назва зустрічі</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ meeting.title }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Опис</label>
+                        <textarea class="form-control" id="description" name="description" rows="3">{{ meeting.description }}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date">Дата і час</label>
+                        <input type="datetime-local" class="form-control" id="date" name="date" 
+                            value="{{ meeting.date.strftime('%Y-%m-%dT%H:%M') }}" required>
+                    </div>
+                    
+                    <div class="agenda-section">
+                        <h3>Порядок денний</h3>
+                        <div id="agenda-items">
+                            {% for item in agenda_items %}
+                            <div class="agenda-item" id="agenda-item-{{ item.id }}">
+                                <div class="form-group">
+                                    <label>Пункт {{ loop.index }}</label>
+                                    <input type="text" class="form-control" name="agenda_item_{{ item.id }}_title" 
+                                        value="{{ item.title }}" required>
+                                    <input type="hidden" name="agenda_item_{{ item.id }}_order" value="{{ loop.index0 }}">
+                                </div>
+                                <div class="form-group">
+                                    <textarea class="form-control" name="agenda_item_{{ item.id }}_description" 
+                                        rows="2">{{ item.description }}</textarea>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="agenda_item_{{ item.id }}_requires_voting" 
+                                        id="voting{{ item.id }}" {% if item.requires_voting %}checked{% endif %}>
+                                    <label class="form-check-label" for="voting{{ item.id }}">Потребує голосування</label>
+                                </div>
+                                <div class="item-actions">
+                                    <button type="button" class="btn btn-sm btn-outline-danger delete-item" 
+                                        data-item-id="{{ item.id }}">Видалити</button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div id="new-agenda-items"></div>
+                        
+                        <button type="button" id="add-agenda-item" class="btn btn-sm btn-outline-primary mt-3">
+                            Додати пункт порядку денного
+                        </button>
+                        
+                        <!-- Hidden input to store deleted items -->
+                        <div id="deleted-items-container"></div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">Зберегти зміни</button>
+                        <a href="{{ url_for('founder.view_meeting', meeting_id=meeting.id) }}" class="btn btn-secondary">Скасувати</a>
+                        <button type="button" class="btn btn-danger float-right" data-toggle="modal" data-target="#deleteModal">
+                            Видалити зустріч
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Підтвердження видалення</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Ви впевнені, що хочете видалити зустріч "{{ meeting.title }}"? Цю дію неможливо скасувати.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Скасувати</button>
+                <form action="{{ url_for('founder.delete_meeting', meeting_id=meeting.id) }}" method="POST">
+                    <button type="submit" class="btn btn-danger">Видалити</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let newAgendaCount = 0;
+    
+    // Add new agenda item
+    document.getElementById('add-agenda-item').addEventListener('click', function() {
+        newAgendaCount++;
+        const container = document.getElementById('new-agenda-items');
+        
+        const newItem = document.createElement('div');
+        newItem.className = 'agenda-item';
+        newItem.innerHTML = `
+            <div class="form-group">
+                <label>Новий пункт ${newAgendaCount}</label>
+                <input type="text" class="form-control" name="new_agenda_item_title" placeholder="Назва пункту" required>
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" name="new_agenda_item_description" placeholder="Опис пункту" rows="2"></textarea>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="new_agenda_item_requires_voting" id="new_voting${newAgendaCount}">
+                <label class="form-check-label" for="new_voting${newAgendaCount}">Потребує голосування</label>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-new-item">Видалити</button>
+        `;
+        
+        container.appendChild(newItem);
+        
+        // Add event listener to the new remove button
+        newItem.querySelector('.remove-new-item').addEventListener('click', function() {
+            newItem.remove();
+            renumberNewItems();
+        });
+    });
+    
+    // Delete existing agenda item
+    document.querySelectorAll('.delete-item').forEach(button => {
+        button.addEventListener('click', function() {
+            const itemId = this.getAttribute('data-item-id');
+            const itemElement = document.getElementById(`agenda-item-${itemId}`);
+            
+            // Create hidden input to track deleted item
+            const deletedInput = document.createElement('input');
+            deletedInput.type = 'hidden';
+            deletedInput.name = 'delete_agenda_item';
+            deletedInput.value = itemId;
+            document.getElementById('deleted-items-container').appendChild(deletedInput);
+            
+            // Remove the item element
+            itemElement.remove();
+            renumberExistingItems();
+        });
+    });
+    
+    // Function to renumber new items
+    function renumberNewItems() {
+        const items = document.querySelectorAll('#new-agenda-items .agenda-item');
+        newAgendaCount = items.length;
+        
+        items.forEach((item, index) => {
+            const label = item.querySelector('label');
+            if (label) {
+                label.textContent = `Новий пункт ${index + 1}`;
+            }
+            
+            const checkbox = item.querySelector('.form-check-input');
+            if (checkbox) {
+                checkbox.id = `new_voting${index + 1}`;
+            }
+            
+            const checkboxLabel = item.querySelector('.form-check-label');
+            if (checkboxLabel) {
+                checkboxLabel.setAttribute('for', `new_voting${index + 1}`);
+            }
+        });
+    }
+    
+    // Function to renumber existing items
+    function renumberExistingItems() {
+        const items = document.querySelectorAll('#agenda-items .agenda-item');
+        
+        items.forEach((item, index) => {
+            const label = item.querySelector('label');
+            if (label) {
+                label.textContent = `Пункт ${index + 1}`;
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

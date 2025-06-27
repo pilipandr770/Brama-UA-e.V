@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='founder-dashboard.css') }}">
+<title>Створення зустрічі - Brama-UA e.V</title>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Створити зустріч</h1>
+        <a href="{{ url_for('founder.dashboard') }}" class="btn btn-secondary">Назад до панелі</a>
+    </div>
+    
+    <div class="content-section">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="title">Назва зустрічі</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Опис</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date">Дата і час</label>
+                        <input type="datetime-local" class="form-control" id="date" name="date" required>
+                    </div>
+                    
+                    <div class="agenda-section">
+                        <h3>Порядок денний</h3>
+                        <div id="agenda-items">
+                            <div class="agenda-item">
+                                <div class="form-group">
+                                    <label>Пункт 1</label>
+                                    <input type="text" class="form-control" name="agenda_item_title" placeholder="Назва пункту" required>
+                                </div>
+                                <div class="form-group">
+                                    <textarea class="form-control" name="agenda_item_description" placeholder="Опис пункту" rows="2"></textarea>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="agenda_item_requires_voting" id="voting1">
+                                    <label class="form-check-label" for="voting1">Потребує голосування</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" id="add-agenda-item" class="btn btn-sm btn-outline-primary mt-2">
+                            Додати пункт порядку денного
+                        </button>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">Створити зустріч</button>
+                        <a href="{{ url_for('founder.dashboard') }}" class="btn btn-secondary">Скасувати</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let agendaCount = 1;
+    
+    document.getElementById('add-agenda-item').addEventListener('click', function() {
+        agendaCount++;
+        
+        const agendaContainer = document.getElementById('agenda-items');
+        const newItem = document.createElement('div');
+        newItem.className = 'agenda-item mt-3';
+        newItem.innerHTML = `
+            <div class="form-group">
+                <label>Пункт ${agendaCount}</label>
+                <input type="text" class="form-control" name="agenda_item_title" placeholder="Назва пункту">
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" name="agenda_item_description" placeholder="Опис пункту" rows="2"></textarea>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="agenda_item_requires_voting" id="voting${agendaCount}">
+                <label class="form-check-label" for="voting${agendaCount}">Потребує голосування</label>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-item">Видалити</button>
+        `;
+        
+        agendaContainer.appendChild(newItem);
+        
+        // Add event listener to the new remove button
+        newItem.querySelector('.remove-item').addEventListener('click', function() {
+            newItem.remove();
+            renumberItems();
+        });
+    });
+    
+    // Function to renumber items after removal
+    function renumberItems() {
+        const items = document.querySelectorAll('.agenda-item');
+        agendaCount = items.length;
+        
+        items.forEach((item, index) => {
+            const label = item.querySelector('label');
+            if (label) {
+                label.textContent = `Пункт ${index + 1}`;
+            }
+            
+            const checkbox = item.querySelector('.form-check-input');
+            if (checkbox) {
+                checkbox.id = `voting${index + 1}`;
+            }
+            
+            const checkboxLabel = item.querySelector('.form-check-label');
+            if (checkboxLabel) {
+                checkboxLabel.setAttribute('for', `voting${index + 1}`);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -11,6 +11,9 @@
             <a href="#gallery-section" class="admin-nav-item">Галерея</a>
             <a href="#projects-section" class="admin-nav-item">Проєкти</a>
             <a href="#settings-section" class="admin-nav-item">Налаштування</a>
+            <a href="{{ url_for('admin.manage_founders') }}" class="admin-nav-item" style="color:#007bff;font-weight:bold;">
+                Керування засновниками
+            </a>
         </div>
     </div>
 
@@ -374,4 +377,4 @@
         });
     });
 </script>
-{% endblock %} 
+{% endblock %}

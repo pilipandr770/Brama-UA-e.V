@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='admin-dashboard.css') }}">
+<title>Управління засновниками - Адмін-панель</title>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>Управління засновниками</h1>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Назад до панелі</a>
+    </div>
+    
+    <div class="content-section">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3>Поточні засновники</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="founders-list">
+                            {% if founders %}
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Ім'я</th>
+                                            <th>Email</th>
+                                            <th>Дії</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for founder in founders %}
+                                        <tr>
+                                            <td>
+                                                {% if founder.profile_photo_url %}
+                                                <img src="{{ url_for('static', filename=founder.profile_photo_url) }}" 
+                                                     alt="{{ founder.first_name }}" class="user-avatar mr-2">
+                                                {% endif %}
+                                                {{ founder.first_name }} {{ founder.last_name }}
+                                            </td>
+                                            <td>{{ founder.email }}</td>
+                                            <td>
+                                                <form action="{{ url_for('admin.manage_founders') }}" method="post">
+                                                    <input type="hidden" name="action" value="remove">
+                                                    <input type="hidden" name="user_id" value="{{ founder.id }}">
+                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                        Видалити роль
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p>Немає жодних засновників.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h3>Додати засновника</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if regular_members %}
+                        <div class="members-list">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Ім'я</th>
+                                        <th>Email</th>
+                                        <th>Дії</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for member in regular_members %}
+                                    <tr>
+                                        <td>
+                                            {% if member.profile_photo_url %}
+                                            <img src="{{ url_for('static', filename=member.profile_photo_url) }}" 
+                                                 alt="{{ member.first_name }}" class="user-avatar mr-2">
+                                            {% endif %}
+                                            {{ member.first_name }} {{ member.last_name }}
+                                        </td>
+                                        <td>{{ member.email }}</td>
+                                        <td>
+                                            <form action="{{ url_for('admin.manage_founders') }}" method="post">
+                                                <input type="hidden" name="action" value="add">
+                                                <input type="hidden" name="user_id" value="{{ member.id }}">
+                                                <button type="submit" class="btn btn-sm btn-success">
+                                                    Призначити засновником
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                            <p>Немає звичайних членів для призначення засновниками.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-card mt-4">
+            <div class="card-header bg-info text-white">
+                <h3>Інформація про роль засновника</h3>
+            </div>
+            <div class="card-body">
+                <p>
+                    <strong>Роль засновника надає такі можливості:</strong>
+                </p>
+                <ul>
+                    <li>Створення та проведення офіційних зустрічей</li>
+                    <li>Участь у голосуваннях з ключових питань організації</li>
+                    <li>Доступ до спеціальної панелі засновника</li>
+                    <li>Можливість додавання пунктів до порядку денного зустрічей</li>
+                    <li>Генерація та підписання протоколів зустрічей</li>
+                </ul>
+                <p>
+                    <strong>Важливо:</strong> Засновниками рекомендується призначати активних членів організації, 
+                    які мають відповідні права згідно зі статутом.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, session, flash, request, send_file
 from app import db
-from app.models.user import User
+from app.models.user import User, UserRole
 from app.models.block import Block
 from app.models.gallery_image import GalleryImage
 from app.models.project import Project
@@ -278,3 +278,27 @@ def delete_project(project_id):
     db.session.commit()
     flash('Проєкт успішно видалено!', 'success')
     return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/manage-founders', methods=['GET', 'POST'])
+@admin_required
+def manage_founders():
+    """Manage founder users as an admin"""
+    founders = User.query.filter_by(role=UserRole.founder).all()
+    regular_members = User.query.filter_by(is_member=True).filter(User.role != UserRole.founder).all()
+    
+    if request.method == 'POST':
+        action = request.form.get('action')
+        user_id = int(request.form.get('user_id'))
+        user = User.query.get_or_404(user_id)
+        
+        if action == 'add':
+            user.role = UserRole.founder
+            flash(f'{user.email} успішно додано як засновника!', 'success')
+        elif action == 'remove':
+            user.role = UserRole.member
+            flash(f'{user.email} видалено з засновників!', 'success')
+        
+        db.session.commit()
+        return redirect(url_for('admin.manage_founders'))
+    
+    return render_template('admin/manage_founders.html', founders=founders, regular_members=regular_members)

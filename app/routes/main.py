@@ -153,6 +153,8 @@ def login():
             flash("Ви увійшли!", "success")
             if user.is_admin:
                 return redirect(url_for('admin.dashboard'))
+            if user.is_founder:
+                return redirect(url_for('founder.dashboard'))
             return redirect(url_for('main.dashboard'))
         flash("Невірний email або пароль", "danger")
     return render_template('login.html')
@@ -171,7 +173,13 @@ def dashboard():
     if not user_id:
         flash("Увійдіть, щоб побачити кабінет", "warning")
         return redirect(url_for('main.login'))
+    
     user = User.query.get(user_id)
+    
+    # If user is a founder, redirect to founder dashboard
+    if user.is_founder:
+        return redirect(url_for('founder.dashboard'))
+    
     from sqlalchemy import func
     total_contributions = db.session.query(func.sum(User.contributions)).scalar() or 0.0
     last_contributor = User.query.filter(User.contributions > 0).order_by(User.contributions.desc()).first()

@@ -3,9 +3,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import enum
 
 class UserRole(enum.Enum):
-    member = "member"
-    admin = "admin"
-    founder = "founder"
+    MEMBER = "member"
+    ADMIN = "admin"
+    FOUNDER = "founder"
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -28,7 +28,7 @@ class User(db.Model):
     consent_given = db.Column(db.Boolean, default=False)
     contributions = db.Column(db.Float, default=0.0)
     profile_photo_url = db.Column(db.String(300), nullable=True)  # URL до фото профілю
-    role = db.Column(db.Enum(UserRole), default=UserRole.member)
+    role = db.Column(db.Enum(UserRole), default=UserRole.MEMBER)
 
     # Relationship with meetings
     created_meetings = db.relationship('Meeting', backref='creator', lazy='dynamic', foreign_keys='Meeting.creator_id')
@@ -53,7 +53,7 @@ class User(db.Model):
             
     @property
     def is_founder(self):
-        return self.role == UserRole.founder
+        return self.role == UserRole.FOUNDER
     
     @property
     def full_name(self):

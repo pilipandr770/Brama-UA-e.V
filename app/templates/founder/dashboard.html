@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='founder-dashboard.css') }}">
+<title>Засновники - Brama-UA e.V</title>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Панель засновника</h1>
+        <div class="user-info">
+            {% if user.profile_photo_url %}
+            <img src="{{ url_for('static', filename=user.profile_photo_url) }}" alt="{{ user.first_name }}" class="profile-photo">
+            {% else %}
+            <div class="profile-placeholder">{{ user.first_name[0] if user.first_name else user.email[0] }}</div>
+            {% endif %}
+            <span>{{ user.first_name }} {{ user.last_name }}</span>
+        </div>
+    </div>
+    
+    <div class="founder-dashboard-content">
+        <div class="meetings-section">
+            <div class="section-header">
+                <h2>Зустрічі</h2>
+                <a href="{{ url_for('founder.create_meeting') }}" class="btn btn-primary">Створити зустріч</a>
+            </div>
+            
+            {% if active_meetings %}
+            <div class="meeting-category">
+                <h3>Активні зустрічі <span class="badge badge-active">{{ active_meetings|length }}</span></h3>
+                <div class="meeting-list">
+                    {% for meeting in active_meetings %}
+                    <div class="meeting-card active">
+                        <div class="meeting-header">
+                            <h4>{{ meeting.title }}</h4>
+                            <span class="meeting-date">{{ meeting.date.strftime('%d.%m.%Y %H:%M') }}</span>
+                        </div>
+                        <p>{{ meeting.description|truncate(100) }}</p>
+                        <div class="meeting-footer">
+                            <span class="meeting-status active">Активна</span>
+                            <span class="meeting-attendees">{{ meeting.attendee_count }} учасників</span>
+                            <a href="{{ url_for('founder.view_meeting', meeting_id=meeting.id) }}" class="btn btn-sm btn-success">Приєднатись</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if upcoming_meetings %}
+            <div class="meeting-category">
+                <h3>Заплановані зустрічі <span class="badge badge-planned">{{ upcoming_meetings|length }}</span></h3>
+                <div class="meeting-list">
+                    {% for meeting in upcoming_meetings %}
+                    <div class="meeting-card planned">
+                        <div class="meeting-header">
+                            <h4>{{ meeting.title }}</h4>
+                            <span class="meeting-date">{{ meeting.date.strftime('%d.%m.%Y %H:%M') }}</span>
+                        </div>
+                        <p>{{ meeting.description|truncate(100) }}</p>
+                        <div class="meeting-footer">
+                            <span class="meeting-status planned">Запланована</span>
+                            <div class="meeting-actions">
+                                <a href="{{ url_for('founder.view_meeting', meeting_id=meeting.id) }}" class="btn btn-sm btn-primary">Перегляд</a>
+                                <a href="{{ url_for('founder.edit_meeting', meeting_id=meeting.id) }}" class="btn btn-sm btn-secondary">Редагувати</a>
+                                <form action="{{ url_for('founder.start_meeting', meeting_id=meeting.id) }}" method="post" style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-success">Розпочати</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if past_meetings %}
+            <div class="meeting-category">
+                <h3>Минулі зустрічі <span class="badge badge-completed">{{ past_meetings|length }}</span></h3>
+                <div class="meeting-list">
+                    {% for meeting in past_meetings %}
+                    <div class="meeting-card completed">
+                        <div class="meeting-header">
+                            <h4>{{ meeting.title }}</h4>
+                            <span class="meeting-date">{{ meeting.date.strftime('%d.%m.%Y %H:%M') }}</span>
+                        </div>
+                        <p>{{ meeting.description|truncate(100) }}</p>
+                        <div class="meeting-footer">
+                            <span class="meeting-status completed">Завершена</span>
+                            <div class="meeting-actions">
+                                <a href="{{ url_for('founder.view_meeting', meeting_id=meeting.id) }}" class="btn btn-sm btn-primary">Перегляд</a>
+                                {% if meeting.protocol_url %}
+                                <a href="{{ meeting.protocol_url }}" class="btn btn-sm btn-info" target="_blank">Протокол</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if not active_meetings and not upcoming_meetings and not past_meetings %}
+            <div class="empty-state">
+                <p>Наразі немає жодних зустрічей.</p>
+                <a href="{{ url_for('founder.create_meeting') }}" class="btn btn-primary">Створити першу зустріч</a>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <h3>Засновники</h3>
+                <div class="founder-list">
+                    {% for founder in founders %}
+                    <div class="founder-item">
+                        {% if founder.profile_photo_url %}
+                        <img src="{{ url_for('static', filename=founder.profile_photo_url) }}" alt="{{ founder.first_name }}" class="founder-photo">
+                        {% else %}
+                        <div class="founder-placeholder">{{ founder.first_name[0] if founder.first_name else founder.email[0] }}</div>
+                        {% endif %}
+                        <span>{{ founder.first_name }} {{ founder.last_name }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3>Швидкі дії</h3>
+                <div class="quick-actions">
+                    <a href="{{ url_for('founder.create_meeting') }}" class="btn btn-block btn-primary">Нова зустріч</a>
+                    <a href="{{ url_for('founder.manage_founders') }}" class="btn btn-block btn-secondary">Управління засновниками</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
