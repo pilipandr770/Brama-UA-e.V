@@ -53,7 +53,38 @@ def create_block():
         content = request.form['content']
         type_ = request.form['type']
         image_url = request.form.get('image_url')
-        block = Block(title=title, content=content, type=type_, image_url=image_url)
+        
+        # Обработка загруженного файла
+        image_file = request.files.get('image_file')
+        if image_file and image_file.filename:
+            # Генерируем уникальное имя файла
+            import os
+            from werkzeug.utils import secure_filename
+            from datetime import datetime
+            
+            # Создаем директорию для загрузок, если она не существует
+            upload_dir = os.path.join(os.getcwd(), 'app', 'static', 'uploads')
+            if not os.path.exists(upload_dir):
+                os.makedirs(upload_dir)
+            
+            # Создаем уникальное имя файла
+            filename = secure_filename(image_file.filename)
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            unique_filename = f"{timestamp}_{filename}"
+            file_path = os.path.join(upload_dir, unique_filename)
+            
+            # Сохраняем файл
+            image_file.save(file_path)
+            
+            # Устанавливаем URL для сохранения в БД
+            image_url = url_for('static', filename=f'uploads/{unique_filename}')
+        
+        block = Block(
+            title=title, 
+            content=content, 
+            type=type_, 
+            image_url=image_url
+        )
         db.session.add(block)
         db.session.commit()
         flash('Блок створено!', 'success')
@@ -68,7 +99,35 @@ def edit_block(block_id):
         block.title = request.form['title']
         block.content = request.form['content']
         block.type = request.form['type']
-        block.image_url = request.form.get('image_url')
+        
+        # Сначала проверяем загруженный файл
+        image_file = request.files.get('image_file')
+        if image_file and image_file.filename:
+            # Генерируем уникальное имя файла
+            import os
+            from werkzeug.utils import secure_filename
+            from datetime import datetime
+            
+            # Создаем директорию для загрузок, если она не существует
+            upload_dir = os.path.join(os.getcwd(), 'app', 'static', 'uploads')
+            if not os.path.exists(upload_dir):
+                os.makedirs(upload_dir)
+            
+            # Создаем уникальное имя файла
+            filename = secure_filename(image_file.filename)
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            unique_filename = f"{timestamp}_{filename}"
+            file_path = os.path.join(upload_dir, unique_filename)
+            
+            # Сохраняем файл
+            image_file.save(file_path)
+            
+            # Устанавливаем URL для сохранения в БД
+            block.image_url = url_for('static', filename=f'uploads/{unique_filename}')
+        else:
+            # Если файл не загружен, используем URL из формы
+            block.image_url = request.form.get('image_url')
+                
         db.session.commit()
         flash('Блок оновлено!', 'success')
         return redirect(url_for('admin.dashboard'))
@@ -171,4 +230,51 @@ def update_contribution(user_id):
         flash(f'Внесок для {user.first_name} {user.last_name} оновлено!', 'success')
     except Exception as e:
         flash(f'Помилка при оновленні внеску: {e}', 'danger')
-    return redirect(url_for('admin.dashboard')) 
+    return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/edit_project/<int:project_id>', methods=['GET', 'POST'])
+@admin_required
+def edit_project(project_id):
+    project = Project.query.get_or_404(project_id)
+    
+    if request.method == 'POST':
+        # Обновляем данные проекта
+        project.title = request.form['title']
+        project.problem_description = request.form['problem_description']
+        project.goal = request.form['goal']
+        project.target_audience = request.form['target_audience']
+        project.implementation_plan = request.form['implementation_plan']
+        project.executor_info = request.form['executor_info']
+        project.total_budget = request.form['total_budget']
+        project.budget_breakdown = request.form['budget_breakdown']
+        project.expected_result = request.form['expected_result']
+        project.risks = request.form['risks']
+        project.duration = request.form['duration']
+        project.reporting_plan = request.form['reporting_plan']
+        project.category = request.form.get('category')
+        project.location = request.form.get('location')
+        project.website = request.form.get('website')
+        project.social_links = request.form.get('social_links')
+        project.document_url = request.form.get('document_url')
+        project.status = request.form.get('status')
+        
+        # Обрабатываем загрузку фото, если оно было предоставлено
+        image_file = request.files.get('image_file')
+        if image_file and image_file.filename:
+            project.image_data = image_file.read()
+            project.image_mimetype = image_file.mimetype
+        
+        db.session.commit()
+        flash('Проєкт успішно оновлено!', 'success')
+        return redirect(url_for('admin.dashboard'))
+        
+    return render_template('admin/edit_project.html', project=project)
+
+@admin_bp.route('/delete_project/<int:project_id>', methods=['POST'])
+@admin_required
+def delete_project(project_id):
+    project = Project.query.get_or_404(project_id)
+    db.session.delete(project)
+    db.session.commit()
+    flash('Проєкт успішно видалено!', 'success')
+    return redirect(url_for('admin.dashboard'))

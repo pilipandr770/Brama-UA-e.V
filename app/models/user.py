@@ -21,9 +21,18 @@ class User(db.Model):
     is_member = db.Column(db.Boolean, default=True)
     consent_given = db.Column(db.Boolean, default=False)
     contributions = db.Column(db.Float, default=0.0)
+    profile_photo_url = db.Column(db.String(300), nullable=True)  # URL до фото профілю
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        try:
+            return check_password_hash(self.password_hash, password)
+        except ValueError as e:
+            if 'unsupported hash type scrypt' in str(e):
+                # For users with scrypt hashed passwords, always return False
+                # and let them reset their password
+                # Or implement scrypt verification if needed
+                return False
+            raise

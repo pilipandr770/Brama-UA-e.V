@@ -1,0 +1,69 @@
+/* Дополнительные стили для проектов в админке */
+
+.project-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-top: 1px solid #eee;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.project-actions form {
+    flex: 0 0 auto;
+}
+
+.project-actions .button {
+    white-space: nowrap;
+    min-width: 40px;
+    text-align: center;
+}
+
+.approve-button {
+    background-color: #28a745;
+}
+
+.approve-button:hover {
+    background-color: #218838;
+}
+
+.reject-button {
+    background-color: #dc3545;
+}
+
+.reject-button:hover {
+    background-color: #c82333;
+}
+
+.edit-button {
+    background-color: #6c757d;
+}
+
+.edit-button:hover {
+    background-color: #5a6268;
+}
+
+.delete-button {
+    background-color: #dc3545;
+}
+
+.delete-button:hover {
+    background-color: #c82333;
+}
+
+@media (max-width: 768px) {
+    .project-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .project-actions form {
+        width: 100%;
+    }
+    
+    .project-actions .button {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+}

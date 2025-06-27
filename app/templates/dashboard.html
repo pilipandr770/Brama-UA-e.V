@@ -3,66 +3,121 @@
 {% block title %}Мій кабінет{% endblock %}
 
 {% block content %}
-<h2>Вітаємо у кабінеті, {{ user.first_name }} {{ user.last_name }}!</h2>
-
-<!-- Баланс ферайну та останній внесок -->
-<div style="margin-bottom: 24px;">
-    <h3>Баланс ферайну:</h3>
-    <p style="font-size:1.2em;"><strong>&euro;{{ total_contributions|round(2) }}</strong></p>
-    <h3>Останній внесок:</h3>
-    {% if last_contributor %}
-        <p>{{ last_contributor.first_name }} {{ last_contributor.last_name }} — <strong>&euro;{{ last_contributor.contributions|round(2) }}</strong></p>
-    {% else %}
-        <p>Ще немає внесків.</p>
-    {% endif %}
-</div>
-
-<!-- Баланс та повідомлення -->
-<div>
-    <h3>Ваш баланс:</h3>
-    <p>&euro;{{ balance or '0.00' }}</p>
-
-    <h3>Останні надходження:</h3>
-    <ul>
-        {% for payment in payments %}
-            <li>{{ payment.date }} - &euro;{{ payment.amount }} - {{ payment.note }}</li>
-        {% else %}
-            <li>Немає записів</li>
-        {% endfor %}
-    </ul>
-</div>
-
-<!-- Голосування -->
-<div>
-    <h3>Активні проєкти для голосування</h3>
-    <ul>
-        {% for project in active_projects %}
-            <li>
-                <strong>{{ project.title }}</strong> - {{ project.goal }}<br>
-                <form method="POST" action="{{ url_for('main.vote', project_id=project.id) }}">
-                    <button type="submit">Проголосувати</button>
+<div class="dashboard-container">
+    <!-- Profile Section -->
+    <div class="dashboard-card profile-card">
+        <div class="profile-header">
+            <div class="profile-photo-container">
+                {% if user.profile_photo_url %}
+                    <img src="{{ user.profile_photo_url }}" alt="{{ user.first_name }} {{ user.last_name }}" class="profile-photo">
+                {% else %}
+                    <div class="profile-photo-placeholder">
+                        {{ user.first_name[0] }}{{ user.last_name[0] }}
+                    </div>
+                {% endif %}
+                
+                <form method="POST" action="{{ url_for('main.upload_profile_photo') }}" enctype="multipart/form-data" class="upload-photo-form">
+                    <label for="profile_photo" class="upload-photo-button">Змінити фото</label>
+                    <input type="file" name="profile_photo" id="profile_photo" accept="image/*" style="display:none" onchange="this.form.submit()">
                 </form>
-            </li>
-        {% else %}
-            <li>Поки що немає доступних проєктів</li>
-        {% endfor %}
-    </ul>
-</div>
+            </div>
+            
+            <div class="profile-info">
+                <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+                <p class="profile-email">{{ user.email }}</p>
+                <p class="profile-specialty">{{ user.specialty }}</p>
+                <a href="#" class="edit-profile-btn">Редагувати профіль</a>
+            </div>
+        </div>
+    </div>
 
-<!-- Мої проєкти -->
-<div>
-    <h3>Мої проєкти</h3>
-    <ul>
-        {% for project in my_projects %}
-            <li>
-                {{ project.title }} - статус: <strong>{{ project.status }}</strong>
-            </li>
-        {% else %}
-            <li>Ви ще не подавали проєктів</li>
-        {% endfor %}
-    </ul>
-</div>
+    <div class="dashboard-row">
+        <!-- Contributions Section -->
+        <div class="dashboard-card contribution-card">
+            <h3>Баланс ферайну</h3>
+            <div class="contribution-amount">&euro;{{ total_contributions|round(2) }}</div>
+            
+            <div class="contribution-info">
+                <h4>Ваш баланс</h4>
+                <div class="personal-contribution">&euro;{{ user.contributions|round(2) }}</div>
+            </div>
+            
+            {% if last_contributor %}
+            <div class="last-contribution">
+                <h4>Останній внесок</h4>
+                <div class="last-contributor">
+                    {{ last_contributor.first_name }} {{ last_contributor.last_name }} — <strong>&euro;{{ last_contributor.contributions|round(2) }}</strong>
+                </div>
+            </div>
+            {% endif %}
+        </div>
 
-<!-- Подати новий проєкт -->
-<a href="{{ url_for('main.submit_project') }}">Подати новий проєкт</a>
+        <!-- Projects Section -->
+        <div class="dashboard-card projects-card">
+            <h3>Мої проєкти</h3>
+            
+            {% if my_projects %}
+            <div class="projects-list">
+                {% for project in my_projects %}
+                <div class="project-item">
+                    <h4>{{ project.title }}</h4>
+                    <div class="project-status {{ project.status }}">{{ project.status }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-projects">
+                <p>Ви ще не подавали проєктів</p>
+            </div>
+            {% endif %}
+            
+            <a href="{{ url_for('main.submit_project') }}" class="button primary-button">Подати новий проєкт</a>
+        </div>
+    </div>
+    
+    <!-- Voting Section -->
+    <div class="dashboard-card voting-card">
+        <h3>Активні проєкти для голосування</h3>
+        
+        {% if active_projects %}
+        <div class="voting-projects">
+            {% for project in active_projects %}
+            <div class="voting-project-item">
+                <div class="voting-project-info">
+                    <h4>{{ project.title }}</h4>
+                    <p>{{ project.goal }}</p>
+                </div>
+                <form method="POST" action="{{ url_for('main.vote', project_id=project.id) }}">
+                    <button type="submit" class="button vote-button">Проголосувати</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-voting-projects">
+            <p>Наразі немає проєктів для голосування</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Show/hide profile photo upload option on hover
+    document.addEventListener('DOMContentLoaded', function() {
+        const photoContainer = document.querySelector('.profile-photo-container');
+        const uploadForm = document.querySelector('.upload-photo-form');
+        
+        if (photoContainer && uploadForm) {
+            photoContainer.addEventListener('mouseenter', function() {
+                uploadForm.style.display = 'block';
+            });
+            
+            photoContainer.addEventListener('mouseleave', function() {
+                uploadForm.style.display = 'none';
+            });
+        }
+    });
+</script>
 {% endblock %}

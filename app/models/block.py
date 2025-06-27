@@ -7,4 +7,4 @@ class Block(db.Model):
     content = db.Column(db.Text, nullable=True)
     type = db.Column(db.String(32), nullable=False)  # info, gallery, projects
     is_active = db.Column(db.Boolean, default=True)
-    image_url = db.Column(db.String(300), nullable=True)  # обкладинка 
+    image_url = db.Column(db.String(300), nullable=True)  # обкладинка

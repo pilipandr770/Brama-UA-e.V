@@ -107,6 +107,8 @@ def gallery_image_file(image_id):
     else:
         return '', 404
 
+# Block image route removed - images are now served from filesystem
+
 from flask import session
 
 @main_bp.route('/register', methods=['GET', 'POST'])
@@ -203,3 +205,53 @@ def vote(project_id):
     db.session.commit()
     flash('Ваш голос зараховано!', 'success')
     return redirect(url_for('main.index'))
+
+@main_bp.route('/upload-profile-photo', methods=['POST'])
+def upload_profile_photo():
+    user_id = session.get('user_id')
+    if not user_id:
+        flash("Увійдіть, щоб змінити фото профілю", "warning")
+        return redirect(url_for('main.login'))
+    
+    user = User.query.get(user_id)
+    if not user:
+        flash("Користувача не знайдено", "danger")
+        return redirect(url_for('main.login'))
+    
+    if 'profile_photo' not in request.files:
+        flash("Файл не вибрано", "warning")
+        return redirect(url_for('main.dashboard'))
+    
+    profile_photo = request.files['profile_photo']
+    
+    if profile_photo.filename == '':
+        flash("Файл не вибрано", "warning")
+        return redirect(url_for('main.dashboard'))
+    
+    if profile_photo:
+        # Генерируем уникальное имя файла
+        import os
+        from werkzeug.utils import secure_filename
+        from datetime import datetime
+        
+        # Создаем директорию для загрузок, если она не существует
+        upload_dir = os.path.join(os.getcwd(), 'app', 'static', 'uploads', 'profiles')
+        if not os.path.exists(upload_dir):
+            os.makedirs(upload_dir)
+        
+        # Создаем уникальное имя файла
+        filename = secure_filename(profile_photo.filename)
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        unique_filename = f"{timestamp}_{user_id}_{filename}"
+        file_path = os.path.join(upload_dir, unique_filename)
+        
+        # Сохраняем файл
+        profile_photo.save(file_path)
+        
+        # Устанавливаем URL для сохранения в БД
+        user.profile_photo_url = url_for('static', filename=f'uploads/profiles/{unique_filename}')
+        db.session.commit()
+        
+        flash("Фото профілю оновлено", "success")
+    
+    return redirect(url_for('main.dashboard'))

@@ -2,10 +2,11 @@
 {% block title %}{{ 'Редагувати блок' if block else 'Створити блок' }}{% endblock %}
 {% block content %}
 <h2>{{ 'Редагувати блок' if block else 'Створити блок' }}</h2>
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     <label>Заголовок:</label><br>
     <input type="text" name="title" value="{{ block.title if block else '' }}" required><br>
-    <label>Тип блоку:</label><br>    <select name="type" required>
+    <label>Тип блоку:</label><br>    
+    <select name="type" required>
         <option value="info" {% if block and block.type=='info' %}selected{% endif %}>Інформаційний</option>
         <option value="gallery" {% if block and block.type=='gallery' %}selected{% endif %}>Галерея</option>
         <option value="projects" {% if block and block.type=='projects' %}selected{% endif %}>Проекти</option>
@@ -13,11 +14,20 @@
         <option value="news" {% if block and block.type=='news' %}selected{% endif %}>Новини</option>
         <option value="custom" {% if block and block.type=='custom' %}selected{% endif %}>Інший блок</option>
     </select><br>
-    <label>URL обкладинки (image_url):</label><br>
+    <label>Обкладинка:</label><br>
+    {% if block and block.image_url %}
+        <div style="margin: 10px 0;">
+            <img src="{{ block.image_url }}" 
+                 alt="Поточна обкладинка" style="max-width: 200px; max-height: 150px; margin-bottom: 10px;">
+            <p>Поточне зображення</p>
+        </div>
+    {% endif %}
+    <input type="file" name="image_file" accept="image/*"><br>
+    <small>Або вкажіть URL зображення:</small><br>
     <input type="url" name="image_url" value="{{ block.image_url if block else '' }}"><br>
     <label>Контент:</label><br>
     <textarea name="content" rows="6">{{ block.content if block else '' }}</textarea><br>
     <button type="submit">Зберегти</button>
     <a href="{{ url_for('admin.dashboard') }}">Скасувати</a>
 </form>
-{% endblock %} 
+{% endblock %}

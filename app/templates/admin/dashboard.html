@@ -1,105 +1,377 @@
 {% extends "base.html" %}
-{% block title %}Адмін-дешборд{% endblock %}
+{% block title %}Адмін-панель{% endblock %}
 {% block content %}
-<h2>Адмін-дешборд</h2>
+<div class="admin-dashboard">
+    <div class="admin-header">
+        <h1>Адміністративна панель</h1>
+        <div class="admin-nav">
+            <a href="#users-section" class="admin-nav-item">Користувачі</a>
+            <a href="#members-section" class="admin-nav-item">Члени</a>
+            <a href="#blocks-section" class="admin-nav-item">Блоки</a>
+            <a href="#gallery-section" class="admin-nav-item">Галерея</a>
+            <a href="#projects-section" class="admin-nav-item">Проєкти</a>
+            <a href="#settings-section" class="admin-nav-item">Налаштування</a>
+        </div>
+    </div>
+
+    <div id="users-section" class="admin-section">
+        <div class="section-header">
+            <h2>Користувачі</h2>
+            <div class="section-actions">
+                <a href="#" class="button">Додати користувача</a>
+            </div>
+        </div>
+        
+        <div class="users-grid">
+            {% for user in users %}
+            <div class="user-card {% if user.is_blocked %}blocked{% endif %} {% if user.is_admin %}admin{% endif %}">
+                <div class="user-photo">
+                    {% if user.profile_photo_url %}
+                    <img src="{{ user.profile_photo_url }}" alt="{{ user.email }}">
+                    {% else %}
+                    <div class="user-initials">{{ user.email[0]|upper }}</div>
+                    {% endif %}
+                </div>
+                <div class="user-details">
+                    <h3>{{ user.email }}</h3>
+                    <div class="user-tags">
+                        {% if user.is_admin %}
+                        <span class="tag admin-tag">Адмін</span>
+                        {% endif %}
+                        {% if user.is_blocked %}
+                        <span class="tag blocked-tag">Заблоковано</span>
+                        {% endif %}
+                        {% if user.is_member %}
+                        <span class="tag member-tag">Член</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="user-actions">
+                    {% if not user.is_admin %}
+                    <form method="post" action="{{ url_for('admin.toggle_block_user', user_id=user.id) }}">
+                        <button type="submit" class="button {% if user.is_blocked %}unblock-button{% else %}block-button{% endif %}">
+                            {% if user.is_blocked %}Розблокувати{% else %}Заблокувати{% endif %}
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <hr>
+<div id="members-section" class="admin-section">
+    <div class="section-header">
+        <h2>Члени ферайну / Волонтери</h2>
+        <div class="section-actions">
+            <a href="#" class="button">Експорт у CSV</a>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <table class="members-table">
+            <thead>
+                <tr>
+                    <th class="photo-col">Фото</th>
+                    <th>Ім'я</th>
+                    <th>Прізвище</th>
+                    <th>Дата нар.</th>
+                    <th>Спеціальність</th>
+                    <th>Мета</th>
+                    <th>Може допомогти</th>
+                    <th>Хоче займатись</th>
+                    <th>Телефон</th>
+                    <th>Email</th>
+                    <th>Внески (€)</th>
+                    <th>Згода</th>
+                    <th>Статус</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users if user.is_member %}
+                <tr class="{% if user.is_blocked %}blocked-row{% endif %}">
+                    <td class="photo-cell">
+                        {% if user.profile_photo_url %}
+                        <img src="{{ user.profile_photo_url }}" alt="{{ user.first_name }}" class="member-photo">
+                        {% else %}
+                        <div class="member-initials">{{ user.first_name[0]|upper if user.first_name else "" }}{{ user.last_name[0]|upper if user.last_name else "" }}</div>
+                        {% endif %}
+                    </td>
+                    <td>{{ user.first_name }}</td>
+                    <td>{{ user.last_name }}</td>
+                    <td>{{ user.birth_date }}</td>
+                    <td>{{ user.specialty }}</td>
+                    <td class="truncate-text">{{ user.join_goal }}</td>
+                    <td class="truncate-text">{{ user.can_help }}</td>
+                    <td class="truncate-text">{{ user.want_to_do }}</td>
+                    <td>{{ user.phone }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <form method="post" action="{{ url_for('admin.update_contribution', user_id=user.id) }}" class="contribution-form">
+                            <input type="number" step="0.01" name="contribution" value="{{ user.contributions or 0 }}" class="contribution-input">
+                            <button type="submit" class="save-button" title="Зберегти">💾</button>
+                        </form>
+                    </td>
+                    <td class="consent-cell">
+                        <span class="consent-badge {% if user.consent_given %}consent-yes{% else %}consent-no{% endif %}">
+                            {% if user.consent_given %}✓{% else %}✗{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge 
+                            {% if user.is_blocked %}status-blocked{% elif user.is_admin %}status-admin{% else %}status-active{% endif %}">
+                            {% if user.is_blocked %}Заблоковано{% elif user.is_admin %}Адмін{% else %}Активний{% endif %}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 <hr>
-<h3>Користувачі</h3>
-<ul>
-  {% for user in users %}
-    <li>{{ user.email }} {% if user.is_admin %}(адмін){% endif %} {% if user.is_blocked %}<span style="color:red;">[заблоковано]</span>{% endif %}
-      {% if not user.is_admin %}
-        <form method="post" action="{{ url_for('admin.toggle_block_user', user_id=user.id) }}" style="display:inline;">
-          <button type="submit">{% if user.is_blocked %}Розблокувати{% else %}Заблокувати{% endif %}</button>
-        </form>
-      {% endif %}
-    </li>
-  {% endfor %}
-</ul>
+<div id="blocks-section" class="admin-section">
+    <div class="section-header">
+        <h2>Блоки на головній</h2>
+        <div class="section-actions">
+            <a href="{{ url_for('admin.create_block') }}" class="button add-button">
+                <i class="fa fa-plus"></i> Додати блок
+            </a>
+        </div>
+    </div>
+    
+    <div class="blocks-grid">
+        {% for block in blocks %}
+        <div class="block-card" data-type="{{ block.type }}">
+            <div class="block-header">
+                <h3>{{ block.title }}</h3>
+                <span class="block-type">{{ block.type }}</span>
+            </div>
+            
+            <div class="block-preview">
+                {% if block.image_url %}
+                <img src="{{ block.image_url }}" alt="{{ block.title }}" class="block-image">
+                {% else %}
+                <div class="block-placeholder">Без зображення</div>
+                {% endif %}
+                
+                <div class="block-content-preview">
+                    {{ block.content[:100] }}{% if block.content|length > 100 %}...{% endif %}
+                </div>
+            </div>
+            
+            <div class="block-actions">
+                <a href="{{ url_for('admin.edit_block', block_id=block.id) }}" class="button edit-button">
+                    <i class="fa fa-edit"></i> Редагувати
+                </a>
+                <form method="post" action="{{ url_for('admin.delete_block', block_id=block.id) }}">
+                    <button type="submit" onclick="return confirm('Видалити блок {{ block.title }}?');" class="button delete-button">
+                        <i class="fa fa-trash"></i> Видалити
+                    </button>
+                </form>
+                <div class="status-toggle">
+                    <span class="status-indicator {% if block.is_active %}active{% else %}inactive{% endif %}"></span>
+                    {{ 'Активний' if block.is_active else 'Неактивний' }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 <hr>
-<h3>Члени ферайну / Волонтери</h3>
-<table border="1" cellpadding="6" style="border-collapse:collapse; margin-bottom:20px;">
-  <tr>
-    <th>Ім'я</th><th>Прізвище</th><th>Дата нар.</th><th>Спец.</th><th>Мета</th><th>Може допомогти</th><th>Хоче займатись</th><th>Телефон</th><th>Email</th><th>Внески (€)</th><th>Згода</th><th>Статус</th>
-  </tr>
-  {% for user in users if user.is_member %}
-  <tr>
-    <td>{{ user.first_name }}</td>
-    <td>{{ user.last_name }}</td>
-    <td>{{ user.birth_date }}</td>
-    <td>{{ user.specialty }}</td>
-    <td>{{ user.join_goal }}</td>
-    <td>{{ user.can_help }}</td>
-    <td>{{ user.want_to_do }}</td>
-    <td>{{ user.phone }}</td>
-    <td>{{ user.email }}</td>
-    <td>
-      <form method="post" action="{{ url_for('admin.update_contribution', user_id=user.id) }}" style="display:inline;">
-        <input type="number" step="0.01" name="contribution" value="{{ user.contributions or 0 }}" style="width:70px;">
-        <button type="submit">💾</button>
-      </form>
-    </td>
-    <td>{% if user.consent_given %}✅{% else %}❌{% endif %}</td>
-    <td>{% if user.is_blocked %}Заблоковано{% elif user.is_admin %}Адмін{% else %}Активний{% endif %}</td>
-  </tr>
-  {% endfor %}
-</table>
+<div id="gallery-section" class="admin-section">
+    <div class="section-header">
+        <h2>Галерея</h2>
+        <div class="section-actions">
+            <a href="{{ url_for('admin.add_gallery_image') }}" class="button add-button">
+                <i class="fa fa-plus"></i> Додати фото
+            </a>
+        </div>
+    </div>
+    
+    <div class="gallery-grid">
+        {% for img in gallery %}
+        <div class="gallery-card">
+            <div class="gallery-image">
+                <img src="{{ img.image_url }}" alt="{{ img.description }}" loading="lazy">
+            </div>
+            <div class="gallery-description">
+                <p>{{ img.description }}</p>
+            </div>
+            <div class="gallery-actions">
+                <form method="post" action="{{ url_for('admin.delete_gallery_image', image_id=img.id) }}">
+                    <button type="submit" onclick="return confirm('Видалити фото?');" class="button delete-button">
+                        <i class="fa fa-trash"></i> Видалити
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 <hr>
-<h3>Блоки на головній</h3>
-<a href="{{ url_for('admin.create_block') }}">+ Додати блок</a>
-<ul>
-  {% for block in blocks %}
-    <li>{{ block.title }} ({{ block.type }})
-      <a href="{{ url_for('admin.edit_block', block_id=block.id) }}">Редагувати</a>
-      <form method="post" action="{{ url_for('admin.delete_block', block_id=block.id) }}" style="display:inline;">
-        <button type="submit" onclick="return confirm('Видалити блок?');">Видалити</button>
-      </form>
-    </li>
-  {% endfor %}
-</ul>
+<div id="projects-section" class="admin-section">
+    <div class="section-header">
+        <h2>Проєкти</h2>
+        <div class="section-actions">
+            <div class="filter-actions">
+                <button class="button filter-button active" data-filter="all">Всі</button>
+                <button class="button filter-button" data-filter="pending">Очікують</button>
+                <button class="button filter-button" data-filter="approved">Затверджені</button>
+                <button class="button filter-button" data-filter="rejected">Відхилені</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="projects-grid">
+        {% for project in projects %}
+        <div class="project-card" data-status="{{ project.status }}">
+            <div class="project-header">
+                <h3>{{ project.title }}</h3>
+                <span class="project-status status-{{ project.status }}">{{ project.status }}</span>
+            </div>
+            
+            <div class="project-body">
+                {% if project.image_url %}
+                <img src="{{ project.image_url }}" alt="{{ project.title }}" class="project-image">
+                {% elif project.image_data %}
+                <img src="{{ url_for('main.project_image_file', project_id=project.id) }}" alt="Фото проєкту" class="project-image">
+                {% else %}
+                <div class="project-image-placeholder">Без фото</div>
+                {% endif %}
+                
+                <div class="project-info">
+                    <div class="project-category">{{ project.category }}</div>
+                    <div class="project-location">{{ project.location }}</div>
+                    <div class="project-budget">Бюджет: {{ project.total_budget }}</div>
+                    <div class="project-duration">Тривалість: {{ project.duration }}</div>
+                </div>
+            </div>
+            
+            <div class="project-actions">
+                {% if project.status == 'pending' %}
+                <form method="post" action="{{ url_for('admin.approve_project', project_id=project.id) }}">
+                    <button type="submit" class="button approve-button">Затвердити</button>
+                </form>
+                <form method="post" action="{{ url_for('admin.reject_project', project_id=project.id) }}">
+                    <button type="submit" class="button reject-button">Відхилити</button>
+                </form>
+                {% endif %}
+                <a href="{{ url_for('admin.edit_project', project_id=project.id) }}" class="button edit-button">
+                    <i class="fa fa-edit"></i> Редагувати
+                </a>
+                <form method="post" action="{{ url_for('admin.delete_project', project_id=project.id) }}" onsubmit="return confirm('Ви впевнені, що хочете видалити проєкт {{ project.title }}?');">
+                    <button type="submit" class="button delete-button">
+                        <i class="fa fa-trash"></i> Видалити
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 <hr>
-<h3>Галерея</h3>
-<a href="{{ url_for('admin.add_gallery_image') }}">+ Додати фото</a>
-<ul>
-  {% for img in gallery %}
-    <li><img src="{{ img.image_url }}" alt="" width="80"> {{ img.description }}
-      <form method="post" action="{{ url_for('admin.delete_gallery_image', image_id=img.id) }}" style="display:inline;">
-        <button type="submit" onclick="return confirm('Видалити фото?');">Видалити</button>
-      </form>
-    </li>
-  {% endfor %}
-</ul>
-<hr>
-<h3>Проекти</h3>
-<ul>
-  {% for project in projects %}
-    <li style="margin-bottom: 18px;">
-      <strong>{{ project.title }}</strong> ({{ project.status }})
-      {% if project.image_data or project.image_url %}
-        <br>
-        <img src="{{ url_for('main.project_image_file', project_id=project.id) }}" alt="фото проєкту" style="max-width:120px; max-height:80px; border-radius:8px;">
-      {% endif %}
-      <br>
-      {% if project.status == 'pending' %}
-        <form method="post" action="{{ url_for('admin.approve_project', project_id=project.id) }}" style="display:inline;">
-          <button type="submit" style="color:green;">Підтвердити</button>
-        </form>
-        <form method="post" action="{{ url_for('admin.reject_project', project_id=project.id) }}" style="display:inline;">
-          <button type="submit" style="color:red;">Відхилити</button>
-        </form>
-      {% endif %}
-    </li>
-  {% endfor %}
-</ul>
-<hr>
-<h3>Соцмережі</h3>
-<p>Facebook: {{ settings.facebook if settings else '' }}<br>Instagram: {{ settings.instagram if settings else '' }}<br>Telegram: {{ settings.telegram if settings else '' }}<br>Email: {{ settings.email if settings else '' }}</p>
-<hr>
-<a href="{{ url_for('admin.edit_social_settings') }}" style="font-weight:bold; font-size:1.1em; color:#007bb8;">⚙️ Налаштувати соцмережі</a>
-<hr>
-<h3>Звіти</h3>
-<ul>
-  {% for report in reports %}
-    <li>{{ report.title }} ({{ report.created_at.strftime('%Y-%m-%d') }})</li>
-  {% endfor %}
-</ul>
+<div id="settings-section" class="admin-section">
+    <div class="section-header">
+        <h2>Налаштування</h2>
+        <div class="section-actions">
+            <a href="{{ url_for('admin.edit_social_settings') }}" class="button settings-button">
+                <i class="fa fa-cog"></i> Редагувати
+            </a>
+        </div>
+    </div>
+    
+    <div class="settings-cards">
+        <div class="settings-card">
+            <div class="settings-card-header">
+                <h3>Соціальні мережі</h3>
+                <span class="settings-icon">📱</span>
+            </div>
+            <div class="settings-card-body">
+                <div class="social-links">
+                    <div class="social-link">
+                        <span class="social-icon">📘</span>
+                        <span class="social-name">Facebook:</span>
+                        <span class="social-value">{{ settings.facebook if settings else 'Не налаштовано' }}</span>
+                    </div>
+                    <div class="social-link">
+                        <span class="social-icon">📸</span>
+                        <span class="social-name">Instagram:</span>
+                        <span class="social-value">{{ settings.instagram if settings else 'Не налаштовано' }}</span>
+                    </div>
+                    <div class="social-link">
+                        <span class="social-icon">✈️</span>
+                        <span class="social-name">Telegram:</span>
+                        <span class="social-value">{{ settings.telegram if settings else 'Не налаштовано' }}</span>
+                    </div>
+                    <div class="social-link">
+                        <span class="social-icon">✉️</span>
+                        <span class="social-name">Email:</span>
+                        <span class="social-value">{{ settings.email if settings else 'Не налаштовано' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="reports-section" class="admin-section">
+    <div class="section-header">
+        <h2>Звіти</h2>
+        <div class="section-actions">
+            <a href="#" class="button add-button">
+                <i class="fa fa-plus"></i> Новий звіт
+            </a>
+        </div>
+    </div>
+    
+    <div class="reports-list">
+        {% for report in reports %}
+        <div class="report-card">
+            <div class="report-icon">📊</div>
+            <div class="report-info">
+                <h3>{{ report.title }}</h3>
+                <div class="report-date">{{ report.created_at.strftime('%d.%m.%Y') }}</div>
+            </div>
+            <div class="report-actions">
+                <a href="#" class="button view-button">Переглянути</a>
+                <a href="#" class="button download-button">Завантажити</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="no-reports">
+            <p>Немає доступних звітів</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Filter projects by status
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterButtons = document.querySelectorAll('.filter-button');
+        const projectCards = document.querySelectorAll('.project-card');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const filter = button.dataset.filter;
+                
+                // Update active button
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Filter projects
+                projectCards.forEach(card => {
+                    if (filter === 'all' || card.dataset.status === filter) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
 {% endblock %} 

@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Редагувати проєкт' }}{% endblock %}
+
+{% block content %}
+<div class="edit-project-container">
+    <div class="section-header">
+        <h2>Редагування проєкту</h2>
+    </div>
+    
+    <form method="POST" enctype="multipart/form-data" class="project-edit-form">
+        <div class="form-group">
+            <label for="title">Назва проєкту*</label>
+            <input name="title" id="title" value="{{ project.title }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="problem_description">Опис проблеми*</label>
+            <textarea name="problem_description" id="problem_description" required>{{ project.problem_description }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="goal">Мета*</label>
+            <textarea name="goal" id="goal" required>{{ project.goal }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="target_audience">Цільова аудиторія*</label>
+            <textarea name="target_audience" id="target_audience" required>{{ project.target_audience }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="implementation_plan">План реалізації*</label>
+            <textarea name="implementation_plan" id="implementation_plan" required>{{ project.implementation_plan }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="executor_info">Виконавець*</label>
+            <textarea name="executor_info" id="executor_info" required>{{ project.executor_info }}</textarea>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="total_budget">Бюджет (€)*</label>
+                <input type="number" name="total_budget" id="total_budget" value="{{ project.total_budget }}" step="0.01" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="duration">Тривалість*</label>
+                <input name="duration" id="duration" value="{{ project.duration }}" required>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="budget_breakdown">Розподіл бюджету*</label>
+            <textarea name="budget_breakdown" id="budget_breakdown" required>{{ project.budget_breakdown }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="expected_result">Очікуваний результат*</label>
+            <textarea name="expected_result" id="expected_result" required>{{ project.expected_result }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="risks">Можливі ризики*</label>
+            <textarea name="risks" id="risks" required>{{ project.risks }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="reporting_plan">Звітність*</label>
+            <textarea name="reporting_plan" id="reporting_plan" required>{{ project.reporting_plan }}</textarea>
+        </div>
+        
+        <!-- Додаткові поля -->
+        <hr>
+        <h3>Додаткова інформація</h3>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="category">Категорія</label>
+                <input name="category" id="category" value="{{ project.category }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="location">Місце реалізації</label>
+                <input name="location" id="location" value="{{ project.location }}">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="website">Вебсайт</label>
+                <input type="url" name="website" id="website" value="{{ project.website }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="social_links">Соцмережі</label>
+                <input name="social_links" id="social_links" value="{{ project.social_links }}">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="document_url">Документ (URL)</label>
+            <input name="document_url" id="document_url" value="{{ project.document_url }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="status">Статус проєкту</label>
+            <select name="status" id="status">
+                <option value="pending" {% if project.status == 'pending' %}selected{% endif %}>На розгляді</option>
+                <option value="approved" {% if project.status == 'approved' %}selected{% endif %}>Затверджено</option>
+                <option value="rejected" {% if project.status == 'rejected' %}selected{% endif %}>Відхилено</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="image_file">Фото проєкту</label>
+            {% if project.image_data or project.image_url %}
+                <div class="current-image">
+                    <img src="{{ url_for('main.project_image_file', project_id=project.id) }}" alt="Поточне фото" class="preview-image">
+                    <p>Поточне фото</p>
+                </div>
+            {% endif %}
+            <input type="file" name="image_file" id="image_file" accept="image/*">
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="button primary-button">Зберегти зміни</button>
+            <a href="{{ url_for('admin.dashboard') }}" class="button cancel-button">Скасувати</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .edit-project-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .project-edit-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    label {
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    
+    input, textarea, select {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    
+    textarea {
+        min-height: 100px;
+    }
+    
+    .current-image {
+        margin: 10px 0;
+        text-align: center;
+    }
+    
+    .preview-image {
+        max-width: 200px;
+        max-height: 150px;
+        border-radius: 5px;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    
+    .cancel-button {
+        background-color: #6c757d;
+    }
+    
+    .cancel-button:hover {
+        background-color: #5a6268;
+    }
+    
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
