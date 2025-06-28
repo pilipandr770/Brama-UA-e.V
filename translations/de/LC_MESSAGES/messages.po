@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-06-28 10:49+0200\n"
+"POT-Creation-Date: 2025-06-28 14:18+0200\n"
 "PO-Revision-Date: 2025-06-28 09:49+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -18,124 +18,126 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: app/routes/main.py:84
+#: app/routes/main.py:104
 msgid "Проєкт успішно подано! Очікує модерації."
 msgstr "Projekt erfolgreich eingereicht! Wartet auf Moderation."
 
-#: app/routes/main.py:87
+#: app/routes/main.py:107
 #, python-brace-format
 msgid "Помилка при збереженні: {}"
 msgstr "Fehler beim Speichern: {}"
 
-#: app/routes/main.py:121
+#: app/routes/main.py:141
 msgid "Користувач з такою поштою вже існує."
 msgstr "Ein Benutzer mit dieser E-Mail existiert bereits."
 
-#: app/routes/main.py:141
+#: app/routes/main.py:161
 msgid "Реєстрація успішна! Ви стали членом ферайну."
 msgstr "Registrierung erfolgreich! Sie sind jetzt Mitglied des Vereins."
 
-#: app/routes/main.py:154
+#: app/routes/main.py:174
 msgid "Ви увійшли!"
 msgstr "Sie sind angemeldet!"
 
-#: app/routes/main.py:160
+#: app/routes/main.py:180
 msgid "Невірний email або пароль"
 msgstr "Ungültige E-Mail oder Passwort"
 
-#: app/routes/main.py:167
+#: app/routes/main.py:187
 msgid "Ви вийшли з акаунту."
 msgstr "Sie haben sich abgemeldet."
 
-#: app/routes/main.py:175
+#: app/routes/main.py:195
 msgid "Увійдіть, щоб побачити кабінет"
 msgstr "Bitte melden Sie sich an, um das Dashboard zu sehen"
 
-#: app/routes/main.py:205
+#: app/routes/main.py:225
 msgid "Треба увійти, щоб голосувати."
 msgstr "Sie müssen angemeldet sein, um abzustimmen."
 
-#: app/routes/main.py:210
+#: app/routes/main.py:230
 msgid "Ви вже підтримали цей проєкт!"
 msgstr "Sie haben dieses Projekt bereits unterstützt!"
 
-#: app/routes/main.py:215
+#: app/routes/main.py:235
 msgid "Ваш голос зараховано!"
 msgstr "Ihre Stimme wurde gezählt!"
 
-#: app/routes/main.py:222
+#: app/routes/main.py:242
 msgid "Увійдіть, щоб змінити фото профілю"
 msgstr "Melden Sie sich an, um Ihr Profilbild zu ändern"
 
-#: app/routes/main.py:227
+#: app/routes/main.py:247
 msgid "Користувача не знайдено"
 msgstr "Benutzer nicht gefunden"
 
-#: app/routes/main.py:231 app/routes/main.py:237
+#: app/routes/main.py:251 app/routes/main.py:257
 msgid "Файл не вибрано"
 msgstr "Keine Datei ausgewählt"
 
-#: app/routes/main.py:264
+#: app/routes/main.py:284
 msgid "Фото профілю оновлено"
 msgstr "Profilbild aktualisiert"
 
-#: app/templates/base.html:5 app/templates/base.html:63
+#: app/templates/base.html:5 app/templates/base.html:64
 msgid "Brama UA"
 msgstr "Brama UA"
 
-#: app/templates/base.html:16
+#: app/templates/base.html:17
 #, fuzzy
 msgid "Головна"
 msgstr "Startseite"
 
-#: app/templates/base.html:17
+#: app/templates/base.html:18
 msgid "Facebook"
 msgstr "Facebook"
 
-#: app/templates/base.html:18
+#: app/templates/base.html:19
 msgid "Instagram"
 msgstr "Instagram"
 
-#: app/templates/base.html:19
+#: app/templates/base.html:20
 msgid "Telegram"
 msgstr "Telegram"
 
-#: app/templates/base.html:22
+#: app/templates/base.html:23
 msgid "Особистий кабінет"
 msgstr "Persönlicher Bereich"
 
-#: app/templates/base.html:24
+#: app/templates/base.html:25
 msgid "Панель адміністратора"
 msgstr "Administrator-Panel"
 
-#: app/templates/base.html:27
+#: app/templates/base.html:28
 msgid "Панель засновника"
 msgstr "Gründer-Panel"
 
-#: app/templates/base.html:29
+#: app/templates/base.html:30
 #, fuzzy
 msgid "Вийти"
 msgstr "Abmelden"
 
-#: app/templates/base.html:31 app/templates/login.html:3
+#: app/templates/base.html:32 app/templates/login.html:3
 msgid "Вхід"
 msgstr "Anmelden"
 
-#: app/templates/base.html:32
+#: app/templates/base.html:33
 #, fuzzy
 msgid "Реєстрація"
 msgstr "Registrieren"
 
-#: app/templates/base.html:54
+#: app/templates/base.html:55 app/templates/privacy.html:2
+#: app/templates/privacy.html:5
 msgid "Політика конфіденційності"
 msgstr "Datenschutzerklärung"
 
-#: app/templates/base.html:55 app/templates/contact.html:2
+#: app/templates/base.html:56 app/templates/contact.html:2
 #: app/templates/contact.html:5
 msgid "Контакти"
 msgstr "Kontakte"
 
-#: app/templates/base.html:56
+#: app/templates/base.html:57 app/templates/impressum.html:2
+#: app/templates/impressum.html:5
 msgid "Імпресум"
 msgstr "Impressum"
 
@@ -338,6 +340,125 @@ msgstr "Projektfoto (optional):"
 #: app/templates/submit_project.html:27
 msgid "Документ (URL)"
 msgstr "Dokument (URL)"
+
+#: app/templates/admin/edit_block_multilingual.html:2
+#: app/templates/admin/edit_block_multilingual.html:4
+msgid "Редагувати блок"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:2
+#: app/templates/admin/edit_block_multilingual.html:4
+msgid "Створити блок"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:8
+msgid "Українська"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:9
+msgid "Німецька"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:10
+msgid "Англійська"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:16
+msgid "Українська версія (основна)"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:17
+msgid "Заголовок:"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:19
+#, fuzzy
+msgid "Контент:"
+msgstr "Kontakte"
+
+#: app/templates/admin/edit_block_multilingual.html:25
+msgid "Німецька версія"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:26
+msgid "Заголовок (німецькою):"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:28
+msgid "Контент (німецькою):"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:34
+msgid "Англійська версія"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:35
+msgid "Заголовок (англійською):"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:37
+msgid "Контент (англійською):"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:43
+msgid "Тип блоку:"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:45
+msgid "Інформаційний"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:46
+msgid "Галерея"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:47
+msgid "Проекти"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:48
+msgid "Події"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:49
+msgid "Новини"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:50
+msgid "Інший блок"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:52
+msgid "Обкладинка:"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:56
+msgid "Поточна обкладинка"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:57
+msgid "Поточне зображення"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:61
+msgid "Або вкажіть URL зображення:"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:64
+#: app/templates/admin/edit_social.html:28
+msgid "Зберегти"
+msgstr ""
+
+#: app/templates/admin/edit_block_multilingual.html:65
+#: app/templates/admin/edit_social.html:29
+msgid "Скасувати"
+msgstr ""
+
+#: app/templates/admin/edit_social.html:2
+#: app/templates/admin/edit_social.html:5
+#, fuzzy
+msgid "Редагувати соцмережі"
+msgstr "Soziale Netzwerke"
 
 #~ msgid "{editor}: Editing failed"
 #~ msgstr ""

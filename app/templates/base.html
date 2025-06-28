@@ -13,25 +13,40 @@
 
 <!-- ХЕДЕР -->
 <header class="main-header">
-  <div class="d-flex justify-content-center align-items-center gap-4">
-    <a class="nav-link" href="{{ url_for('main.index') }}" title="{{ _('Головна') }}"><i class="fas fa-home"></i></a>
-    <a class="nav-link" href="{{ settings.facebook or '#' }}" target="_blank" title="{{ _('Facebook') }}"><i class="fab fa-facebook"></i></a>
-    <a class="nav-link" href="{{ settings.instagram or '#' }}" target="_blank" title="{{ _('Instagram') }}"><i class="fab fa-instagram"></i></a>
-    <a class="nav-link" href="{{ settings.telegram or '#' }}" target="_blank" title="{{ _('Telegram') }}"><i class="fab fa-telegram"></i></a>
-    {% if session.get('user_id') %}
-      {% set current_user = user or {} %}
-      <a class="nav-link" href="{{ url_for('main.dashboard') }}" title="{{ _('Особистий кабінет') }}">👤</a>
-      {% if current_user.is_admin %}
-        <a class="nav-link" href="{{ url_for('admin.dashboard') }}" title="{{ _('Панель адміністратора') }}">⚙️</a>
+  <div class="d-flex justify-content-between align-items-center w-100">
+    <div class="d-flex align-items-center gap-3">
+      <a class="nav-link" href="{{ url_for('main.index') }}" title="{{ _('Головна') }}"><i class="fas fa-home"></i></a>
+      <a class="nav-link" href="{{ settings.facebook or '#' }}" target="_blank" title="{{ _('Facebook') }}"><i class="fab fa-facebook"></i></a>
+      <a class="nav-link" href="{{ settings.instagram or '#' }}" target="_blank" title="{{ _('Instagram') }}"><i class="fab fa-instagram"></i></a>
+      <a class="nav-link" href="{{ settings.telegram or '#' }}" target="_blank" title="{{ _('Telegram') }}"><i class="fab fa-telegram"></i></a>
+    </div>
+    <div class="language-dropdown">
+      <button class="language-btn">
+        {% if session.get('language', 'uk') == 'uk' %}UA{% elif session.get('language') == 'de' %}DE{% else %}EN{% endif %}
+        <i class="fas fa-chevron-down"></i>
+      </button>
+      <div class="language-dropdown-content">
+        <a href="{{ url_for('language.set_language', language='uk') }}" {% if session.get('language', 'uk') == 'uk' %}class="active"{% endif %}>UA</a>
+        <a href="{{ url_for('language.set_language', language='de') }}" {% if session.get('language') == 'de' %}class="active"{% endif %}>DE</a>
+        <a href="{{ url_for('language.set_language', language='en') }}" {% if session.get('language') == 'en' %}class="active"{% endif %}>EN</a>
+      </div>
+    </div>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      {% if session.get('user_id') %}
+        {% set current_user = user or {} %}
+        <a class="nav-link" href="{{ url_for('main.dashboard') }}" title="{{ _('Особистий кабінет') }}"><i class="fas fa-user"></i></a>
+        {% if current_user.is_admin %}
+          <a class="nav-link" href="{{ url_for('admin.dashboard') }}" title="{{ _('Панель адміністратора') }}"><i class="fas fa-cogs"></i></a>
+        {% endif %}
+        {% if current_user.is_founder %}
+          <a class="nav-link" href="{{ url_for('founder.dashboard') }}" title="{{ _('Панель засновника') }}"><i class="fas fa-landmark"></i></a>
+        {% endif %}
+        <a class="nav-link" href="{{ url_for('main.logout') }}" title="{{ _('Вийти') }}"><i class="fas fa-sign-out-alt"></i></a>
+      {% else %}
+        <a class="nav-link" href="{{ url_for('main.login') }}" title="{{ _('Вхід') }}"><i class="fas fa-lock"></i></a>
+        <a class="nav-link" href="{{ url_for('main.register') }}" title="{{ _('Реєстрація') }}"><i class="fas fa-user-plus"></i></a>
       {% endif %}
-      {% if current_user.is_founder %}
-        <a class="nav-link" href="{{ url_for('founder.dashboard') }}" title="{{ _('Панель засновника') }}">🏛️</a>
-      {% endif %}
-      <a class="nav-link" href="{{ url_for('main.logout') }}" title="{{ _('Вийти') }}">🚪</a>
-    {% else %}
-      <a class="nav-link" href="/login" title="{{ _('Вхід') }}">🔒</a>
-      <a class="nav-link" href="/register" title="{{ _('Реєстрація') }}">📝</a>
-    {% endif %}
   </div>
 </header>
 
@@ -51,21 +66,38 @@
 
 <!-- ФУТЕР -->
 <footer class="main-footer">
-  <div class="footer-links">
-    <a href="/privacy">{{ _('Політика конфіденційності') }}</a>
-    <a href="/contact">{{ _('Контакти') }}</a>
-    <a href="/impressum">{{ _('Імпресум') }}</a>
+  <div class="d-flex justify-content-between align-items-center w-100 px-4">
+    <div class="footer-links">
+      <a href="{{ url_for('main.privacy') }}">{{ _('Політика конфіденційності') }}</a>
+      <a href="{{ url_for('main.contact') }}">{{ _('Контакти') }}</a>
+      <a href="{{ url_for('main.impressum') }}">{{ _('Імпресум') }}</a>
+    </div>
+    <p class="copyright m-0">© 2025 {{ _('Brama UA') }}</p>
   </div>
-  <div class="language-selector">
-    <a href="{{ url_for('language.set_language', language='uk') }}" {% if session.get('language', 'uk') == 'uk' %}class="active"{% endif %}>UA</a> |
-    <a href="{{ url_for('language.set_language', language='de') }}" {% if session.get('language') == 'de' %}class="active"{% endif %}>DE</a> |
-    <a href="{{ url_for('language.set_language', language='en') }}" {% if session.get('language') == 'en' %}class="active"{% endif %}>EN</a>
-  </div>
-  <p class="copyright">© 2025 {{ _('Brama UA') }}</p>
 </footer>
 
 <!-- Подключаем чат-виджет -->
 <link rel="stylesheet" href="{{ url_for('static', filename='chat-widget/chat-widget.css') }}">
 <script src="{{ url_for('static', filename='chat-widget/chat-widget.js') }}"></script>
+
+<!-- Language dropdown toggle script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const langBtn = document.querySelector('.language-btn');
+  const langDropdown = document.querySelector('.language-dropdown-content');
+  
+  langBtn.addEventListener('click', function(event) {
+    event.preventDefault();
+    langDropdown.style.display = langDropdown.style.display === 'block' ? 'none' : 'block';
+  });
+  
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(event) {
+    if (!event.target.closest('.language-dropdown')) {
+      langDropdown.style.display = 'none';
+    }
+  });
+});
+</script>
 </body>
 </html>
