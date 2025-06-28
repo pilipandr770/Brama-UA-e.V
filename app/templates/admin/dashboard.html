@@ -140,6 +140,9 @@
             <a href="{{ url_for('admin.create_block') }}" class="button add-button">
                 <i class="fa fa-plus"></i> Додати блок
             </a>
+            <a href="{{ url_for('multilingual_admin.create_block_multilingual') }}" class="button add-button" style="background-color: #3498db; margin-left: 10px;">
+                <i class="fa fa-plus"></i> <i class="fa fa-language"></i> Додати багатомовний блок
+            </a>
         </div>
     </div>
     
@@ -166,6 +169,9 @@
             <div class="block-actions">
                 <a href="{{ url_for('admin.edit_block', block_id=block.id) }}" class="button edit-button">
                     <i class="fa fa-edit"></i> Редагувати
+                </a>
+                <a href="{{ url_for('multilingual_admin.edit_block_multilingual', block_id=block.id) }}" class="button edit-button" style="background-color: #3498db;">
+                    <i class="fa fa-language"></i> Багатомовний редактор
                 </a>
                 <form method="post" action="{{ url_for('admin.delete_block', block_id=block.id) }}">
                     <button type="submit" onclick="return confirm('Видалити блок {{ block.title }}?');" class="button delete-button">
@@ -288,27 +294,27 @@
         <div class="settings-card">
             <div class="settings-card-header">
                 <h3>Соціальні мережі</h3>
-                <span class="settings-icon">📱</span>
+                <span class="settings-icon"><i class="fas fa-share-alt"></i></span>
             </div>
             <div class="settings-card-body">
                 <div class="social-links">
                     <div class="social-link">
-                        <span class="social-icon">📘</span>
+                        <span class="social-icon"><i class="fab fa-facebook"></i></span>
                         <span class="social-name">Facebook:</span>
                         <span class="social-value">{{ settings.facebook if settings else 'Не налаштовано' }}</span>
                     </div>
                     <div class="social-link">
-                        <span class="social-icon">📸</span>
+                        <span class="social-icon"><i class="fab fa-instagram"></i></span>
                         <span class="social-name">Instagram:</span>
                         <span class="social-value">{{ settings.instagram if settings else 'Не налаштовано' }}</span>
                     </div>
                     <div class="social-link">
-                        <span class="social-icon">✈️</span>
+                        <span class="social-icon"><i class="fab fa-telegram"></i></span>
                         <span class="social-name">Telegram:</span>
                         <span class="social-value">{{ settings.telegram if settings else 'Не налаштовано' }}</span>
                     </div>
                     <div class="social-link">
-                        <span class="social-icon">✉️</span>
+                        <span class="social-icon"><i class="fas fa-envelope"></i></span>
                         <span class="social-name">Email:</span>
                         <span class="social-value">{{ settings.email if settings else 'Не налаштовано' }}</span>
                     </div>

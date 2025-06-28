@@ -1,0 +1,337 @@
+# Translations template for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-06-28 10:49+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: app/routes/main.py:84
+msgid "Проєкт успішно подано! Очікує модерації."
+msgstr ""
+
+#: app/routes/main.py:87
+#, python-brace-format
+msgid "Помилка при збереженні: {}"
+msgstr ""
+
+#: app/routes/main.py:121
+msgid "Користувач з такою поштою вже існує."
+msgstr ""
+
+#: app/routes/main.py:141
+msgid "Реєстрація успішна! Ви стали членом ферайну."
+msgstr ""
+
+#: app/routes/main.py:154
+msgid "Ви увійшли!"
+msgstr ""
+
+#: app/routes/main.py:160
+msgid "Невірний email або пароль"
+msgstr ""
+
+#: app/routes/main.py:167
+msgid "Ви вийшли з акаунту."
+msgstr ""
+
+#: app/routes/main.py:175
+msgid "Увійдіть, щоб побачити кабінет"
+msgstr ""
+
+#: app/routes/main.py:205
+msgid "Треба увійти, щоб голосувати."
+msgstr ""
+
+#: app/routes/main.py:210
+msgid "Ви вже підтримали цей проєкт!"
+msgstr ""
+
+#: app/routes/main.py:215
+msgid "Ваш голос зараховано!"
+msgstr ""
+
+#: app/routes/main.py:222
+msgid "Увійдіть, щоб змінити фото профілю"
+msgstr ""
+
+#: app/routes/main.py:227
+msgid "Користувача не знайдено"
+msgstr ""
+
+#: app/routes/main.py:231 app/routes/main.py:237
+msgid "Файл не вибрано"
+msgstr ""
+
+#: app/routes/main.py:264
+msgid "Фото профілю оновлено"
+msgstr ""
+
+#: app/templates/base.html:5 app/templates/base.html:63
+msgid "Brama UA"
+msgstr ""
+
+#: app/templates/base.html:16
+msgid "Головна"
+msgstr ""
+
+#: app/templates/base.html:17
+msgid "Facebook"
+msgstr ""
+
+#: app/templates/base.html:18
+msgid "Instagram"
+msgstr ""
+
+#: app/templates/base.html:19
+msgid "Telegram"
+msgstr ""
+
+#: app/templates/base.html:22
+msgid "Особистий кабінет"
+msgstr ""
+
+#: app/templates/base.html:24
+msgid "Панель адміністратора"
+msgstr ""
+
+#: app/templates/base.html:27
+msgid "Панель засновника"
+msgstr ""
+
+#: app/templates/base.html:29
+msgid "Вийти"
+msgstr ""
+
+#: app/templates/base.html:31 app/templates/login.html:3
+msgid "Вхід"
+msgstr ""
+
+#: app/templates/base.html:32
+msgid "Реєстрація"
+msgstr ""
+
+#: app/templates/base.html:54
+msgid "Політика конфіденційності"
+msgstr ""
+
+#: app/templates/base.html:55 app/templates/contact.html:2
+#: app/templates/contact.html:5
+msgid "Контакти"
+msgstr ""
+
+#: app/templates/base.html:56
+msgid "Імпресум"
+msgstr ""
+
+#: app/templates/contact.html:6
+msgid "Зв'яжіться з нами для співпраці, питань чи пропозицій:"
+msgstr ""
+
+#: app/templates/contact.html:7 app/templates/contact.html:14
+msgid "Email:"
+msgstr ""
+
+#: app/templates/contact.html:8
+msgid "Телефон:"
+msgstr ""
+
+#: app/templates/contact.html:9
+msgid "Адреса:"
+msgstr ""
+
+#: app/templates/contact.html:9
+msgid "Берлін, Німеччина"
+msgstr ""
+
+#: app/templates/contact.html:10
+msgid "Або скористайтесь формою:"
+msgstr ""
+
+#: app/templates/contact.html:12
+msgid "Ваше ім'я:"
+msgstr ""
+
+#: app/templates/contact.html:16
+msgid "Повідомлення:"
+msgstr ""
+
+#: app/templates/contact.html:18 app/templates/submit_project.html:29
+msgid "Надіслати"
+msgstr ""
+
+#: app/templates/index.html:2
+msgid "Головна сторінка"
+msgstr ""
+
+#: app/templates/login.html:5
+msgid "Email"
+msgstr ""
+
+#: app/templates/login.html:7
+msgid "Пароль"
+msgstr ""
+
+#: app/templates/login.html:9
+msgid "Увійти"
+msgstr ""
+
+#: app/templates/register.html:3
+msgid "Реєстрація члена ферайну / волонтера"
+msgstr ""
+
+#: app/templates/register.html:5
+msgid "Згода на обробку персональних даних (GDPR):"
+msgstr ""
+
+#: app/templates/register.html:6
+msgid ""
+"Ваша інформація буде використана лише для членства у ферайні, "
+"комунікації, організації волонтерської діяльності та звітності. Дані не "
+"передаються третім особам, окрім випадків, передбачених законом. Ви маєте"
+" право на доступ, зміну та видалення своїх даних. Детальніше — у"
+msgstr ""
+
+#: app/templates/register.html:6
+msgid "Політиці конфіденційності"
+msgstr ""
+
+#: app/templates/register.html:7
+msgid "Погоджуюсь"
+msgstr ""
+
+#: app/templates/register.html:10
+msgid "Ім'я*:"
+msgstr ""
+
+#: app/templates/register.html:12
+msgid "Прізвище*:"
+msgstr ""
+
+#: app/templates/register.html:14
+msgid "Дата народження*:"
+msgstr ""
+
+#: app/templates/register.html:16
+msgid "Спеціальність:"
+msgstr ""
+
+#: app/templates/register.html:18
+msgid "Мета приєднання до ферайну*:"
+msgstr ""
+
+#: app/templates/register.html:20
+msgid "Чим можете допомогти?"
+msgstr ""
+
+#: app/templates/register.html:22
+msgid "Чим хочете займатись?"
+msgstr ""
+
+#: app/templates/register.html:24
+msgid "Телефон*:"
+msgstr ""
+
+#: app/templates/register.html:26
+msgid "Email*:"
+msgstr ""
+
+#: app/templates/register.html:28
+msgid "Пароль*:"
+msgstr ""
+
+#: app/templates/register.html:31
+msgid "Зареєструватися"
+msgstr ""
+
+#: app/templates/submit_project.html:3
+msgid "Подати проєкт"
+msgstr ""
+
+#: app/templates/submit_project.html:6
+msgid "Подати новий соціальний проєкт"
+msgstr ""
+
+#: app/templates/submit_project.html:8
+msgid "Назва проєкту*"
+msgstr ""
+
+#: app/templates/submit_project.html:9
+msgid "Опис проблеми*"
+msgstr ""
+
+#: app/templates/submit_project.html:10
+msgid "Мета*"
+msgstr ""
+
+#: app/templates/submit_project.html:11
+msgid "Цільова аудиторія*"
+msgstr ""
+
+#: app/templates/submit_project.html:12
+msgid "План реалізації*"
+msgstr ""
+
+#: app/templates/submit_project.html:13
+msgid "Виконавець*"
+msgstr ""
+
+#: app/templates/submit_project.html:14
+msgid "Бюджет (€)*"
+msgstr ""
+
+#: app/templates/submit_project.html:15
+msgid "Розподіл бюджету*"
+msgstr ""
+
+#: app/templates/submit_project.html:16
+msgid "Очікуваний результат*"
+msgstr ""
+
+#: app/templates/submit_project.html:17
+msgid "Можливі ризики*"
+msgstr ""
+
+#: app/templates/submit_project.html:18
+msgid "Тривалість*"
+msgstr ""
+
+#: app/templates/submit_project.html:19
+msgid "Звітність*"
+msgstr ""
+
+#: app/templates/submit_project.html:22
+msgid "Категорія"
+msgstr ""
+
+#: app/templates/submit_project.html:23
+msgid "Місце реалізації"
+msgstr ""
+
+#: app/templates/submit_project.html:24
+msgid "Вебсайт"
+msgstr ""
+
+#: app/templates/submit_project.html:25
+msgid "Соцмережі"
+msgstr ""
+
+#: app/templates/submit_project.html:26
+msgid "Фото проєкту (необовʼязково):"
+msgstr ""
+
+#: app/templates/submit_project.html:27
+msgid "Документ (URL)"
+msgstr ""
+

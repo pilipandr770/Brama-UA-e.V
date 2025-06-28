@@ -8,3 +8,4 @@ class Block(db.Model):
     type = db.Column(db.String(32), nullable=False)  # info, gallery, projects
     is_active = db.Column(db.Boolean, default=True)
     image_url = db.Column(db.String(300), nullable=True)  # обкладинка
+    translations = db.Column(db.Text, nullable=True)  # JSON string for multilingual content

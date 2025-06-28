@@ -1,0 +1,542 @@
+# German translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-06-28 10:49+0200\n"
+"PO-Revision-Date: 2025-06-28 09:49+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: de\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: app/routes/main.py:84
+msgid "Проєкт успішно подано! Очікує модерації."
+msgstr "Projekt erfolgreich eingereicht! Wartet auf Moderation."
+
+#: app/routes/main.py:87
+#, python-brace-format
+msgid "Помилка при збереженні: {}"
+msgstr "Fehler beim Speichern: {}"
+
+#: app/routes/main.py:121
+msgid "Користувач з такою поштою вже існує."
+msgstr "Ein Benutzer mit dieser E-Mail existiert bereits."
+
+#: app/routes/main.py:141
+msgid "Реєстрація успішна! Ви стали членом ферайну."
+msgstr "Registrierung erfolgreich! Sie sind jetzt Mitglied des Vereins."
+
+#: app/routes/main.py:154
+msgid "Ви увійшли!"
+msgstr "Sie sind angemeldet!"
+
+#: app/routes/main.py:160
+msgid "Невірний email або пароль"
+msgstr "Ungültige E-Mail oder Passwort"
+
+#: app/routes/main.py:167
+msgid "Ви вийшли з акаунту."
+msgstr "Sie haben sich abgemeldet."
+
+#: app/routes/main.py:175
+msgid "Увійдіть, щоб побачити кабінет"
+msgstr "Bitte melden Sie sich an, um das Dashboard zu sehen"
+
+#: app/routes/main.py:205
+msgid "Треба увійти, щоб голосувати."
+msgstr "Sie müssen angemeldet sein, um abzustimmen."
+
+#: app/routes/main.py:210
+msgid "Ви вже підтримали цей проєкт!"
+msgstr "Sie haben dieses Projekt bereits unterstützt!"
+
+#: app/routes/main.py:215
+msgid "Ваш голос зараховано!"
+msgstr "Ihre Stimme wurde gezählt!"
+
+#: app/routes/main.py:222
+msgid "Увійдіть, щоб змінити фото профілю"
+msgstr "Melden Sie sich an, um Ihr Profilbild zu ändern"
+
+#: app/routes/main.py:227
+msgid "Користувача не знайдено"
+msgstr "Benutzer nicht gefunden"
+
+#: app/routes/main.py:231 app/routes/main.py:237
+msgid "Файл не вибрано"
+msgstr "Keine Datei ausgewählt"
+
+#: app/routes/main.py:264
+msgid "Фото профілю оновлено"
+msgstr "Profilbild aktualisiert"
+
+#: app/templates/base.html:5 app/templates/base.html:63
+msgid "Brama UA"
+msgstr "Brama UA"
+
+#: app/templates/base.html:16
+#, fuzzy
+msgid "Головна"
+msgstr "Startseite"
+
+#: app/templates/base.html:17
+msgid "Facebook"
+msgstr "Facebook"
+
+#: app/templates/base.html:18
+msgid "Instagram"
+msgstr "Instagram"
+
+#: app/templates/base.html:19
+msgid "Telegram"
+msgstr "Telegram"
+
+#: app/templates/base.html:22
+msgid "Особистий кабінет"
+msgstr "Persönlicher Bereich"
+
+#: app/templates/base.html:24
+msgid "Панель адміністратора"
+msgstr "Administrator-Panel"
+
+#: app/templates/base.html:27
+msgid "Панель засновника"
+msgstr "Gründer-Panel"
+
+#: app/templates/base.html:29
+#, fuzzy
+msgid "Вийти"
+msgstr "Abmelden"
+
+#: app/templates/base.html:31 app/templates/login.html:3
+msgid "Вхід"
+msgstr "Anmelden"
+
+#: app/templates/base.html:32
+#, fuzzy
+msgid "Реєстрація"
+msgstr "Registrieren"
+
+#: app/templates/base.html:54
+msgid "Політика конфіденційності"
+msgstr "Datenschutzerklärung"
+
+#: app/templates/base.html:55 app/templates/contact.html:2
+#: app/templates/contact.html:5
+msgid "Контакти"
+msgstr "Kontakte"
+
+#: app/templates/base.html:56
+msgid "Імпресум"
+msgstr "Impressum"
+
+#: app/templates/contact.html:6
+msgid "Зв'яжіться з нами для співпраці, питань чи пропозицій:"
+msgstr "Kontaktieren Sie uns für Zusammenarbeit, Fragen oder Vorschläge:"
+
+#: app/templates/contact.html:7 app/templates/contact.html:14
+msgid "Email:"
+msgstr "E-Mail:"
+
+#: app/templates/contact.html:8
+msgid "Телефон:"
+msgstr "Telefon:"
+
+#: app/templates/contact.html:9
+msgid "Адреса:"
+msgstr "Adresse:"
+
+#: app/templates/contact.html:9
+msgid "Берлін, Німеччина"
+msgstr "Berlin, Deutschland"
+
+#: app/templates/contact.html:10
+msgid "Або скористайтесь формою:"
+msgstr "Oder benutzen Sie das Formular:"
+
+#: app/templates/contact.html:12
+msgid "Ваше ім'я:"
+msgstr "Ihr Name:"
+
+#: app/templates/contact.html:16
+msgid "Повідомлення:"
+msgstr "Nachricht:"
+
+#: app/templates/contact.html:18 app/templates/submit_project.html:29
+msgid "Надіслати"
+msgstr "Absenden"
+
+#: app/templates/index.html:2
+msgid "Головна сторінка"
+msgstr "Startseite"
+
+#: app/templates/login.html:5
+msgid "Email"
+msgstr "E-Mail"
+
+#: app/templates/login.html:7
+msgid "Пароль"
+msgstr "Passwort"
+
+#: app/templates/login.html:9
+msgid "Увійти"
+msgstr "Anmelden"
+
+#: app/templates/register.html:3
+msgid "Реєстрація члена ферайну / волонтера"
+msgstr "Registrierung eines Vereinsmitglieds / Freiwilligen"
+
+#: app/templates/register.html:5
+msgid "Згода на обробку персональних даних (GDPR):"
+msgstr "Einwilligung zur Verarbeitung personenbezogener Daten (DSGVO):"
+
+#: app/templates/register.html:6
+msgid ""
+"Ваша інформація буде використана лише для членства у ферайні, "
+"комунікації, організації волонтерської діяльності та звітності. Дані не "
+"передаються третім особам, окрім випадків, передбачених законом. Ви маєте"
+" право на доступ, зміну та видалення своїх даних. Детальніше — у"
+msgstr ""
+
+#: app/templates/register.html:6
+msgid "Політиці конфіденційності"
+msgstr "Datenschutzerklärung"
+
+#: app/templates/register.html:7
+msgid "Погоджуюсь"
+msgstr "Ich stimme zu"
+
+#: app/templates/register.html:10
+msgid "Ім'я*:"
+msgstr "Vorname*:"
+
+#: app/templates/register.html:12
+msgid "Прізвище*:"
+msgstr "Nachname*:"
+
+#: app/templates/register.html:14
+msgid "Дата народження*:"
+msgstr "Geburtsdatum*:"
+
+#: app/templates/register.html:16
+msgid "Спеціальність:"
+msgstr "Fachgebiet:"
+
+#: app/templates/register.html:18
+msgid "Мета приєднання до ферайну*:"
+msgstr "Zweck des Vereinsbeitritts*:"
+
+#: app/templates/register.html:20
+msgid "Чим можете допомогти?"
+msgstr "Wie können Sie helfen?"
+
+#: app/templates/register.html:22
+msgid "Чим хочете займатись?"
+msgstr "Womit möchten Sie sich beschäftigen?"
+
+#: app/templates/register.html:24
+msgid "Телефон*:"
+msgstr "Telefon*:"
+
+#: app/templates/register.html:26
+msgid "Email*:"
+msgstr "E-Mail*:"
+
+#: app/templates/register.html:28
+msgid "Пароль*:"
+msgstr "Passwort*:"
+
+#: app/templates/register.html:31
+msgid "Зареєструватися"
+msgstr "Registrieren"
+
+#: app/templates/submit_project.html:3
+msgid "Подати проєкт"
+msgstr "Projekt einreichen"
+
+#: app/templates/submit_project.html:6
+msgid "Подати новий соціальний проєкт"
+msgstr "Neues soziales Projekt einreichen"
+
+#: app/templates/submit_project.html:8
+msgid "Назва проєкту*"
+msgstr "Projektname*"
+
+#: app/templates/submit_project.html:9
+msgid "Опис проблеми*"
+msgstr "Problembeschreibung*"
+
+#: app/templates/submit_project.html:10
+msgid "Мета*"
+msgstr "Ziel*"
+
+#: app/templates/submit_project.html:11
+msgid "Цільова аудиторія*"
+msgstr "Zielgruppe*"
+
+#: app/templates/submit_project.html:12
+msgid "План реалізації*"
+msgstr "Umsetzungsplan*"
+
+#: app/templates/submit_project.html:13
+msgid "Виконавець*"
+msgstr "Ausführender*"
+
+#: app/templates/submit_project.html:14
+msgid "Бюджет (€)*"
+msgstr "Budget (€)*"
+
+#: app/templates/submit_project.html:15
+msgid "Розподіл бюджету*"
+msgstr "Budgetverteilung*"
+
+#: app/templates/submit_project.html:16
+msgid "Очікуваний результат*"
+msgstr "Erwartetes Ergebnis*"
+
+#: app/templates/submit_project.html:17
+msgid "Можливі ризики*"
+msgstr "Mögliche Risiken*"
+
+#: app/templates/submit_project.html:18
+msgid "Тривалість*"
+msgstr "Dauer*"
+
+#: app/templates/submit_project.html:19
+msgid "Звітність*"
+msgstr "Berichterstattung*"
+
+#: app/templates/submit_project.html:22
+msgid "Категорія"
+msgstr "Kategorie"
+
+#: app/templates/submit_project.html:23
+msgid "Місце реалізації"
+msgstr "Umsetzungsort"
+
+#: app/templates/submit_project.html:24
+msgid "Вебсайт"
+msgstr "Website"
+
+#: app/templates/submit_project.html:25
+msgid "Соцмережі"
+msgstr "Soziale Netzwerke"
+
+#: app/templates/submit_project.html:26
+msgid "Фото проєкту (необовʼязково):"
+msgstr "Projektfoto (optional):"
+
+#: app/templates/submit_project.html:27
+msgid "Документ (URL)"
+msgstr "Dokument (URL)"
+
+#~ msgid "{editor}: Editing failed"
+#~ msgstr ""
+
+#~ msgid "{editor}: Editing failed: {e}"
+#~ msgstr ""
+
+#~ msgid "{text} {deprecated_message}"
+#~ msgstr ""
+
+#~ msgid "Options"
+#~ msgstr ""
+
+#~ msgid "Got unexpected extra argument ({args})"
+#~ msgid_plural "Got unexpected extra arguments ({args})"
+#~ msgstr[0] ""
+#~ msgstr[1] ""
+
+#~ msgid "DeprecationWarning: The command {name!r} is deprecated.{extra_message}"
+#~ msgstr ""
+
+#~ msgid "Aborted!"
+#~ msgstr ""
+
+#~ msgid "Commands"
+#~ msgstr ""
+
+#~ msgid "Missing command."
+#~ msgstr ""
+
+#~ msgid "No such command {name!r}."
+#~ msgstr ""
+
+#~ msgid "Value must be an iterable."
+#~ msgstr ""
+
+#~ msgid "Takes {nargs} values but 1 was given."
+#~ msgid_plural "Takes {nargs} values but {len} were given."
+#~ msgstr[0] ""
+#~ msgstr[1] ""
+
+#~ msgid ""
+#~ "DeprecationWarning: The {param_type} {name!r} "
+#~ "is deprecated.{extra_message}"
+#~ msgstr ""
+
+#~ msgid "env var: {var}"
+#~ msgstr ""
+
+#~ msgid "default: {default}"
+#~ msgstr ""
+
+#~ msgid "required"
+#~ msgstr ""
+
+#~ msgid "(dynamic)"
+#~ msgstr ""
+
+#~ msgid "%(prog)s, version %(version)s"
+#~ msgstr ""
+
+#~ msgid "Show the version and exit."
+#~ msgstr ""
+
+#~ msgid "Show this message and exit."
+#~ msgstr ""
+
+#~ msgid "Error: {message}"
+#~ msgstr ""
+
+#~ msgid "Try '{command} {option}' for help."
+#~ msgstr ""
+
+#~ msgid "Invalid value: {message}"
+#~ msgstr ""
+
+#~ msgid "Invalid value for {param_hint}: {message}"
+#~ msgstr ""
+
+#~ msgid "Missing argument"
+#~ msgstr ""
+
+#~ msgid "Missing option"
+#~ msgstr ""
+
+#~ msgid "Missing parameter"
+#~ msgstr ""
+
+#~ msgid "Missing {param_type}"
+#~ msgstr ""
+
+#~ msgid "Missing parameter: {param_name}"
+#~ msgstr ""
+
+#~ msgid "No such option: {name}"
+#~ msgstr ""
+
+#~ msgid "Did you mean {possibility}?"
+#~ msgid_plural "(Possible options: {possibilities})"
+#~ msgstr[0] ""
+#~ msgstr[1] ""
+
+#~ msgid "unknown error"
+#~ msgstr ""
+
+#~ msgid "Could not open file {filename!r}: {message}"
+#~ msgstr ""
+
+#~ msgid "Argument {name!r} takes {nargs} values."
+#~ msgstr ""
+
+#~ msgid "Option {name!r} does not take a value."
+#~ msgstr ""
+
+#~ msgid "Option {name!r} requires an argument."
+#~ msgid_plural "Option {name!r} requires {nargs} arguments."
+#~ msgstr[0] ""
+#~ msgstr[1] ""
+
+#~ msgid "Shell completion is not supported for Bash versions older than 4.4."
+#~ msgstr ""
+
+#~ msgid "Couldn't detect Bash version, shell completion is not supported."
+#~ msgstr ""
+
+#~ msgid "Repeat for confirmation"
+#~ msgstr ""
+
+#~ msgid "Error: The value you entered was invalid."
+#~ msgstr ""
+
+#~ msgid "Error: {e.message}"
+#~ msgstr ""
+
+#~ msgid "Error: The two entered values do not match."
+#~ msgstr ""
+
+#~ msgid "Error: invalid input"
+#~ msgstr ""
+
+#~ msgid "Press any key to continue..."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Choose from:\n"
+#~ "\t{choices}"
+#~ msgstr ""
+
+#~ msgid "{value!r} is not {choice}."
+#~ msgid_plural "{value!r} is not one of {choices}."
+#~ msgstr[0] ""
+#~ msgstr[1] ""
+
+#~ msgid "{value!r} does not match the format {format}."
+#~ msgid_plural "{value!r} does not match the formats {formats}."
+#~ msgstr[0] ""
+#~ msgstr[1] ""
+
+#~ msgid "{value!r} is not a valid {number_type}."
+#~ msgstr ""
+
+#~ msgid "{value} is not in the range {range}."
+#~ msgstr ""
+
+#~ msgid "{value!r} is not a valid boolean."
+#~ msgstr ""
+
+#~ msgid "{value!r} is not a valid UUID."
+#~ msgstr ""
+
+#~ msgid "file"
+#~ msgstr ""
+
+#~ msgid "directory"
+#~ msgstr ""
+
+#~ msgid "path"
+#~ msgstr ""
+
+#~ msgid "{name} {filename!r} does not exist."
+#~ msgstr ""
+
+#~ msgid "{name} {filename!r} is a file."
+#~ msgstr ""
+
+#~ msgid "{name} {filename!r} is a directory."
+#~ msgstr ""
+
+#~ msgid "{name} {filename!r} is not readable."
+#~ msgstr ""
+
+#~ msgid "{name} {filename!r} is not writable."
+#~ msgstr ""
+
+#~ msgid "{name} {filename!r} is not executable."
+#~ msgstr ""
+
+#~ msgid "{len_type} values are required, but {len_value} was given."
+#~ msgid_plural "{len_type} values are required, but {len_value} were given."
+#~ msgstr[0] ""
+#~ msgstr[1] ""
+

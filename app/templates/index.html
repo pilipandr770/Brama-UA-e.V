@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Головна сторінка{% endblock %}
+{% block title %}{{ _('Головна сторінка') }}{% endblock %}
 
 {% block content %}
 <div class="main-center-container">
@@ -12,8 +12,8 @@
       {% if info_block.image_url %}
       <img src="{{ info_block.image_url }}" alt="" class="block-cover">
       {% endif %}
-      <h3>{{ info_block.title }}</h3>
-      <div class="block-short">{{ info_block.content[:80] }}...</div>
+      <h3>{{ info_block.translated_title or info_block.title }}</h3>
+      <div class="block-short">{{ (info_block.translated_content or info_block.content)[:80] }}...</div>
     </div>
     {% endif %}
 
@@ -22,8 +22,8 @@
       {% if gallery_block.image_url %}
       <img src="{{ gallery_block.image_url }}" alt="" class="block-cover">
       {% endif %}
-      <h3>{{ gallery_block.title }}</h3>
-      <div class="block-short">{{ gallery_block.content[:80] }}...</div>
+      <h3>{{ gallery_block.translated_title or gallery_block.title }}</h3>
+      <div class="block-short">{{ (gallery_block.translated_content or gallery_block.content)[:80] }}...</div>
     </div>
     {% endif %}
 
@@ -32,8 +32,8 @@
       {% if projects_block.image_url %}
       <img src="{{ projects_block.image_url }}" alt="" class="block-cover">
       {% endif %}
-      <h3>{{ projects_block.title }}</h3>
-      <div class="block-short">{{ projects_block.content[:80] }}...</div>
+      <h3>{{ projects_block.translated_title or projects_block.title }}</h3>
+      <div class="block-short">{{ (projects_block.translated_content or projects_block.content)[:80] }}...</div>
     </div>
     {% endif %}
     
@@ -44,8 +44,8 @@
       {% if block.image_url %}
       <img src="{{ block.image_url }}" alt="" class="block-cover">
       {% endif %}
-      <h3>{{ block.title }}</h3>
-      <div class="block-short">{{ block.content[:80] }}...</div>
+      <h3>{{ block.translated_title or block.title }}</h3>
+      <div class="block-short">{{ (block.translated_content or block.content)[:80] }}...</div>
     </div>
     {% endif %}
     {% endfor %}
@@ -62,15 +62,15 @@
 
     {% if info_block %}
     <div id="modal-details-info" class="modal-details" style="display: none;">
-      <h2>{{ info_block.title }}</h2>
-      <div>{{ info_block.content|safe }}</div>
+      <h2>{{ info_block.translated_title or info_block.title }}</h2>
+      <div>{{ (info_block.translated_content or info_block.content)|safe }}</div>
     </div>
     {% endif %}
 
     {% if gallery_block %}
     <div id="modal-details-gallery" class="modal-details" style="display: none;">
-      <h2>{{ gallery_block.title }}</h2>
-      <div>{{ gallery_block.content|safe }}</div>
+      <h2>{{ gallery_block.translated_title or gallery_block.title }}</h2>
+      <div>{{ (gallery_block.translated_content or gallery_block.content)|safe }}</div>
 
       <div id="gallery-carousel" class="gallery-carousel">
         <button id="gallery-prev" class="gallery-nav">&#8592;</button>
@@ -89,8 +89,8 @@
 
     {% if projects_block %}
     <div id="modal-details-projects" class="modal-details" style="display: none;">
-      <h2>{{ projects_block.title }}</h2>
-      <div>{{ projects_block.content|safe }}</div>
+      <h2>{{ projects_block.translated_title or projects_block.title }}</h2>
+      <div>{{ (projects_block.translated_content or projects_block.content)|safe }}</div>
 
       <!-- Проекти як картки в модальному вікні -->
       {% if projects %}
@@ -118,8 +118,8 @@
     {% for block in additional_blocks %}
     {% if block.is_active %}
     <div id="modal-details-additional-{{ block.id }}" class="modal-details" style="display: none;">
-      <h2>{{ block.title }}</h2>
-      <div>{{ block.content|safe }}</div>
+      <h2>{{ block.translated_title or block.title }}</h2>
+      <div>{{ (block.translated_content or block.content)|safe }}</div>
     </div>
     {% endif %}
     {% endfor %}

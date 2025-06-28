@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Редагувати блок') if block else _('Створити блок') }}{% endblock %}
+{% block content %}
+<h2>{{ _('Редагувати блок') if block else _('Створити блок') }}</h2>
+
+<!-- Language tabs -->
+<div class="language-tabs">
+    <button class="lang-tab active" data-lang="uk">{{ _('Українська') }}</button>
+    <button class="lang-tab" data-lang="de">{{ _('Німецька') }}</button>
+    <button class="lang-tab" data-lang="en">{{ _('Англійська') }}</button>
+</div>
+
+<form method="post" enctype="multipart/form-data" id="blockForm">
+    <!-- Default (Ukrainian) content -->
+    <div class="lang-content uk active">
+        <h3>{{ _('Українська версія (основна)') }}</h3>
+        <label>{{ _('Заголовок:') }}</label><br>
+        <input type="text" name="title" value="{{ block.title if block else '' }}" required><br>
+        <label>{{ _('Контент:') }}</label><br>
+        <textarea name="content" rows="6">{{ block.content if block else '' }}</textarea><br>
+    </div>
+    
+    <!-- German translation -->
+    <div class="lang-content de">
+        <h3>{{ _('Німецька версія') }}</h3>
+        <label>{{ _('Заголовок (німецькою):') }}</label><br>
+        <input type="text" name="title_de" value="{{ block.translations.de.title if block and block.translations and block.translations.de else '' }}"><br>
+        <label>{{ _('Контент (німецькою):') }}</label><br>
+        <textarea name="content_de" rows="6">{{ block.translations.de.content if block and block.translations and block.translations.de else '' }}</textarea><br>
+    </div>
+    
+    <!-- English translation -->
+    <div class="lang-content en">
+        <h3>{{ _('Англійська версія') }}</h3>
+        <label>{{ _('Заголовок (англійською):') }}</label><br>
+        <input type="text" name="title_en" value="{{ block.translations.en.title if block and block.translations and block.translations.en else '' }}"><br>
+        <label>{{ _('Контент (англійською):') }}</label><br>
+        <textarea name="content_en" rows="6">{{ block.translations.en.content if block and block.translations and block.translations.en else '' }}</textarea><br>
+    </div>
+
+    <!-- Common fields for all languages -->
+    <div class="common-fields">
+        <label>{{ _('Тип блоку:') }}</label><br>    
+        <select name="type" required>
+            <option value="info" {% if block and block.type=='info' %}selected{% endif %}>{{ _('Інформаційний') }}</option>
+            <option value="gallery" {% if block and block.type=='gallery' %}selected{% endif %}>{{ _('Галерея') }}</option>
+            <option value="projects" {% if block and block.type=='projects' %}selected{% endif %}>{{ _('Проекти') }}</option>
+            <option value="events" {% if block and block.type=='events' %}selected{% endif %}>{{ _('Події') }}</option>
+            <option value="news" {% if block and block.type=='news' %}selected{% endif %}>{{ _('Новини') }}</option>
+            <option value="custom" {% if block and block.type=='custom' %}selected{% endif %}>{{ _('Інший блок') }}</option>
+        </select><br>
+        <label>{{ _('Обкладинка:') }}</label><br>
+        {% if block and block.image_url %}
+            <div style="margin: 10px 0;">
+                <img src="{{ block.image_url }}" 
+                     alt="{{ _('Поточна обкладинка') }}" style="max-width: 200px; max-height: 150px; margin-bottom: 10px;">
+                <p>{{ _('Поточне зображення') }}</p>
+            </div>
+        {% endif %}
+        <input type="file" name="image_file" accept="image/*"><br>
+        <small>{{ _('Або вкажіть URL зображення:') }}</small><br>
+        <input type="url" name="image_url" value="{{ block.image_url if block else '' }}"><br>
+        
+        <button type="submit">{{ _('Зберегти') }}</button>
+        <a href="{{ url_for('admin.dashboard') }}">{{ _('Скасувати') }}</a>
+    </div>
+</form>
+
+<style>
+.language-tabs {
+    display: flex;
+    margin-bottom: 20px;
+}
+.lang-tab {
+    padding: 10px 15px;
+    margin-right: 5px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+.lang-tab.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+.lang-content {
+    display: none;
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+}
+.lang-content.active {
+    display: block;
+}
+.common-fields {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching
+    document.querySelectorAll('.lang-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs and content sections
+            document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.lang-content').forEach(c => c.classList.remove('active'));
+            
+            // Add active class to current tab and corresponding content
+            this.classList.add('active');
+            const lang = this.getAttribute('data-lang');
+            document.querySelector(`.lang-content.${lang}`).classList.add('active');
+        });
+    });
+
+    // Handle form submission to include translations
+    document.getElementById('blockForm').addEventListener('submit', function(e) {
+        // We'll handle translations in the backend, so no need for client-side processing
+    });
+});
+</script>
+{% endblock %}

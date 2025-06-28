@@ -1,15 +1,16 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_babel import Babel
 from flask_socketio import SocketIO
 from dotenv import load_dotenv
 import os
 
 db = SQLAlchemy()
 migrate = Migrate()
-babel = Babel()
 socketio = SocketIO()
+
+# Import our babel setup (needs to be after initializing the other extensions)
+from app.babel import init_babel
 
 def create_app():
     load_dotenv()
@@ -19,8 +20,17 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app, db)
-    babel.init_app(app)
+    init_babel(app)  # Initialize Babel with our custom locale selector
     socketio.init_app(app, cors_allowed_origins="*")
+    
+    # Configure Babel settings
+    app.config['BABEL_DEFAULT_LOCALE'] = 'uk'
+    app.config['BABEL_DEFAULT_TIMEZONE'] = 'Europe/Kyiv'
+    app.config['LANGUAGES'] = {
+        'uk': 'Українська',
+        'de': 'Deutsch',
+        'en': 'English'
+    }
 
     # Используем централизованную регистрацию blueprints
     from app.routes import register_blueprints

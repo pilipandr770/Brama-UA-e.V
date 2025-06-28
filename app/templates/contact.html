@@ -1,21 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Контакти{% endblock %}
+{% block title %}{{ _('Контакти') }}{% endblock %}
 {% block content %}
 <div style="text-align:center; max-width:700px; margin:40px auto;">
-  <h2>Контакти</h2>
-  <p>Зв'яжіться з нами для співпраці, питань чи пропозицій:</p>
-  <p>Email: <a href="mailto:info@brama-ua.org">info@brama-ua.org</a></p>
-  <p>Телефон: +49 123 4567890</p>
-  <p>Адреса: Musterstraße 1, 12345 Берлін, Німеччина</p>
-  <h3>Або скористайтесь формою:</h3>
+  <h2>{{ _('Контакти') }}</h2>
+  <p>{{ _('Зв\'яжіться з нами для співпраці, питань чи пропозицій:') }}</p>
+  <p>{{ _('Email:') }} <a href="mailto:info@brama-ua.org">info@brama-ua.org</a></p>
+  <p>{{ _('Телефон:') }} +49 123 4567890</p>
+  <p>{{ _('Адреса:') }} Musterstraße 1, 12345 {{ _('Берлін, Німеччина') }}</p>
+  <h3>{{ _('Або скористайтесь формою:') }}</h3>
   <form method="post" style="display:inline-block; text-align:left;">
-    <label>Ваше ім'я:</label><br>
+    <label>{{ _('Ваше ім\'я:') }}</label><br>
     <input type="text" name="name" required><br>
-    <label>Email:</label><br>
+    <label>{{ _('Email:') }}</label><br>
     <input type="email" name="email" required><br>
-    <label>Повідомлення:</label><br>
+    <label>{{ _('Повідомлення:') }}</label><br>
     <textarea name="message" required></textarea><br>
-    <button type="submit">Надіслати</button>
+    <button type="submit">{{ _('Надіслати') }}</button>
   </form>
 </div>
-{% endblock %} 
+{% endblock %}

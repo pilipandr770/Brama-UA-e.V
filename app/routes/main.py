@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, send_file
+from flask_babel import gettext as _
 from app import db
 from app.models.project import Project, Vote
 from app.models.user import User
@@ -9,6 +10,8 @@ import io
 
 
 main_bp = Blueprint('main', __name__)
+
+from app.models.helpers import get_translated_content
 
 @main_bp.route('/')
 def index():
@@ -33,6 +36,24 @@ def index():
         print(f"[DEBUG] Block: {block.id}, {block.title}, {block.type}, active: {block.is_active}")
     
     settings = Settings.query.first()
+    
+    # Process translations for blocks
+    if info_block:
+        info_block.translated_title = get_translated_content(info_block, 'title')
+        info_block.translated_content = get_translated_content(info_block, 'content')
+    
+    if gallery_block:
+        gallery_block.translated_title = get_translated_content(gallery_block, 'title')
+        gallery_block.translated_content = get_translated_content(gallery_block, 'content')
+    
+    if projects_block:
+        projects_block.translated_title = get_translated_content(projects_block, 'title')
+        projects_block.translated_content = get_translated_content(projects_block, 'content')
+    
+    for block in additional_blocks:
+        block.translated_title = get_translated_content(block, 'title')
+        block.translated_content = get_translated_content(block, 'content')
+    
     return render_template(
         'index.html', 
         info_block=info_block, 
@@ -80,10 +101,10 @@ def submit_project():
             )
             db.session.add(project)
             db.session.commit()
-            flash("Проєкт успішно подано! Очікує модерації.", "success")
+            flash(_("Проєкт успішно подано! Очікує модерації."), "success")
             return redirect(url_for('main.index'))
         except Exception as e:
-            flash(f"Помилка при збереженні: {e}", "danger")
+            flash(_("Помилка при збереженні: {}").format(e), "danger")
 
     return render_template('submit_project.html')
 
@@ -117,7 +138,7 @@ def register():
         email = request.form['email']
         password = request.form['password']
         if User.query.filter_by(email=email).first():
-            flash("Користувач з такою поштою вже існує.", "danger")
+            flash(_("Користувач з такою поштою вже існує."), "danger")
             return redirect(url_for('main.register'))
         user = User(
             email=email,
@@ -137,7 +158,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         session['user_id'] = user.id
-        flash("Реєстрація успішна! Ви стали членом ферайну.", "success")
+        flash(_("Реєстрація успішна! Ви стали членом ферайну."), "success")
         return redirect(url_for('main.dashboard'))
     return render_template('register.html')
 
@@ -150,20 +171,20 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
             session['user_id'] = user.id
-            flash("Ви увійшли!", "success")
+            flash(_("Ви увійшли!"), "success")
             if user.is_admin:
                 return redirect(url_for('admin.dashboard'))
             if user.is_founder:
                 return redirect(url_for('founder.dashboard'))
             return redirect(url_for('main.dashboard'))
-        flash("Невірний email або пароль", "danger")
+        flash(_("Невірний email або пароль"), "danger")
     return render_template('login.html')
 
 
 @main_bp.route('/logout')
 def logout():
     session.pop('user_id', None)
-    flash("Ви вийшли з акаунту.", "info")
+    flash(_("Ви вийшли з акаунту."), "info")
     return redirect(url_for('main.index'))
 
 
@@ -171,7 +192,7 @@ def logout():
 def dashboard():
     user_id = session.get('user_id')
     if not user_id:
-        flash("Увійдіть, щоб побачити кабінет", "warning")
+        flash(_("Увійдіть, щоб побачити кабінет"), "warning")
         return redirect(url_for('main.login'))
     
     user = User.query.get(user_id)
@@ -201,39 +222,39 @@ def contact():
 def vote(project_id):
     user_id = session.get('user_id')
     if not user_id:
-        flash('Треба увійти, щоб голосувати.', 'warning')
+        flash(_('Треба увійти, щоб голосувати.'), 'warning')
         return redirect(url_for('main.login'))
     project = Project.query.get_or_404(project_id)
     existing_vote = Vote.query.filter_by(user_id=user_id, project_id=project_id).first()
     if existing_vote:
-        flash('Ви вже підтримали цей проєкт!', 'info')
+        flash(_('Ви вже підтримали цей проєкт!'), 'info')
         return redirect(url_for('main.index'))
     vote = Vote(user_id=user_id, project_id=project_id)
     db.session.add(vote)
     db.session.commit()
-    flash('Ваш голос зараховано!', 'success')
+    flash(_('Ваш голос зараховано!'), 'success')
     return redirect(url_for('main.index'))
 
 @main_bp.route('/upload-profile-photo', methods=['POST'])
 def upload_profile_photo():
     user_id = session.get('user_id')
     if not user_id:
-        flash("Увійдіть, щоб змінити фото профілю", "warning")
+        flash(_("Увійдіть, щоб змінити фото профілю"), "warning")
         return redirect(url_for('main.login'))
     
     user = User.query.get(user_id)
     if not user:
-        flash("Користувача не знайдено", "danger")
+        flash(_("Користувача не знайдено"), "danger")
         return redirect(url_for('main.login'))
     
     if 'profile_photo' not in request.files:
-        flash("Файл не вибрано", "warning")
+        flash(_("Файл не вибрано"), "warning")
         return redirect(url_for('main.dashboard'))
     
     profile_photo = request.files['profile_photo']
     
     if profile_photo.filename == '':
-        flash("Файл не вибрано", "warning")
+        flash(_("Файл не вибрано"), "warning")
         return redirect(url_for('main.dashboard'))
     
     if profile_photo:
@@ -260,6 +281,6 @@ def upload_profile_photo():
         user.profile_photo_url = url_for('static', filename=f'uploads/profiles/{unique_filename}')
         db.session.commit()
         
-        flash("Фото профілю оновлено", "success")
+        flash(_("Фото профілю оновлено"), "success")
     
     return redirect(url_for('main.dashboard'))

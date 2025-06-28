@@ -2,9 +2,10 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <title>{% block title %}Brama UA{% endblock %}</title>
+  <title>{% block title %}{{ _('Brama UA') }}{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   {% block head %}{% endblock %}
 </head>
@@ -13,23 +14,23 @@
 <!-- ХЕДЕР -->
 <header class="main-header">
   <div class="d-flex justify-content-center align-items-center gap-4">
-    <a class="nav-link" href="{{ url_for('main.index') }}">🏠</a>
-    <a class="nav-link" href="{{ settings.facebook or '#' }}">📄</a>
-    <a class="nav-link" href="{{ settings.instagram or '#' }}">📷</a>
-    <a class="nav-link" href="{{ settings.telegram or '#' }}">✈️</a>
+    <a class="nav-link" href="{{ url_for('main.index') }}" title="{{ _('Головна') }}"><i class="fas fa-home"></i></a>
+    <a class="nav-link" href="{{ settings.facebook or '#' }}" target="_blank" title="{{ _('Facebook') }}"><i class="fab fa-facebook"></i></a>
+    <a class="nav-link" href="{{ settings.instagram or '#' }}" target="_blank" title="{{ _('Instagram') }}"><i class="fab fa-instagram"></i></a>
+    <a class="nav-link" href="{{ settings.telegram or '#' }}" target="_blank" title="{{ _('Telegram') }}"><i class="fab fa-telegram"></i></a>
     {% if session.get('user_id') %}
       {% set current_user = user or {} %}
-      <a class="nav-link" href="{{ url_for('main.dashboard') }}">👤</a>
+      <a class="nav-link" href="{{ url_for('main.dashboard') }}" title="{{ _('Особистий кабінет') }}">👤</a>
       {% if current_user.is_admin %}
-        <a class="nav-link" href="{{ url_for('admin.dashboard') }}">⚙️</a>
+        <a class="nav-link" href="{{ url_for('admin.dashboard') }}" title="{{ _('Панель адміністратора') }}">⚙️</a>
       {% endif %}
       {% if current_user.is_founder %}
-        <a class="nav-link" href="{{ url_for('founder.dashboard') }}">🏛️</a>
+        <a class="nav-link" href="{{ url_for('founder.dashboard') }}" title="{{ _('Панель засновника') }}">🏛️</a>
       {% endif %}
-      <a class="nav-link" href="{{ url_for('main.logout') }}">🚪</a>
+      <a class="nav-link" href="{{ url_for('main.logout') }}" title="{{ _('Вийти') }}">🚪</a>
     {% else %}
-      <a class="nav-link" href="/login">🔒</a>
-      <a class="nav-link" href="/register">📝</a>
+      <a class="nav-link" href="/login" title="{{ _('Вхід') }}">🔒</a>
+      <a class="nav-link" href="/register" title="{{ _('Реєстрація') }}">📝</a>
     {% endif %}
   </div>
 </header>
@@ -40,7 +41,7 @@
     {% if messages %}
       <ul class="flashes">
         {% for category, message in messages %}
-          <li class="flash-{{ category }}">{{ message }}</li>
+          <li class="flash-{{ category }}">{{ _(message) }}</li>
         {% endfor %}
       </ul>
     {% endif %}
@@ -51,11 +52,16 @@
 <!-- ФУТЕР -->
 <footer class="main-footer">
   <div class="footer-links">
-    <a href="/privacy">Політика конфіденційності</a>
-    <a href="/contact">Контакти</a>
-    <a href="/impressum">Імпресум</a>
+    <a href="/privacy">{{ _('Політика конфіденційності') }}</a>
+    <a href="/contact">{{ _('Контакти') }}</a>
+    <a href="/impressum">{{ _('Імпресум') }}</a>
   </div>
-  <p class="copyright">© 2025 Brama UA</p>
+  <div class="language-selector">
+    <a href="{{ url_for('language.set_language', language='uk') }}" {% if session.get('language', 'uk') == 'uk' %}class="active"{% endif %}>UA</a> |
+    <a href="{{ url_for('language.set_language', language='de') }}" {% if session.get('language') == 'de' %}class="active"{% endif %}>DE</a> |
+    <a href="{{ url_for('language.set_language', language='en') }}" {% if session.get('language') == 'en' %}class="active"{% endif %}>EN</a>
+  </div>
+  <p class="copyright">© 2025 {{ _('Brama UA') }}</p>
 </footer>
 
 <!-- Подключаем чат-виджет -->

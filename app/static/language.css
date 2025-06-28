@@ -1,0 +1,20 @@
+.language-selector {
+  margin: 10px 0;
+  text-align: center;
+}
+
+.language-selector a {
+  color: #888;
+  margin: 0 5px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.language-selector a.active {
+  color: #007bff;
+  font-weight: bold;
+}
+
+.language-selector a:hover {
+  text-decoration: underline;
+}

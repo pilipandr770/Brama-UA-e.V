@@ -1,7 +1,7 @@
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 @import url('dashboard.css');
 @import url('admin-dashboard.css');
 @import url('admin-project-styles.css');
+@import url('language.css');
 
 body {
     font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
@@ -47,6 +47,34 @@ main {
     text-decoration: none;
     font-weight: 500;
     margin: 0 8px;
+}
+
+/* Social Media Icons */
+.nav-link .fab, .nav-link .fas {
+    font-size: 1.5rem;
+    transition: transform 0.3s, color 0.3s;
+}
+
+.nav-link:hover .fab, .nav-link:hover .fas {
+    transform: scale(1.2);
+}
+
+.nav-link .fa-facebook {
+    color: #1877f2;
+}
+
+.nav-link .fa-instagram {
+    color: #e4405f;
+}
+
+.nav-link .fa-telegram {
+    color: #0088cc;
+}
+
+.social-icon .fab, .social-icon .fas {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
     transition: color 0.2s;
 }
 
