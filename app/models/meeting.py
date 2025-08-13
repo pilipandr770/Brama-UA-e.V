@@ -30,6 +30,10 @@ class Meeting(db.Model):
     agenda_items = db.relationship('AgendaItem', backref='meeting', lazy='dynamic', cascade='all, delete-orphan')
     attendees = db.relationship('MeetingAttendee', backref='meeting', lazy='dynamic', cascade='all, delete-orphan')
     messages = db.relationship('Message', backref='meeting', lazy='dynamic', cascade='all, delete-orphan')
+    # documents relation is defined in MeetingDocument model
+    
+    # Notification settings
+    reminder_sent = db.Column(db.Boolean, default=False)
     
     @property
     def attendee_count(self):
@@ -39,6 +43,11 @@ class Meeting(db.Model):
     def has_quorum(self):
         # 3 is the quorum number as specified
         return self.attendees.count() >= 3
+        
+    @property
+    def is_upcoming(self):
+        now = datetime.utcnow()
+        return self.date > now and self.status != MeetingStatus.cancelled
 
 class AgendaItem(db.Model):
     __tablename__ = 'agenda_items'

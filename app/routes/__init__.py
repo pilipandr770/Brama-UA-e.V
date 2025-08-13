@@ -8,6 +8,7 @@ from app.routes.language import language_bp as language
 from app.routes.multilingual import multilingual_bp as multilingual
 from app.routes.multilingual_admin import multilingual_admin_bp as multilingual_admin
 from app.routes.meeting import meeting_bp as meeting
+from app.routes.document import document_bp as meeting_document
 
 def register_blueprints(app):
     """Регистрация всех blueprints приложения"""
@@ -20,3 +21,4 @@ def register_blueprints(app):
     app.register_blueprint(multilingual)
     app.register_blueprint(multilingual_admin)
     app.register_blueprint(meeting)
+    app.register_blueprint(meeting_document)

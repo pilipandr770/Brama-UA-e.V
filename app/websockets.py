@@ -161,6 +161,56 @@ def notify_founders_about_agenda_item(meeting_id, agenda_item):
     
     print(f"Notification sent to founders about new agenda item in meeting {meeting_id}")
 
+# Function to notify about upcoming meeting
+def notify_about_upcoming_meeting(meeting):
+    """Send notification to all founders about an upcoming meeting"""
+    if not meeting or not meeting.is_upcoming:
+        return
+    
+    # Calculate time until meeting starts
+    now = datetime.utcnow()
+    time_until_meeting = meeting.date - now
+    hours_until_meeting = time_until_meeting.total_seconds() / 3600
+    
+    # Create a notification message
+    notification_data = {
+        'type': 'upcoming_meeting',
+        'meeting_id': meeting.id,
+        'meeting_title': meeting.title,
+        'meeting_date': meeting.date.strftime('%Y-%m-%d %H:%M:%S'),
+        'hours_until': int(hours_until_meeting),
+        'created_at': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+    }
+    
+    # Send notification to all founders
+    socketio.emit('notification', notification_data, room='founders_room')
+    
+    print(f"Notification sent to founders about upcoming meeting {meeting.id}")
+
+# Function to notify about new document uploaded
+def notify_about_new_document(meeting_id, document):
+    """Send notification to all founders about a new document uploaded"""
+    # Get the meeting information
+    meeting = Meeting.query.get(meeting_id)
+    if not meeting:
+        return
+    
+    # Create a notification message
+    notification_data = {
+        'type': 'new_document',
+        'meeting_id': meeting_id,
+        'meeting_title': meeting.title,
+        'document_id': document.id,
+        'document_name': document.name,
+        'is_public': document.is_public,
+        'created_at': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+    }
+    
+    # Send notification to all founders
+    socketio.emit('notification', notification_data, room='founders_room')
+    
+    print(f"Notification sent to founders about new document in meeting {meeting_id}")
+
 # Function to subscribe a founder to notifications when they connect
 def subscribe_founder_to_notifications(user_id):
     """Subscribe a founder to the founders notification room"""
