@@ -13,10 +13,14 @@ def handle_connect():
         return False  # Reject connection if not logged in
     
     user = User.query.get(user_id)
-    if not user or not user.is_founder:
-        return False  # Reject connection if not a founder
-
+    if not user:
+        return False  # Reject connection if user not found
+    
     print(f"Client connected: {user.email}")
+    
+    # Subscribe founders to notifications
+    if user.is_founder:
+        subscribe_founder_to_notifications(user.id)
 
 @socketio.on('join')
 def handle_join(data):
@@ -131,3 +135,36 @@ def handle_disconnect():
     """Handle client disconnection"""
     print("Client disconnected")
     # You might want to update attendee status if they disconnect without leaving properly
+
+# Function to notify founders about new agenda items
+def notify_founders_about_agenda_item(meeting_id, agenda_item):
+    """Send notification to all founders about a new agenda item"""
+    # Get the meeting information
+    meeting = Meeting.query.get(meeting_id)
+    if not meeting:
+        return
+    
+    # Create a notification message
+    notification_data = {
+        'type': 'new_agenda_item',
+        'meeting_id': meeting_id,
+        'meeting_title': meeting.title,
+        'agenda_item_id': agenda_item.id,
+        'agenda_item_title': agenda_item.title,
+        'requires_voting': agenda_item.requires_voting,
+        'created_at': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+    }
+    
+    # Send notification to all founders
+    # We're broadcasting to a special room that all founders are automatically subscribed to
+    socketio.emit('notification', notification_data, room='founders_room')
+    
+    print(f"Notification sent to founders about new agenda item in meeting {meeting_id}")
+
+# Function to subscribe a founder to notifications when they connect
+def subscribe_founder_to_notifications(user_id):
+    """Subscribe a founder to the founders notification room"""
+    user = User.query.get(user_id)
+    if user and user.is_founder:
+        join_room('founders_room')
+        print(f"Founder {user.email} subscribed to notifications")

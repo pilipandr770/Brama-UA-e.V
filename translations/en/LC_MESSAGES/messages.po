@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-06-28 14:18+0200\n"
+"POT-Creation-Date: 2025-06-28 15:14+0200\n"
 "PO-Revision-Date: 2025-06-28 10:19+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -18,14 +18,36 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: app/routes/main.py:104
-msgid "Проєкт успішно подано! Очікує модерації."
+#: translations_examples.py:14
+#, fuzzy
+msgid "Проєкт успішно подано!"
 msgstr "Project submitted successfully! Awaiting moderation."
 
-#: app/routes/main.py:107
+#: translations_examples.py:15
+#, fuzzy
+msgid "Доступ лише для адміністратора!"
+msgstr "Admin Panel"
+
+#: app/routes/main.py:107 translations_examples.py:19
 #, python-brace-format
 msgid "Помилка при збереженні: {}"
 msgstr "Error saving: {}"
+
+#: translations_examples.py:22
+msgid "Зустріч успішно створена!"
+msgstr "Meeting created successfully"
+
+#: translations_examples.py:25
+msgid "Можна редагувати лише заплановані зустрічі!"
+msgstr "Only planned meetings can be edited!"
+
+#: app/templates/index.html:2 translations_examples.py:28
+msgid "Головна сторінка"
+msgstr "Home Page"
+
+#: app/routes/main.py:104
+msgid "Проєкт успішно подано! Очікує модерації."
+msgstr "Project submitted successfully! Awaiting moderation."
 
 #: app/routes/main.py:141
 msgid "Користувач з такою поштою вже існує."
@@ -79,64 +101,158 @@ msgstr "No file selected"
 msgid "Фото профілю оновлено"
 msgstr "Profile photo updated"
 
-#: app/templates/base.html:5 app/templates/base.html:64
+#: app/routes/meeting.py:15
+msgid "This action requires founder privileges"
+msgstr ""
+
+#: app/routes/meeting.py:44
+msgid "This meeting is not yet available for viewing"
+msgstr ""
+
+#: app/routes/meeting.py:86
+msgid "Meeting created successfully"
+msgstr "Meeting created successfully"
+
+#: app/routes/meeting.py:90
+#, python-brace-format
+msgid "Error creating meeting: {}"
+msgstr ""
+
+#: app/routes/meeting.py:116
+msgid "Meeting updated successfully"
+msgstr "Meeting updated successfully"
+
+#: app/routes/meeting.py:120
+#, python-brace-format
+msgid "Error updating meeting: {}"
+msgstr ""
+
+#: app/routes/meeting.py:152
+msgid "Agenda item added successfully"
+msgstr ""
+
+#: app/routes/meeting.py:169
+msgid "Agenda item deleted"
+msgstr ""
+
+#: app/routes/meeting.py:185
+msgid "Agenda item updated"
+msgstr ""
+
+#: app/routes/meeting.py:195
+msgid "Only founders can vote"
+msgstr ""
+
+#: app/routes/meeting.py:200
+msgid "This item does not require voting"
+msgstr ""
+
+#: app/routes/meeting.py:204
+msgid "Voting is only allowed for active meetings"
+msgstr ""
+
+#: app/routes/meeting.py:210
+msgid "Invalid vote value"
+msgstr ""
+
+#: app/routes/meeting.py:246
+msgid "Vote recorded successfully"
+msgstr ""
+
+#: app/routes/meeting.py:284
+msgid "You are already marked as attending this meeting"
+msgstr ""
+
+#: app/routes/meeting.py:294
+msgid "Attendance marked successfully"
+msgstr ""
+
+#: app/routes/meeting.py:306
+msgid "Only planned meetings can be activated"
+msgstr ""
+
+#: app/routes/meeting.py:310
+msgid "Meeting activated successfully"
+msgstr "Meeting activated successfully"
+
+#: app/routes/meeting.py:322
+msgid "Only active meetings can be completed"
+msgstr ""
+
+#: app/routes/meeting.py:336
+msgid "Meeting completed successfully"
+msgstr "Meeting completed successfully"
+
+#: app/routes/meeting.py:354
+msgid "Protocol URL updated successfully"
+msgstr ""
+
+#: app/routes/meeting.py:356
+msgid "Protocol URL is required"
+msgstr ""
+
+#: app/templates/base.html:5 app/templates/base.html:76
 msgid "Brama UA"
 msgstr "Brama UA"
 
-#: app/templates/base.html:17
+#: app/templates/base.html:18
 #, fuzzy
 msgid "Головна"
 msgstr "Home"
 
-#: app/templates/base.html:18
+#: app/templates/base.html:19
 msgid "Facebook"
 msgstr "Facebook"
 
-#: app/templates/base.html:19
+#: app/templates/base.html:20
 msgid "Instagram"
 msgstr "Instagram"
 
-#: app/templates/base.html:20
+#: app/templates/base.html:21
 msgid "Telegram"
 msgstr "Telegram"
 
-#: app/templates/base.html:23
+#: app/templates/base.html:38
 msgid "Особистий кабінет"
 msgstr "Personal Account"
 
-#: app/templates/base.html:25
+#: app/templates/base.html:40
 msgid "Панель адміністратора"
 msgstr "Admin Panel"
 
-#: app/templates/base.html:28
+#: app/templates/base.html:43
 msgid "Панель засновника"
 msgstr "Founder Panel"
 
-#: app/templates/base.html:30
+#: app/templates/base.html:44
+msgid "Збори фаундерів"
+msgstr "Founders' Meetings"
+
+#: app/templates/base.html:46
 #, fuzzy
 msgid "Вийти"
 msgstr "Logout"
 
-#: app/templates/base.html:32 app/templates/login.html:3
+#: app/templates/base.html:48 app/templates/login.html:3
 msgid "Вхід"
 msgstr "Login"
 
-#: app/templates/base.html:33
+#: app/templates/base.html:49
 #, fuzzy
 msgid "Реєстрація"
 msgstr "Register"
 
-#: app/templates/base.html:55 app/templates/privacy.html:2
+#: app/templates/base.html:72 app/templates/privacy.html:2
 #: app/templates/privacy.html:5
 msgid "Політика конфіденційності"
 msgstr "Privacy Policy"
 
-#: app/templates/base.html:56 app/templates/contact.html:2
+#: app/templates/base.html:73 app/templates/contact.html:2
 #: app/templates/contact.html:5
 msgid "Контакти"
 msgstr "Contacts"
 
-#: app/templates/base.html:57 app/templates/impressum.html:2
+#: app/templates/base.html:74 app/templates/impressum.html:2
 #: app/templates/impressum.html:5
 msgid "Імпресум"
 msgstr "Impressum"
@@ -176,10 +292,6 @@ msgstr "Message:"
 #: app/templates/contact.html:18 app/templates/submit_project.html:29
 msgid "Надіслати"
 msgstr "Send"
-
-#: app/templates/index.html:2
-msgid "Головна сторінка"
-msgstr "Home Page"
 
 #: app/templates/login.html:5
 msgid "Email"
@@ -459,4 +571,554 @@ msgstr ""
 #, fuzzy
 msgid "Редагувати соцмережі"
 msgstr "Social networks"
+
+#: app/templates/meetings/agenda.html:3 app/templates/meetings/agenda.html:11
+#: app/templates/meetings/detail.html:66
+msgid "Manage Agenda"
+msgstr ""
+
+#: app/templates/meetings/agenda.html:9 app/templates/meetings/create.html:9
+#: app/templates/meetings/detail.html:9 app/templates/meetings/edit.html:9
+#: app/templates/meetings/edit_agenda_item.html:9
+#: app/templates/meetings/list.html:3 app/templates/meetings/list.html:8
+msgid "Meetings"
+msgstr "Meetings"
+
+#: app/templates/meetings/agenda.html:20
+msgid "Add Agenda Item"
+msgstr "Add Agenda Item"
+
+#: app/templates/meetings/agenda.html:25 app/templates/meetings/create.html:21
+#: app/templates/meetings/edit.html:22
+#: app/templates/meetings/edit_agenda_item.html:23
+msgid "Title"
+msgstr "Title"
+
+#: app/templates/meetings/agenda.html:30 app/templates/meetings/create.html:26
+#: app/templates/meetings/edit.html:27
+#: app/templates/meetings/edit_agenda_item.html:28
+msgid "Description"
+msgstr "Description"
+
+#: app/templates/meetings/agenda.html:36 app/templates/meetings/agenda.html:65
+#: app/templates/meetings/detail.html:143
+#: app/templates/meetings/edit_agenda_item.html:35
+msgid "Requires Voting"
+msgstr "Requires Voting"
+
+#: app/templates/meetings/agenda.html:40
+msgid "Add Item"
+msgstr "Add Item"
+
+#: app/templates/meetings/agenda.html:51
+msgid "Current Agenda Items"
+msgstr "Current Agenda Items"
+
+#: app/templates/meetings/agenda.html:53
+msgid "Back to Meeting"
+msgstr "Back to Meeting"
+
+#: app/templates/meetings/agenda.html:72 app/templates/meetings/edit.html:11
+#: app/templates/meetings/list.html:43
+msgid "Edit"
+msgstr "Edit"
+
+#: app/templates/meetings/agenda.html:76
+msgid "Delete"
+msgstr "Delete"
+
+#: app/templates/meetings/agenda.html:85
+msgid "No agenda items added yet."
+msgstr "No agenda items added yet."
+
+#: app/templates/meetings/agenda.html:102
+msgid "Are you sure you want to delete this agenda item?"
+msgstr "Are you sure you want to delete this agenda item?"
+
+#: app/templates/meetings/create.html:3 app/templates/meetings/create.html:10
+#: app/templates/meetings/create.html:16 app/templates/meetings/list.html:11
+msgid "Create New Meeting"
+msgstr "Create New Meeting"
+
+#: app/templates/meetings/create.html:31 app/templates/meetings/edit.html:32
+msgid "Date and Time"
+msgstr "Date and Time"
+
+#: app/templates/meetings/create.html:36
+msgid "Create Meeting"
+msgstr "Create Meeting"
+
+#: app/templates/meetings/create.html:37 app/templates/meetings/edit.html:58
+#: app/templates/meetings/edit_agenda_item.html:41
+msgid "Cancel"
+msgstr "Cancel"
+
+#: app/templates/meetings/detail.html:25
+msgid "Date"
+msgstr "Date"
+
+#: app/templates/meetings/detail.html:28
+msgid "Created by"
+msgstr "Created by"
+
+#: app/templates/meetings/detail.html:35
+msgid "View Protocol"
+msgstr "View Protocol"
+
+#: app/templates/meetings/detail.html:45
+msgid "Activate Meeting"
+msgstr "Activate Meeting"
+
+#: app/templates/meetings/detail.html:53
+msgid "Complete Meeting"
+msgstr "Complete Meeting"
+
+#: app/templates/meetings/detail.html:60 app/templates/meetings/edit.html:3
+#: app/templates/meetings/edit.html:17
+msgid "Edit Meeting"
+msgstr "Edit Meeting"
+
+#: app/templates/meetings/detail.html:73
+msgid "Mark Attendance"
+msgstr "Mark Attendance"
+
+#: app/templates/meetings/detail.html:81 app/templates/meetings/detail.html:233
+msgid "Upload Protocol"
+msgstr "Upload Protocol"
+
+#: app/templates/meetings/detail.html:91
+msgid "Attendees"
+msgstr "Attendees"
+
+#: app/templates/meetings/detail.html:99
+msgid "Name"
+msgstr "Name"
+
+#: app/templates/meetings/detail.html:100
+msgid "Joined At"
+msgstr "Joined At"
+
+#: app/templates/meetings/detail.html:101
+msgid "Left At"
+msgstr "Left At"
+
+#: app/templates/meetings/detail.html:116
+msgid "No attendees yet."
+msgstr "No attendees yet."
+
+#: app/templates/meetings/detail.html:122
+msgid "Quorum reached"
+msgstr "Quorum reached"
+
+#: app/templates/meetings/detail.html:124
+msgid "Quorum not reached"
+msgstr "Quorum not reached"
+
+#: app/templates/meetings/detail.html:133
+#: app/templates/meetings/edit_agenda_item.html:11
+msgid "Agenda"
+msgstr "Agenda"
+
+#: app/templates/meetings/detail.html:150
+msgid "Voting Results"
+msgstr "Voting Results"
+
+#: app/templates/meetings/detail.html:159
+#: app/templates/meetings/detail.html:193
+msgid "Yes"
+msgstr "Yes"
+
+#: app/templates/meetings/detail.html:163
+#: app/templates/meetings/detail.html:197
+msgid "No"
+msgstr "No"
+
+#: app/templates/meetings/detail.html:167
+#: app/templates/meetings/detail.html:201
+msgid "Abstain"
+msgstr "Abstain"
+
+#: app/templates/meetings/detail.html:174
+msgid "Total Votes"
+msgstr "Total Votes"
+
+#: app/templates/meetings/detail.html:186
+msgid "Cast Your Vote"
+msgstr "Cast Your Vote"
+
+#: app/templates/meetings/detail.html:206
+msgid "Optional comment"
+msgstr "Optional comment"
+
+#: app/templates/meetings/detail.html:209
+msgid "Submit Vote"
+msgstr "Submit Vote"
+
+#: app/templates/meetings/detail.html:221
+msgid "No agenda items yet."
+msgstr "No agenda items yet."
+
+#: app/templates/meetings/detail.html:239
+msgid "Protocol URL"
+msgstr "Protocol URL"
+
+#: app/templates/meetings/detail.html:244
+msgid "Close"
+msgstr "Close"
+
+#: app/templates/meetings/detail.html:245
+msgid "Save"
+msgstr "Save"
+
+#: app/templates/meetings/detail.html:295
+msgid "An error occurred while processing your vote"
+msgstr ""
+
+#: app/templates/meetings/edit.html:38
+msgid "Status"
+msgstr "Status"
+
+#: app/templates/meetings/edit.html:41 app/templates/meetings/list.html:24
+msgid "Planned"
+msgstr "Planned"
+
+#: app/templates/meetings/edit.html:44 app/templates/meetings/list.html:26
+msgid "Active"
+msgstr "Active"
+
+#: app/templates/meetings/edit.html:47 app/templates/meetings/list.html:28
+msgid "Completed"
+msgstr "Completed"
+
+#: app/templates/meetings/edit.html:50 app/templates/meetings/list.html:30
+msgid "Cancelled"
+msgstr "Cancelled"
+
+#: app/templates/meetings/edit.html:56
+#: app/templates/meetings/edit_agenda_item.html:39
+msgid "Save Changes"
+msgstr "Save Changes"
+
+#: app/templates/meetings/edit_agenda_item.html:3
+#: app/templates/meetings/edit_agenda_item.html:18
+msgid "Edit Agenda Item"
+msgstr ""
+
+#: app/templates/meetings/edit_agenda_item.html:10
+msgid "Meeting"
+msgstr ""
+
+#: app/templates/meetings/edit_agenda_item.html:12
+msgid "Edit Item"
+msgstr ""
+
+#: app/templates/meetings/list.html:39
+msgid "View Details"
+msgstr "View Details"
+
+#: app/templates/meetings/list.html:53
+msgid "No meetings found."
+msgstr "No meetings found."
+
+#: venv/Lib/site-packages/click/_termui_impl.py:600
+#, python-brace-format
+msgid "{editor}: Editing failed"
+msgstr ""
+
+#: venv/Lib/site-packages/click/_termui_impl.py:604
+#, python-brace-format
+msgid "{editor}: Editing failed: {e}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:1084
+#: venv/Lib/site-packages/click/core.py:1121
+#, python-brace-format
+msgid "{text} {deprecated_message}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:1140
+msgid "Options"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:1202
+#, python-brace-format
+msgid "Got unexpected extra argument ({args})"
+msgid_plural "Got unexpected extra arguments ({args})"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/Lib/site-packages/click/core.py:1221
+#, python-brace-format
+msgid "DeprecationWarning: The command {name!r} is deprecated.{extra_message}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:1405
+msgid "Aborted!"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:1779
+msgid "Commands"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:1810
+msgid "Missing command."
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:1888
+#, python-brace-format
+msgid "No such command {name!r}."
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:2303
+msgid "Value must be an iterable."
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:2324
+#, python-brace-format
+msgid "Takes {nargs} values but 1 was given."
+msgid_plural "Takes {nargs} values but {len} were given."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/Lib/site-packages/click/core.py:2404
+#, python-brace-format
+msgid ""
+"DeprecationWarning: The {param_type} {name!r} is "
+"deprecated.{extra_message}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:2807
+#, python-brace-format
+msgid "env var: {var}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:2810
+#, python-brace-format
+msgid "default: {default}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:2814
+msgid "required"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:2870
+msgid "(dynamic)"
+msgstr ""
+
+#: venv/Lib/site-packages/click/decorators.py:465
+#, python-format
+msgid "%(prog)s, version %(version)s"
+msgstr ""
+
+#: venv/Lib/site-packages/click/decorators.py:522
+msgid "Show the version and exit."
+msgstr ""
+
+#: venv/Lib/site-packages/click/decorators.py:548
+msgid "Show this message and exit."
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:50
+#: venv/Lib/site-packages/click/exceptions.py:89
+#, python-brace-format
+msgid "Error: {message}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:81
+#, python-brace-format
+msgid "Try '{command} {option}' for help."
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:130
+#, python-brace-format
+msgid "Invalid value: {message}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:132
+#, python-brace-format
+msgid "Invalid value for {param_hint}: {message}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:190
+msgid "Missing argument"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:192
+msgid "Missing option"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:194
+msgid "Missing parameter"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:196
+#, python-brace-format
+msgid "Missing {param_type}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:203
+#, python-brace-format
+msgid "Missing parameter: {param_name}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:223
+#, python-brace-format
+msgid "No such option: {name}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:235
+#, python-brace-format
+msgid "Did you mean {possibility}?"
+msgid_plural "(Possible options: {possibilities})"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/Lib/site-packages/click/exceptions.py:282
+msgid "unknown error"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:289
+#, python-brace-format
+msgid "Could not open file {filename!r}: {message}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/parser.py:200
+#, python-brace-format
+msgid "Argument {name!r} takes {nargs} values."
+msgstr ""
+
+#: venv/Lib/site-packages/click/parser.py:383
+#, python-brace-format
+msgid "Option {name!r} does not take a value."
+msgstr ""
+
+#: venv/Lib/site-packages/click/parser.py:444
+#, python-brace-format
+msgid "Option {name!r} requires an argument."
+msgid_plural "Option {name!r} requires {nargs} arguments."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/Lib/site-packages/click/shell_completion.py:326
+msgid "Shell completion is not supported for Bash versions older than 4.4."
+msgstr ""
+
+#: venv/Lib/site-packages/click/shell_completion.py:333
+msgid "Couldn't detect Bash version, shell completion is not supported."
+msgstr ""
+
+#: venv/Lib/site-packages/click/termui.py:162
+msgid "Repeat for confirmation"
+msgstr ""
+
+#: venv/Lib/site-packages/click/termui.py:178
+msgid "Error: The value you entered was invalid."
+msgstr ""
+
+#: venv/Lib/site-packages/click/termui.py:180
+#, python-brace-format
+msgid "Error: {e.message}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/termui.py:191
+msgid "Error: The two entered values do not match."
+msgstr ""
+
+#: venv/Lib/site-packages/click/termui.py:247
+msgid "Error: invalid input"
+msgstr ""
+
+#: venv/Lib/site-packages/click/termui.py:866
+msgid "Press any key to continue..."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:332
+#, python-brace-format
+msgid ""
+"Choose from:\n"
+"\t{choices}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:369
+#, python-brace-format
+msgid "{value!r} is not {choice}."
+msgid_plural "{value!r} is not one of {choices}."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/Lib/site-packages/click/types.py:460
+#, python-brace-format
+msgid "{value!r} does not match the format {format}."
+msgid_plural "{value!r} does not match the formats {formats}."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/Lib/site-packages/click/types.py:482
+#, python-brace-format
+msgid "{value!r} is not a valid {number_type}."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:538
+#, python-brace-format
+msgid "{value} is not in the range {range}."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:679
+#, python-brace-format
+msgid "{value!r} is not a valid boolean."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:703
+#, python-brace-format
+msgid "{value!r} is not a valid UUID."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:893
+msgid "file"
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:895
+msgid "directory"
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:897
+msgid "path"
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:944
+#, python-brace-format
+msgid "{name} {filename!r} does not exist."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:953
+#, python-brace-format
+msgid "{name} {filename!r} is a file."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:961
+#, python-brace-format
+msgid "{name} {filename!r} is a directory."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:970
+#, python-brace-format
+msgid "{name} {filename!r} is not readable."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:979
+#, python-brace-format
+msgid "{name} {filename!r} is not writable."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:988
+#, python-brace-format
+msgid "{name} {filename!r} is not executable."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:1055
+#, python-brace-format
+msgid "{len_type} values are required, but {len_value} was given."
+msgid_plural "{len_type} values are required, but {len_value} were given."
+msgstr[0] ""
+msgstr[1] ""
 

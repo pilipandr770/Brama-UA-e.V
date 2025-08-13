@@ -146,33 +146,67 @@ def delete_block(block_id):
 @admin_required
 def add_gallery_image():
     if request.method == 'POST':
-        block_id = request.form.get('block_id')
-        descriptions = request.form.getlist('description')
-        files = request.files.getlist('images')
-        for idx, file in enumerate(files):
-            if file and file.filename:
-                img = GalleryImage(
-                    image_data=file.read(),
-                    image_mimetype=file.mimetype,
-                    description=descriptions[idx] if idx < len(descriptions) else '',
-                    block_id=block_id
-                )
-                db.session.add(img)
-        db.session.commit()
-        flash('Фото додано до галереї!', 'success')
-        return redirect(url_for('admin.dashboard'))
+        try:
+            block_id = request.form.get('block_id')
+            descriptions = request.form.getlist('description')
+            files = request.files.getlist('images')
+            
+            if not files or not any(file.filename for file in files):
+                flash('Будь ласка, виберіть хоча б одне зображення', 'error')
+                blocks = Block.query.filter_by(type='gallery').all()
+                return render_template('admin/add_gallery_image.html', blocks=blocks)
+            
+            added_images = 0
+            for idx, file in enumerate(files):
+                if file and file.filename:
+                    # Читаем файл целиком в память
+                    file_data = file.read()
+                    if not file_data:
+                        continue
+                    
+                    # Создаем запись в базе данных
+                    img = GalleryImage(
+                        image_data=file_data,
+                        image_mimetype=file.mimetype,
+                        description=descriptions[idx] if idx < len(descriptions) else '',
+                        block_id=block_id
+                    )
+                    db.session.add(img)
+                    added_images += 1
+            
+            # Коммитим все изменения в базе данных
+            db.session.commit()
+            
+            flash(f'Додано {added_images} фото до галереї!', 'success')
+            return redirect(url_for('admin.dashboard'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Помилка при додаванні фото: {str(e)}', 'error')
+            print(f"Error adding gallery images: {str(e)}")
+            
     blocks = Block.query.filter_by(type='gallery').all()
     return render_template('admin/add_gallery_image.html', blocks=blocks)
 
 @admin_bp.route('/gallery/image/<int:image_id>')
 def gallery_image_file(image_id):
-    img = GalleryImage.query.get_or_404(image_id)
-    if img.image_data:
-        return send_file(io.BytesIO(img.image_data), mimetype=img.image_mimetype)
-    elif img.image_url:
-        return redirect(img.image_url)
-    else:
-        return '', 404
+    try:
+        img = GalleryImage.query.get_or_404(image_id)
+        if img.image_data:
+            response = send_file(
+                io.BytesIO(img.image_data), 
+                mimetype=img.image_mimetype, 
+                cache_timeout=31536000  # 1 год кеширования
+            )
+            response.headers['Cache-Control'] = 'public, max-age=31536000'
+            return response
+        elif img.image_url:
+            return redirect(img.image_url)
+        else:
+            print(f"Error: Gallery image {image_id} has no data or URL")
+            return '', 404
+    except Exception as e:
+        print(f"Error serving gallery image {image_id}: {str(e)}")
+        return '', 500
 
 @admin_bp.route('/gallery/delete/<int:image_id>', methods=['POST'])
 @admin_required

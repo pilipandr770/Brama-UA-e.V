@@ -18,12 +18,11 @@ def init_babel(app):
     app.config['BABEL_DEFAULT_LOCALE'] = 'uk'
     app.config['BABEL_SUPPORTED_LOCALES'] = ['uk', 'de', 'en']
     
-    # Initialize Babel with the app and specify the locale selector
-    # This is the new way to set locale selector in Flask-Babel 4.0.0
-    babel.init_app(
-        app, 
-        locale_selector=get_locale
-    )
+    # Initialize Babel with the app
+    babel.init_app(app)
+    
+    # Set locale selector function
+    babel.locale_selector_func = get_locale
     
     # Store babel instance on app for easier access
     app.babel_instance = babel

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Create New Meeting') }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('meeting.meetings_list') }}">{{ _('Meetings') }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ _('Create New Meeting') }}</li>
+        </ol>
+    </nav>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>{{ _('Create New Meeting') }}</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{{ url_for('meeting.new_meeting') }}">
+                <div class="mb-3">
+                    <label for="title" class="form-label">{{ _('Title') }} *</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="description" class="form-label">{{ _('Description') }}</label>
+                    <textarea class="form-control" id="description" name="description" rows="5"></textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="date" class="form-label">{{ _('Date and Time') }} *</label>
+                    <input type="datetime-local" class="form-control" id="date" name="date" required>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">{{ _('Create Meeting') }}</button>
+                    <a href="{{ url_for('meeting.meetings_list') }}" class="btn btn-secondary">{{ _('Cancel') }}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

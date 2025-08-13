@@ -10,3 +10,4 @@ gunicorn
 fpdf2
 flask-socketio
 eventlet
+flask-login

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Meetings') }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ _('Meetings') }}</h1>
+        {% if current_user.is_founder or current_user.is_admin %}
+        <a href="{{ url_for('meeting.new_meeting') }}" class="btn btn-primary">
+            <i class="fa fa-plus"></i> {{ _('Create New Meeting') }}
+        </a>
+        {% endif %}
+    </div>
+
+    {% if meetings %}
+    <div class="list-group">
+        {% for meeting in meetings %}
+        <div class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ meeting.title }}</h5>
+                <small class="text-muted">
+                    {% if meeting.status.value == 'planned' %}
+                    <span class="badge bg-warning">{{ _('Planned') }}</span>
+                    {% elif meeting.status.value == 'active' %}
+                    <span class="badge bg-success">{{ _('Active') }}</span>
+                    {% elif meeting.status.value == 'completed' %}
+                    <span class="badge bg-primary">{{ _('Completed') }}</span>
+                    {% elif meeting.status.value == 'cancelled' %}
+                    <span class="badge bg-danger">{{ _('Cancelled') }}</span>
+                    {% endif %}
+                </small>
+            </div>
+            <p class="mb-1">{{ meeting.description|truncate(150) }}</p>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <small>{{ meeting.date.strftime('%d.%m.%Y %H:%M') }}</small>
+                <div>
+                    <a href="{{ url_for('meeting.meeting_detail', meeting_id=meeting.id) }}" class="btn btn-sm btn-outline-primary">
+                        {{ _('View Details') }}
+                    </a>
+                    {% if (current_user.is_founder or current_user.is_admin) and meeting.status.value != 'completed' %}
+                    <a href="{{ url_for('meeting.edit_meeting', meeting_id=meeting.id) }}" class="btn btn-sm btn-outline-secondary">
+                        <i class="fa fa-edit"></i> {{ _('Edit') }}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        {{ _('No meetings found.') }}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

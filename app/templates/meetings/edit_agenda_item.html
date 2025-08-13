@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Edit Agenda Item') }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('meeting.meetings_list') }}">{{ _('Meetings') }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('meeting.meeting_detail', meeting_id=item.meeting_id) }}">{{ _('Meeting') }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('meeting.manage_agenda', meeting_id=item.meeting_id) }}">{{ _('Agenda') }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ _('Edit Item') }}</li>
+        </ol>
+    </nav>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>{{ _('Edit Agenda Item') }}</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{{ url_for('meeting.edit_agenda_item', item_id=item.id) }}">
+                <div class="mb-3">
+                    <label for="title" class="form-label">{{ _('Title') }} *</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ item.title }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="description" class="form-label">{{ _('Description') }}</label>
+                    <textarea class="form-control" id="description" name="description" rows="5">{{ item.description }}</textarea>
+                </div>
+                
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="requires_voting" name="requires_voting"
+                           {% if item.requires_voting %}checked{% endif %}>
+                    <label class="form-check-label" for="requires_voting">{{ _('Requires Voting') }}</label>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">{{ _('Save Changes') }}</button>
+                    <a href="{{ url_for('meeting.manage_agenda', meeting_id=item.meeting_id) }}" class="btn btn-secondary">
+                        {{ _('Cancel') }}
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

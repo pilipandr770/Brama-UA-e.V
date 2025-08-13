@@ -1,37 +1,131 @@
 {% extends "base.html" %}
 {% block title %}Додати фото до галереї{% endblock %}
 {% block content %}
-<h2>Додати фото до галереї</h2>
-<form method="post" enctype="multipart/form-data" id="gallery-upload-form">
-    <label>Виберіть фото (можна кілька):</label><br>
-    <input type="file" name="images" id="images-input" multiple required><br>
-    <div id="descriptions-fields"></div>
-    <label>Галерея-блок:</label><br>
-    <select name="block_id" required>
-        {% for block in blocks %}
-            <option value="{{ block.id }}">{{ block.title }}</option>
-        {% endfor %}
-    </select><br>
-    <button type="submit">Додати</button>
-    <a href="{{ url_for('admin.dashboard') }}">Скасувати</a>
-</form>
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Додати фото до галереї</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" id="gallery-upload-form">
+                <div class="form-group mb-3">
+                    <label for="images-input"><strong>Виберіть фото (можна кілька):</strong></label>
+                    <input type="file" class="form-control" name="images" id="images-input" 
+                           accept="image/jpeg,image/png,image/gif,image/webp" multiple required>
+                    <small class="form-text text-muted">Підтримувані формати: JPEG, PNG, GIF, WebP</small>
+                </div>
+                
+                <div id="image-previews" class="mb-3 d-flex flex-wrap"></div>
+                
+                <div id="descriptions-fields" class="mb-3"></div>
+                
+                <div class="form-group mb-3">
+                    <label for="block-select"><strong>Галерея-блок:</strong></label>
+                    <select class="form-control" id="block-select" name="block_id" required>
+                        {% for block in blocks %}
+                            <option value="{{ block.id }}">{{ block.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" id="submit-button">Додати</button>
+                    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Скасувати</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
 const imagesInput = document.getElementById('images-input');
 const descFields = document.getElementById('descriptions-fields');
+const imagePreviews = document.getElementById('image-previews');
+const submitButton = document.getElementById('submit-button');
+const maxFileSizeMB = 10; // Максимальный размер файла в МБ
+
 imagesInput.addEventListener('change', function() {
     descFields.innerHTML = '';
+    imagePreviews.innerHTML = '';
+    let totalSize = 0;
+    let validFiles = true;
+    
     for (let i = 0; i < imagesInput.files.length; i++) {
+        const file = imagesInput.files[i];
+        totalSize += file.size;
+        
+        // Проверка размера файла
+        if (file.size > maxFileSizeMB * 1024 * 1024) {
+            alert(`Файл "${file.name}" слишком большой. Максимальный размер: ${maxFileSizeMB}MB`);
+            validFiles = false;
+            imagesInput.value = '';
+            return;
+        }
+        
+        // Создаем превью
+        const preview = document.createElement('div');
+        preview.className = 'image-preview m-2';
+        preview.style.width = '150px';
+        
+        const img = document.createElement('img');
+        img.style.maxWidth = '100%';
+        img.style.maxHeight = '100px';
+        img.style.objectFit = 'contain';
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+        
+        preview.appendChild(img);
+        
+        const fileName = document.createElement('p');
+        fileName.textContent = file.name;
+        fileName.style.fontSize = '12px';
+        fileName.style.overflowWrap = 'break-word';
+        preview.appendChild(fileName);
+        
+        imagePreviews.appendChild(preview);
+        
+        // Создаем поле для описания
+        const formGroup = document.createElement('div');
+        formGroup.className = 'form-group mb-3';
+        
         const label = document.createElement('label');
-        label.textContent = `Опис для "${imagesInput.files[i].name}":`;
+        label.textContent = `Опис для "${file.name}":`;
+        label.className = 'form-label';
+        
         const input = document.createElement('input');
         input.type = 'text';
         input.name = 'description';
+        input.className = 'form-control';
         input.placeholder = 'Опис (необовʼязково)';
-        input.style.marginBottom = '10px';
-        descFields.appendChild(label);
-        descFields.appendChild(document.createElement('br'));
-        descFields.appendChild(input);
-        descFields.appendChild(document.createElement('br'));
+        
+        formGroup.appendChild(label);
+        formGroup.appendChild(input);
+        descFields.appendChild(formGroup);
+    }
+    
+    // Проверка общего размера
+    const totalSizeMB = (totalSize / (1024 * 1024)).toFixed(2);
+    if (totalSizeMB > 50) {
+        alert(`Общий размер файлов (${totalSizeMB}MB) слишком велик. Пожалуйста, уменьшите количество или размер изображений.`);
+        imagesInput.value = '';
+        imagePreviews.innerHTML = '';
+        descFields.innerHTML = '';
+        return;
+    }
+    
+    // Включаем/отключаем кнопку отправки
+    submitButton.disabled = !validFiles || imagesInput.files.length === 0;
+});
+
+// Валидация формы перед отправкой
+document.getElementById('gallery-upload-form').addEventListener('submit', function(e) {
+    if (imagesInput.files.length === 0) {
+        e.preventDefault();
+        alert('Пожалуйста, выберите хотя бы одно изображение.');
     }
 });
 </script>

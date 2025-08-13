@@ -77,7 +77,10 @@
         <div id="gallery-slide" class="gallery-slide">
           {% for img in gallery_images %}
           <div class="gallery-item" data-index="{{ loop.index0 }}">
-            <img src="{% if img.image_data %}{{ url_for('main.gallery_image_file', image_id=img.id) }}{% else %}{{ img.image_url }}{% endif %}" alt="" class="gallery-img">
+            <img src="{% if img.image_data %}{{ url_for('main.gallery_image_file', image_id=img.id) }}{% elif img.image_url %}{{ img.image_url }}{% else %}{{ url_for('static', filename='placeholder.png') }}{% endif %}" 
+                 alt="{{ img.description or 'Галерея' }}" 
+                 class="gallery-img"
+                 loading="lazy">
             <div class="gallery-desc">{{ img.description }}</div>
           </div>
           {% endfor %}

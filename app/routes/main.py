@@ -120,13 +120,24 @@ def project_image_file(project_id):
 
 @main_bp.route('/gallery/image/<int:image_id>')
 def gallery_image_file(image_id):
-    img = GalleryImage.query.get_or_404(image_id)
-    if img.image_data:
-        return send_file(io.BytesIO(img.image_data), mimetype=img.image_mimetype)
-    elif img.image_url:
-        return redirect(img.image_url)
-    else:
-        return '', 404
+    try:
+        img = GalleryImage.query.get_or_404(image_id)
+        if img.image_data:
+            response = send_file(
+                io.BytesIO(img.image_data), 
+                mimetype=img.image_mimetype,
+                cache_timeout=31536000  # 1 год кеширования
+            )
+            response.headers['Cache-Control'] = 'public, max-age=31536000'
+            return response
+        elif img.image_url:
+            return redirect(img.image_url)
+        else:
+            print(f"Error: Gallery image {image_id} has no data or URL")
+            return '', 404
+    except Exception as e:
+        print(f"Error serving gallery image {image_id}: {str(e)}")
+        return '', 500
 
 # Block image route removed - images are now served from filesystem
 
