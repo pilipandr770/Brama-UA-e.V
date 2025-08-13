@@ -86,6 +86,9 @@
           {% endfor %}
         </div>
         <button id="gallery-next" class="gallery-nav">&#8594;</button>
+        
+        <!-- Индикаторы слайдов -->
+        <div class="gallery-indicators" id="gallery-indicators"></div>
       </div>
     </div>
     {% endif %}
@@ -208,10 +211,32 @@ function initGalleryCarousel() {
   const items = document.querySelectorAll('.gallery-item');
   let currentIndex = 0;
 
+  // Создаем индикаторы слайдов
+  const indicatorsContainer = document.getElementById('gallery-indicators');
+  if (indicatorsContainer) {
+    items.forEach((_, i) => {
+      const indicator = document.createElement('div');
+      indicator.className = 'gallery-indicator';
+      indicator.addEventListener('click', () => {
+        currentIndex = i;
+        showItem(currentIndex);
+      });
+      indicatorsContainer.appendChild(indicator);
+    });
+  }
+
   function showItem(index) {
     items.forEach((item, i) => {
       item.classList.toggle('active', i === index);
     });
+    
+    // Обновляем индикаторы
+    if (indicatorsContainer) {
+      const indicators = indicatorsContainer.querySelectorAll('.gallery-indicator');
+      indicators.forEach((indicator, i) => {
+        indicator.classList.toggle('active', i === index);
+      });
+    }
   }
 
   document.getElementById('gallery-prev').onclick = () => {
