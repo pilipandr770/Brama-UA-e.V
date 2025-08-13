@@ -8,11 +8,11 @@
     <div class="dashboard-card profile-card">
         <div class="profile-header">
             <div class="profile-photo-container">
-                {% if user.profile_photo_url %}
-                    <img src="{{ user.profile_photo_url }}" alt="{{ user.first_name }} {{ user.last_name }}" class="profile-photo">
+                {% if current_user.profile_photo_url %}
+                    <img src="{{ current_user.profile_photo_url }}" alt="{{ current_user.first_name }} {{ current_user.last_name }}" class="profile-photo">
                 {% else %}
                     <div class="profile-photo-placeholder">
-                        {{ user.first_name[0] }}{{ user.last_name[0] }}
+                        {{ current_user.first_name[0] }}{{ current_user.last_name[0] }}
                     </div>
                 {% endif %}
                 
@@ -23,10 +23,13 @@
             </div>
             
             <div class="profile-info">
-                <h2>{{ user.first_name }} {{ user.last_name }}</h2>
-                <p class="profile-email">{{ user.email }}</p>
-                <p class="profile-specialty">{{ user.specialty }}</p>
-                <a href="#" class="edit-profile-btn">Редагувати профіль</a>
+                <h2>{{ current_user.first_name }} {{ current_user.last_name }}</h2>
+                <p class="profile-email">{{ current_user.email }}</p>
+                <p class="profile-specialty">{{ current_user.specialty }}</p>
+                <div class="profile-actions">
+                    <a href="{{ url_for('main.profile') }}" class="view-profile-btn">Переглянути профіль</a>
+                    <a href="{{ url_for('main.edit_profile') }}" class="edit-profile-btn">Редагувати профіль</a>
+                </div>
             </div>
         </div>
     </div>
@@ -39,7 +42,7 @@
             
             <div class="contribution-info">
                 <h4>Ваш баланс</h4>
-                <div class="personal-contribution">&euro;{{ user.contributions|round(2) }}</div>
+                <div class="personal-contribution">&euro;{{ current_user.contributions|round(2) }}</div>
             </div>
             
             {% if last_contributor %}

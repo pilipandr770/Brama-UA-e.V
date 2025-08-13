@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Редагування профілю') }}{% endblock %}
+
+{% block content %}
+<div class="container profile-edit-container">
+    <h2>{{ _('Редагування профілю') }}</h2>
+    
+    <form action="{{ url_for('main.edit_profile') }}" method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group profile-photo-upload">
+                    <h4>{{ _('Фото профілю') }}</h4>
+                    <div class="profile-image-preview-container">
+                        {% if current_user.profile_photo_url %}
+                        <img src="{{ current_user.profile_photo_url }}" alt="{{ _('Аватар') }}" class="profile-image-preview" id="profile-image-preview">
+                        {% else %}
+                        <div class="profile-image-placeholder" id="profile-image-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <img src="" alt="{{ _('Аватар') }}" class="profile-image-preview" id="profile-image-preview" style="display: none;">
+                        {% endif %}
+                    </div>
+                    
+                    <div class="custom-file mt-3">
+                        {{ form.profile_photo.label(class="custom-file-label") }}
+                        {{ form.profile_photo(class="custom-file-input", id="profile-photo-input") }}
+                        {% if form.profile_photo.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.profile_photo.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="form-section">
+                    <h4>{{ _('Особисті дані') }}</h4>
+                    
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            {{ form.first_name.label }}
+                            {{ form.first_name(class="form-control") }}
+                            {% if form.first_name.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.first_name.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group col-md-6">
+                            {{ form.last_name.label }}
+                            {{ form.last_name(class="form-control") }}
+                            {% if form.last_name.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.last_name.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            {{ form.birth_date.label }}
+                            {{ form.birth_date(class="form-control", type="date") }}
+                            {% if form.birth_date.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.birth_date.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group col-md-6">
+                            {{ form.phone.label }}
+                            {{ form.phone(class="form-control") }}
+                            {% if form.phone.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.phone.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h4>{{ _('Професійна інформація') }}</h4>
+                    
+                    <div class="form-group">
+                        {{ form.specialty.label }}
+                        {{ form.specialty(class="form-control") }}
+                        {% if form.specialty.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.specialty.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h4>{{ _('Інформація про участь') }}</h4>
+                    
+                    <div class="form-group">
+                        {{ form.join_goal.label }}
+                        {{ form.join_goal(class="form-control", rows=3) }}
+                        {% if form.join_goal.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.join_goal.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form.can_help.label }}
+                        {{ form.can_help(class="form-control", rows=3) }}
+                        {% if form.can_help.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.can_help.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form.want_to_do.label }}
+                        {{ form.want_to_do(class="form-control", rows=3) }}
+                        {% if form.want_to_do.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.want_to_do.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-group mt-4">
+                    {{ form.submit(class="btn btn-primary") }}
+                    <a href="{{ url_for('main.profile') }}" class="btn btn-secondary ml-2">{{ _('Скасувати') }}</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const photoInput = document.getElementById('profile-photo-input');
+    const imagePreview = document.getElementById('profile-image-preview');
+    const placeholderDiv = document.getElementById('profile-image-placeholder');
+    
+    if (photoInput && imagePreview) {
+        photoInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    if (placeholderDiv) {
+                        placeholderDiv.style.display = 'none';
+                    }
+                }
+                
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

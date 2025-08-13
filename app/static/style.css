@@ -2,6 +2,7 @@
 @import url('admin-dashboard.css');
 @import url('admin-project-styles.css');
 @import url('language.css');
+@import url('profile.css');
 
 body {
     font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;

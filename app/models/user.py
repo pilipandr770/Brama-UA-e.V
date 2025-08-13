@@ -1,5 +1,6 @@
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 import enum
 
 class UserRole(enum.Enum):
@@ -7,7 +8,7 @@ class UserRole(enum.Enum):
     admin = "admin"
     founder = "founder"
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)

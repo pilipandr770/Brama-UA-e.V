@@ -2,12 +2,14 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_socketio import SocketIO
+from flask_login import LoginManager
 from dotenv import load_dotenv
 import os
 
 db = SQLAlchemy()
 migrate = Migrate()
 socketio = SocketIO()
+login_manager = LoginManager()
 
 # Import our babel setup (needs to be after initializing the other extensions)
 from app.babel import init_babel
@@ -22,6 +24,17 @@ def create_app():
     migrate.init_app(app, db)
     init_babel(app)  # Initialize Babel with our custom locale selector
     socketio.init_app(app, cors_allowed_origins="*")
+    
+    # Настраиваем Flask-Login
+    login_manager.init_app(app)
+    login_manager.login_view = 'main.login'
+    login_manager.login_message = 'Будь ласка, увійдіть для доступу до цієї сторінки.'
+    login_manager.login_message_category = 'info'
+    
+    @login_manager.user_loader
+    def load_user(user_id):
+        from app.models.user import User
+        return User.query.get(int(user_id))
     
     # Configure Babel settings
     app.config['BABEL_DEFAULT_LOCALE'] = 'uk'
@@ -40,7 +53,14 @@ def create_app():
     def inject_settings():
         from app.models.settings import Settings
         settings = Settings.query.first()
-        return dict(settings=settings)
+        
+        # Для обратной совместимости добавим user в контекст
+        from flask_login import current_user
+        user = None
+        if hasattr(current_user, 'is_authenticated') and current_user.is_authenticated:
+            user = current_user
+            
+        return dict(settings=settings, user=user)
     
     # Import WebSocket handlers
     with app.app_context():

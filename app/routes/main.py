@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, send_file
+from flask import Blueprint, render_template, request, redirect, url_for, flash, send_file, current_app, session
 from flask_babel import gettext as _
 from app import db
 from app.models.project import Project, Vote
@@ -6,7 +6,12 @@ from app.models.user import User
 from app.models.block import Block
 from app.models.gallery_image import GalleryImage
 from app.models.settings import Settings
+from app.forms import EditProfileForm, LoginForm, RegistrationForm
+from flask_login import current_user, login_required, login_user, logout_user
+from werkzeug.utils import secure_filename
 import io
+import os
+from datetime import datetime
 
 
 main_bp = Blueprint('main', __name__)
@@ -66,6 +71,7 @@ def index():
     )
 
 @main_bp.route('/submit-project', methods=['GET', 'POST'])
+@login_required
 def submit_project():
     if request.method == 'POST':
         try:
@@ -93,7 +99,7 @@ def submit_project():
                 website=request.form.get('website'),
                 social_links=request.form.get('social_links'),
                 document_url=request.form.get('document_url'),
-                user_id=1,  # тимчасово хардкод, поки немає логіну
+                user_id=current_user.id if current_user.is_authenticated else None,
                 image_data=image_data,
                 image_mimetype=image_mimetype,
                 status='pending',
@@ -145,77 +151,85 @@ from flask import session
 
 @main_bp.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        if User.query.filter_by(email=email).first():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        if User.query.filter_by(email=form.email.data).first():
             flash(_("Користувач з такою поштою вже існує."), "danger")
             return redirect(url_for('main.register'))
+        
         user = User(
-            email=email,
-            first_name=request.form.get('first_name'),
-            last_name=request.form.get('last_name'),
-            birth_date=request.form.get('birth_date'),
-            specialty=request.form.get('specialty'),
-            join_goal=request.form.get('join_goal'),
-            can_help=request.form.get('can_help'),
-            want_to_do=request.form.get('want_to_do'),
-            phone=request.form.get('phone'),
+            email=form.email.data,
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            birth_date=form.birth_date.data,
+            specialty=form.specialty.data,
+            join_goal=form.join_goal.data,
+            can_help=form.can_help.data,
+            want_to_do=form.want_to_do.data,
+            phone=form.phone.data,
             is_member=True,
-            consent_given=bool(request.form.get('consent_given')),
+            consent_given=form.consent_given.data,
             contributions=0.0
         )
-        user.set_password(password)
+        user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        session['user_id'] = user.id
+        
+        # Автоматическая авторизация
+        login_user(user)
+        session['user_id'] = user.id  # Сохраняем для обратной совместимости
+        
         flash(_("Реєстрація успішна! Ви стали членом ферайну."), "success")
         return redirect(url_for('main.dashboard'))
-    return render_template('register.html')
+    
+    return render_template('register.html', form=form)
 
 
 @main_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        user = User.query.filter_by(email=email).first()
-        if user and user.check_password(password):
-            session['user_id'] = user.id
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and user.check_password(form.password.data):
+            # Используем remember=True если пользователь выбрал "запомнить меня"
+            login_user(user, remember=form.remember.data)
+            session['user_id'] = user.id  # Сохраняем для обратной совместимости
             flash(_("Ви увійшли!"), "success")
-            if user.is_admin:
-                return redirect(url_for('admin.dashboard'))
-            if user.is_founder:
-                return redirect(url_for('founder.dashboard'))
-            return redirect(url_for('main.dashboard'))
+            
+            # Перенаправление на страницу, которую пользователь запрашивал до входа
+            next_page = request.args.get('next')
+            if not next_page or not next_page.startswith('/'):
+                if user.is_admin:
+                    next_page = url_for('admin.dashboard')
+                elif user.is_founder:
+                    next_page = url_for('founder.dashboard')
+                else:
+                    next_page = url_for('main.dashboard')
+            return redirect(next_page)
         flash(_("Невірний email або пароль"), "danger")
-    return render_template('login.html')
+    return render_template('login.html', form=form)
 
 
 @main_bp.route('/logout')
 def logout():
-    session.pop('user_id', None)
+    logout_user()
+    session.pop('user_id', None)  # Удаляем для обратной совместимости
     flash(_("Ви вийшли з акаунту."), "info")
     return redirect(url_for('main.index'))
 
 
 @main_bp.route('/dashboard')
+@login_required
 def dashboard():
-    user_id = session.get('user_id')
-    if not user_id:
-        flash(_("Увійдіть, щоб побачити кабінет"), "warning")
-        return redirect(url_for('main.login'))
-    
-    user = User.query.get(user_id)
-    
     # If user is a founder, redirect to founder dashboard
-    if user.is_founder:
+    if current_user.is_founder:
         return redirect(url_for('founder.dashboard'))
     
     from sqlalchemy import func
     total_contributions = db.session.query(func.sum(User.contributions)).scalar() or 0.0
     last_contributor = User.query.filter(User.contributions > 0).order_by(User.contributions.desc()).first()
-    return render_template('dashboard.html', user=user, total_contributions=total_contributions, last_contributor=last_contributor)
+    
+    return render_template('dashboard.html', total_contributions=total_contributions, last_contributor=last_contributor)
 
 @main_bp.route('/privacy')
 def privacy():
@@ -230,34 +244,25 @@ def contact():
     return render_template('contact.html')
 
 @main_bp.route('/vote/<int:project_id>', methods=['POST'])
+@login_required
 def vote(project_id):
-    user_id = session.get('user_id')
-    if not user_id:
-        flash(_('Треба увійти, щоб голосувати.'), 'warning')
-        return redirect(url_for('main.login'))
     project = Project.query.get_or_404(project_id)
-    existing_vote = Vote.query.filter_by(user_id=user_id, project_id=project_id).first()
+    existing_vote = Vote.query.filter_by(user_id=current_user.id, project_id=project_id).first()
+    
     if existing_vote:
         flash(_('Ви вже підтримали цей проєкт!'), 'info')
         return redirect(url_for('main.index'))
-    vote = Vote(user_id=user_id, project_id=project_id)
+        
+    vote = Vote(user_id=current_user.id, project_id=project_id)
     db.session.add(vote)
     db.session.commit()
+    
     flash(_('Ваш голос зараховано!'), 'success')
     return redirect(url_for('main.index'))
 
 @main_bp.route('/upload-profile-photo', methods=['POST'])
+@login_required
 def upload_profile_photo():
-    user_id = session.get('user_id')
-    if not user_id:
-        flash(_("Увійдіть, щоб змінити фото профілю"), "warning")
-        return redirect(url_for('main.login'))
-    
-    user = User.query.get(user_id)
-    if not user:
-        flash(_("Користувача не знайдено"), "danger")
-        return redirect(url_for('main.login'))
-    
     if 'profile_photo' not in request.files:
         flash(_("Файл не вибрано"), "warning")
         return redirect(url_for('main.dashboard'))
@@ -282,16 +287,79 @@ def upload_profile_photo():
         # Создаем уникальное имя файла
         filename = secure_filename(profile_photo.filename)
         timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-        unique_filename = f"{timestamp}_{user_id}_{filename}"
+        unique_filename = f"{timestamp}_{current_user.id}_{filename}"
         file_path = os.path.join(upload_dir, unique_filename)
         
         # Сохраняем файл
         profile_photo.save(file_path)
         
         # Устанавливаем URL для сохранения в БД
-        user.profile_photo_url = url_for('static', filename=f'uploads/profiles/{unique_filename}')
+        current_user.profile_photo_url = url_for('static', filename=f'uploads/profiles/{unique_filename}')
         db.session.commit()
         
         flash(_("Фото профілю оновлено"), "success")
     
     return redirect(url_for('main.dashboard'))
+
+
+@main_bp.route('/profile')
+@login_required
+def profile():
+    """Страница профиля пользователя"""
+    return render_template('profile.html')
+
+
+@main_bp.route('/profile/edit', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    """Редактирование профиля пользователя"""
+    form = EditProfileForm()
+    
+    if request.method == 'GET':
+        # Заполняем форму текущими данными пользователя
+        form.first_name.data = current_user.first_name
+        form.last_name.data = current_user.last_name
+        form.birth_date.data = current_user.birth_date
+        form.specialty.data = current_user.specialty
+        form.join_goal.data = current_user.join_goal
+        form.can_help.data = current_user.can_help
+        form.want_to_do.data = current_user.want_to_do
+        form.phone.data = current_user.phone
+    
+    if form.validate_on_submit():
+        # Обновляем данные пользователя
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
+        current_user.birth_date = form.birth_date.data
+        current_user.specialty = form.specialty.data
+        current_user.join_goal = form.join_goal.data
+        current_user.can_help = form.can_help.data
+        current_user.want_to_do = form.want_to_do.data
+        current_user.phone = form.phone.data
+        
+        # Обработка загрузки фото профиля
+        if form.profile_photo.data:
+            profile_photo = form.profile_photo.data
+            
+            # Создаем директорию для загрузки, если она не существует
+            upload_dir = os.path.join(current_app.static_folder, 'uploads/profiles')
+            if not os.path.exists(upload_dir):
+                os.makedirs(upload_dir)
+            
+            # Создаем уникальное имя файла
+            filename = secure_filename(profile_photo.filename)
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            unique_filename = f"{timestamp}_{current_user.id}_{filename}"
+            file_path = os.path.join(upload_dir, unique_filename)
+            
+            # Сохраняем файл
+            profile_photo.save(file_path)
+            
+            # Устанавливаем URL для сохранения в БД
+            current_user.profile_photo_url = url_for('static', filename=f'uploads/profiles/{unique_filename}')
+        
+        db.session.commit()
+        flash(_('Профіль успішно оновлено'), 'success')
+        return redirect(url_for('main.profile'))
+    
+    return render_template('edit_profile.html', form=form)

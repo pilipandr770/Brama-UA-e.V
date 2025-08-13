@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Профіль') }}{% endblock %}
+
+{% block content %}
+<div class="container profile-container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="profile-sidebar">
+                <div class="profile-image-container">
+                    {% if current_user.profile_photo_url %}
+                    <img src="{{ current_user.profile_photo_url }}" alt="{{ _('Аватар користувача') }}" class="profile-image">
+                    {% else %}
+                    <div class="profile-image-placeholder">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <h3 class="profile-name">{{ current_user.full_name }}</h3>
+                <p class="profile-email">{{ current_user.email }}</p>
+                
+                <div class="profile-actions">
+                    <a href="{{ url_for('main.edit_profile') }}" class="btn btn-primary btn-block">
+                        <i class="fas fa-edit"></i> {{ _('Редагувати профіль') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="profile-content">
+                <h2>{{ _('Інформація про мене') }}</h2>
+                
+                <div class="profile-detail-section">
+                    <h4>{{ _('Особисті дані') }}</h4>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">{{ _('Повне ім\'я:') }}</span>
+                        <span class="profile-detail-value">{{ current_user.first_name }} {{ current_user.last_name }}</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">{{ _('Email:') }}</span>
+                        <span class="profile-detail-value">{{ current_user.email }}</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">{{ _('Дата народження:') }}</span>
+                        <span class="profile-detail-value">{{ current_user.birth_date.strftime('%d.%m.%Y') if current_user.birth_date else _('Не вказано') }}</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">{{ _('Телефон:') }}</span>
+                        <span class="profile-detail-value">{{ current_user.phone or _('Не вказано') }}</span>
+                    </div>
+                </div>
+                
+                <div class="profile-detail-section">
+                    <h4>{{ _('Професійна інформація') }}</h4>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">{{ _('Спеціалізація:') }}</span>
+                        <span class="profile-detail-value">{{ current_user.specialty or _('Не вказано') }}</span>
+                    </div>
+                </div>
+                
+                <div class="profile-detail-section">
+                    <h4>{{ _('Внесок у спільноту') }}</h4>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">{{ _('Мета участі:') }}</span>
+                        <span class="profile-detail-value">{{ current_user.join_goal or _('Не вказано') }}</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">{{ _('Чим можу допомогти:') }}</span>
+                        <span class="profile-detail-value">{{ current_user.can_help or _('Не вказано') }}</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">{{ _('Чим хочу займатись:') }}</span>
+                        <span class="profile-detail-value">{{ current_user.want_to_do or _('Не вказано') }}</span>
+                    </div>
+                    {% if current_user.is_member %}
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">{{ _('Членські внески:') }}</span>
+                        <span class="profile-detail-value">{{ current_user.contributions }} €</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

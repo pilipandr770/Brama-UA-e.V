@@ -109,13 +109,37 @@
     margin-top: 5px;
 }
 
-.edit-profile-btn {
-    display: inline-block;
+.profile-actions {
+    display: flex;
+    gap: 15px;
     margin-top: 15px;
-    color: #00aaff;
+}
+
+.view-profile-btn, .edit-profile-btn {
+    display: inline-block;
+    color: white;
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 500;
     font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.view-profile-btn {
+    background-color: #00aaff;
+}
+
+.edit-profile-btn {
+    background-color: #28a745;
+}
+
+.view-profile-btn:hover {
+    background-color: #0088cc;
+}
+
+.edit-profile-btn:hover {
+    background-color: #218838;
 }
 
 /* Contribution Card */

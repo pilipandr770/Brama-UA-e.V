@@ -7,28 +7,105 @@
   <button onclick="showForm()">{{ _('Погоджуюсь') }}</button>
 </div>
 <form method="post" id="register-form" style="display:none;">
-  <label>{{ _('Ім\'я*:') }}</label>
-  <input name="first_name" required><br>
-  <label>{{ _('Прізвище*:') }}</label>
-  <input name="last_name" required><br>
-  <label>{{ _('Дата народження*:') }}</label>
-  <input type="date" name="birth_date" required><br>
-  <label>{{ _('Спеціальність:') }}</label>
-  <input name="specialty"><br>
-  <label>{{ _('Мета приєднання до ферайну*:') }}</label>
-  <input name="join_goal" required><br>
-  <label>{{ _('Чим можете допомогти?') }}</label>
-  <input name="can_help"><br>
-  <label>{{ _('Чим хочете займатись?') }}</label>
-  <input name="want_to_do"><br>
-  <label>{{ _('Телефон*:') }}</label>
-  <input name="phone" required><br>
-  <label>{{ _('Email*:') }}</label>
-  <input type="email" name="email" required><br>
-  <label>{{ _('Пароль*:') }}</label>
-  <input type="password" name="password" required><br>
-  <input type="hidden" name="consent_given" value="1">
-  <button type="submit">{{ _('Зареєструватися') }}</button>
+  {{ form.hidden_tag() }}
+  
+  <div class="form-group">
+    {{ form.first_name.label }}*:
+    {{ form.first_name(class="form-control") }}
+    {% for error in form.first_name.errors %}
+      <span class="error">{{ error }}</span>
+    {% endfor %}
+  </div>
+  
+  <div class="form-group">
+    {{ form.last_name.label }}*:
+    {{ form.last_name(class="form-control") }}
+    {% for error in form.last_name.errors %}
+      <span class="error">{{ error }}</span>
+    {% endfor %}
+  </div>
+  
+  <div class="form-group">
+    {{ form.birth_date.label }}*:
+    {{ form.birth_date(class="form-control", type="date") }}
+    {% for error in form.birth_date.errors %}
+      <span class="error">{{ error }}</span>
+    {% endfor %}
+  </div>
+  
+  <div class="form-group">
+    {{ form.specialty.label }}:
+    {{ form.specialty(class="form-control") }}
+    {% for error in form.specialty.errors %}
+      <span class="error">{{ error }}</span>
+    {% endfor %}
+  </div>
+  
+  <div class="form-group">
+    {{ form.join_goal.label }}*:
+    {{ form.join_goal(class="form-control") }}
+    {% for error in form.join_goal.errors %}
+      <span class="error">{{ error }}</span>
+    {% endfor %}
+  </div>
+  
+  <div class="form-group">
+    {{ form.can_help.label }}:
+    {{ form.can_help(class="form-control") }}
+    {% for error in form.can_help.errors %}
+      <span class="error">{{ error }}</span>
+    {% endfor %}
+  </div>
+  
+  <div class="form-group">
+    {{ form.want_to_do.label }}:
+    {{ form.want_to_do(class="form-control") }}
+    {% for error in form.want_to_do.errors %}
+      <span class="error">{{ error }}</span>
+    {% endfor %}
+  </div>
+  
+  <div class="form-group">
+    {{ form.phone.label }}*:
+    {{ form.phone(class="form-control") }}
+    {% for error in form.phone.errors %}
+      <span class="error">{{ error }}</span>
+    {% endfor %}
+  </div>
+  
+  <div class="form-group">
+    {{ form.email.label }}*:
+    {{ form.email(class="form-control") }}
+    {% for error in form.email.errors %}
+      <span class="error">{{ error }}</span>
+    {% endfor %}
+  </div>
+  
+  <div class="form-group">
+    {{ form.password.label }}*:
+    {{ form.password(class="form-control") }}
+    {% for error in form.password.errors %}
+      <span class="error">{{ error }}</span>
+    {% endfor %}
+  </div>
+  
+  <div class="form-group">
+    {{ form.password2.label }}*:
+    {{ form.password2(class="form-control") }}
+    {% for error in form.password2.errors %}
+      <span class="error">{{ error }}</span>
+    {% endfor %}
+  </div>
+  
+  <div class="form-group">
+    {{ form.consent_given }}
+    {{ form.consent_given.label }}
+    {% for error in form.consent_given.errors %}
+      <span class="error">{{ error }}</span>
+    {% endfor %}
+  </div>
+  
+  {{ form.submit(class="btn btn-primary") }}
 </form>
 <script>
 function showForm() {
