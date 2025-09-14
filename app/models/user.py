@@ -10,26 +10,26 @@ class UserRole(enum.Enum):
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
+    __table_args__ = {'schema': 'brama'}
 
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(512), nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
     is_blocked = db.Column(db.Boolean, default=False)
-    # Нові поля для членів ферайну/волонтерів
-    first_name = db.Column(db.String(64))
-    last_name = db.Column(db.String(64))
+    first_name = db.Column(db.String(255))
+    last_name = db.Column(db.String(255))
     birth_date = db.Column(db.Date)
-    specialty = db.Column(db.String(128))
-    join_goal = db.Column(db.String(256))
-    can_help = db.Column(db.String(256))
-    want_to_do = db.Column(db.String(256))
-    phone = db.Column(db.String(32))
-    is_member = db.Column(db.Boolean, default=True)
+    specialty = db.Column(db.String(255))
+    join_goal = db.Column(db.Text)
+    can_help = db.Column(db.Text)
+    want_to_do = db.Column(db.Text)
+    phone = db.Column(db.String(50))
+    is_member = db.Column(db.Boolean, default=False)
     consent_given = db.Column(db.Boolean, default=False)
-    contributions = db.Column(db.Float, default=0.0)
-    profile_photo_url = db.Column(db.String(300), nullable=True)  # URL до фото профілю
-    role = db.Column(db.Enum(UserRole), default=UserRole.member)
+    contributions = db.Column(db.Text)
+    profile_photo_url = db.Column(db.String(255), nullable=True)
+    role = db.Column(db.String(50), default='member')
 
     # Relationship with meetings
     created_meetings = db.relationship('Meeting', backref='creator', lazy='dynamic', foreign_keys='Meeting.creator_id')
