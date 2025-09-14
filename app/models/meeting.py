@@ -15,12 +15,13 @@ class VoteType(enum.Enum):
 
 class Meeting(db.Model):
     __tablename__ = 'meetings'
+    __table_args__ = {'schema': 'brama'}
     
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.utcnow)
-    creator_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    creator_id = db.Column(db.Integer, db.ForeignKey('brama.users.id'))
     status = db.Column(db.Enum(MeetingStatus), default=MeetingStatus.planned)
     protocol_url = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -51,9 +52,10 @@ class Meeting(db.Model):
 
 class AgendaItem(db.Model):
     __tablename__ = 'agenda_items'
+    __table_args__ = {'schema': 'brama'}
     
     id = db.Column(db.Integer, primary_key=True)
-    meeting_id = db.Column(db.Integer, db.ForeignKey('meetings.id'))
+    meeting_id = db.Column(db.Integer, db.ForeignKey('brama.meetings.id'))
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
     order = db.Column(db.Integer, default=0)
@@ -86,28 +88,31 @@ class AgendaItem(db.Model):
 
 class MeetingAttendee(db.Model):
     __tablename__ = 'meeting_attendees'
+    __table_args__ = {'schema': 'brama'}
     
     id = db.Column(db.Integer, primary_key=True)
-    meeting_id = db.Column(db.Integer, db.ForeignKey('meetings.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    meeting_id = db.Column(db.Integer, db.ForeignKey('brama.meetings.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('brama.users.id'))
     joined_at = db.Column(db.DateTime, default=datetime.utcnow)
     left_at = db.Column(db.DateTime)
 
 class MeetingVote(db.Model):
     __tablename__ = 'meeting_votes'
+    __table_args__ = {'schema': 'brama'}
     
     id = db.Column(db.Integer, primary_key=True)
-    agenda_item_id = db.Column(db.Integer, db.ForeignKey('agenda_items.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    agenda_item_id = db.Column(db.Integer, db.ForeignKey('brama.agenda_items.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('brama.users.id'))
     vote = db.Column(db.Enum(VoteType))
     comment = db.Column(db.Text)
     voted_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Message(db.Model):
     __tablename__ = 'messages'
+    __table_args__ = {'schema': 'brama'}
     
     id = db.Column(db.Integer, primary_key=True)
-    meeting_id = db.Column(db.Integer, db.ForeignKey('meetings.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    meeting_id = db.Column(db.Integer, db.ForeignKey('brama.meetings.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('brama.users.id'))
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
