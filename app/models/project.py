@@ -7,13 +7,15 @@ main_bp = Blueprint('main', __name__)
 
 class Vote(db.Model):
     __tablename__ = 'votes'
+    __table_args__ = {'schema': 'brama'}
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('brama.users.id'), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey('brama.projects.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Project(db.Model):
     __tablename__ = 'projects'
+    __table_args__ = {'schema': 'brama'}
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
