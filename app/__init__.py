@@ -66,4 +66,8 @@ def create_app():
     with app.app_context():
         from app import websockets
 
+
     return app
+
+# Экспортируем переменную app для gunicorn
+app = create_app()
