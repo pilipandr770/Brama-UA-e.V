@@ -7,5 +7,5 @@ class GalleryImage(db.Model):
     image_data = db.Column(db.LargeBinary, nullable=True)
     image_mimetype = db.Column(db.String(64), nullable=True)
     description = db.Column(db.String(256), nullable=True)
-    block_id = db.Column(db.Integer, db.ForeignKey('blocks.id'))
+    block_id = db.Column(db.Integer, db.ForeignKey('brama.blocks.id'))
     block = db.relationship('Block', backref='images') 
