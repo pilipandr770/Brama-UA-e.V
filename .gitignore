@@ -17,7 +17,7 @@ ENV/
 .idea/
 
 # Migrations
-migrations/versions/
+# migrations/versions/ (удалено для Alembic)
 
 # System
 .DS_Store
