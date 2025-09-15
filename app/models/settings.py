@@ -2,6 +2,7 @@ from app import db
 
 class Settings(db.Model):
     __tablename__ = 'settings'
+    __table_args__ = {'schema': 'brama'}
     id = db.Column(db.Integer, primary_key=True)
     facebook = db.Column(db.String(256))
     instagram = db.Column(db.String(256))
