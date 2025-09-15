@@ -2,6 +2,7 @@ from app import db
 
 class GalleryImage(db.Model):
     __tablename__ = 'gallery_images'
+    __table_args__ = {'schema': 'brama'}
     id = db.Column(db.Integer, primary_key=True)
     image_url = db.Column(db.String(300), nullable=True)
     image_data = db.Column(db.LargeBinary, nullable=True)
