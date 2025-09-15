@@ -56,28 +56,42 @@ def create_block():
         
         # Обработка загруженного файла
         image_file = request.files.get('image_file')
+        image_data = None
+        image_mimetype = None
+        
         if image_file and image_file.filename:
-            # Генерируем уникальное имя файла
-            import os
-            from werkzeug.utils import secure_filename
-            from datetime import datetime
+            # Читаем файл целиком в память для сохранения в базе данных
+            image_data = image_file.read()
+            image_mimetype = image_file.mimetype
             
-            # Создаем директорию для загрузок, если она не существует
-            upload_dir = os.path.join(os.getcwd(), 'app', 'static', 'uploads')
-            if not os.path.exists(upload_dir):
-                os.makedirs(upload_dir)
-            
-            # Создаем уникальное имя файла
-            filename = secure_filename(image_file.filename)
-            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-            unique_filename = f"{timestamp}_{filename}"
-            file_path = os.path.join(upload_dir, unique_filename)
-            
-            # Сохраняем файл
-            image_file.save(file_path)
-            
-            # Устанавливаем URL для сохранения в БД
-            image_url = url_for('static', filename=f'uploads/{unique_filename}')
+            # Можем опционально сохранить и URL, если нужна совместимость
+            try:
+                # Генерируем уникальное имя файла
+                import os
+                from werkzeug.utils import secure_filename
+                from datetime import datetime
+                
+                # Создаем директорию для загрузок, если она не существует
+                upload_dir = os.path.join(os.getcwd(), 'app', 'static', 'uploads')
+                if not os.path.exists(upload_dir):
+                    os.makedirs(upload_dir)
+                
+                # Создаем уникальное имя файла
+                filename = secure_filename(image_file.filename)
+                timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+                unique_filename = f"{timestamp}_{filename}"
+                file_path = os.path.join(upload_dir, unique_filename)
+                
+                # Сохраняем файл и с диска тоже (для совместимости)
+                with open(file_path, 'wb') as f:
+                    f.write(image_data)
+                
+                # Устанавливаем URL для сохранения в БД
+                image_url = url_for('static', filename=f'uploads/{unique_filename}')
+            except Exception as e:
+                # В случае ошибки сохранения файла на диск,
+                # продолжаем работу, так как изображение уже есть в памяти
+                print(f"Warning: Could not save image to disk: {e}")
         
         from datetime import datetime
         # Генерируем уникальное имя и slug
@@ -90,7 +104,9 @@ def create_block():
             title=title, 
             content=content, 
             type=type_, 
-            image_url=image_url
+            image_url=image_url,
+            image_data=image_data,
+            image_mimetype=image_mimetype
         )
         db.session.add(block)
         db.session.commit()

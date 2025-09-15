@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Модифікація HTML для відображення зображень{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Модифікація для підтримки зображень з бази даних</h2>
+        </div>
+        <div class="card-body">
+            <p>Для підтримки зображень, які зберігаються безпосередньо в базі даних, необхідно внести такі зміни в файли шаблонів:</p>
+            
+            <h3>1. Змінити шаблон index.html</h3>
+            <pre><code>
+{% raw %}
+<!-- Замість -->
+{% if block.image_url %}
+<img src="{{ block.image_url }}" alt="" class="block-cover">
+{% endif %}
+
+<!-- Використовувати -->
+{% if block.image_data %}
+<img src="{{ url_for('block_images.block_image_file', block_id=block.id) }}" alt="" class="block-cover">
+{% elif block.image_url %}
+<img src="{{ block.image_url }}" alt="" class="block-cover">
+{% endif %}
+{% endraw %}
+            </code></pre>
+
+            <h3>2. Змінити шаблон admin/edit_block.html та admin/edit_block_multilingual.html</h3>
+            <pre><code>
+{% raw %}
+<!-- Замість -->
+{% if block and block.image_url %}
+<div class="current-image">
+    <img src="{{ block.image_url }}" 
+            alt="Current image" 
+            style="max-width: 200px; max-height: 200px;">
+</div>
+{% endif %}
+
+<!-- Використовувати -->
+{% if block and (block.image_data or block.image_url) %}
+<div class="current-image">
+    <img src="{% if block.image_data %}{{ url_for('block_images.block_image_file', block_id=block.id) }}{% elif block.image_url %}{{ block.image_url }}{% endif %}" 
+            alt="Current image" 
+            style="max-width: 200px; max-height: 200px;">
+</div>
+{% endif %}
+{% endraw %}
+            </code></pre>
+
+            <h3>3. Змінити шаблон admin/dashboard.html</h3>
+            <pre><code>
+{% raw %}
+<!-- Замість -->
+{% if block.image_url %}
+<img src="{{ block.image_url }}" alt="{{ block.title }}" class="block-image">
+{% endif %}
+
+<!-- Використовувати -->
+{% if block.image_data %}
+<img src="{{ url_for('block_images.block_image_file', block_id=block.id) }}" alt="{{ block.title }}" class="block-image">
+{% elif block.image_url %}
+<img src="{{ block.image_url }}" alt="{{ block.title }}" class="block-image">
+{% endif %}
+{% endraw %}
+            </code></pre>
+            
+            <div class="alert alert-info mt-4">
+                <strong>Зауваження:</strong> Після внесення цих змін всі нові зображення будуть надійно зберігатися в базі даних, а не на файловій системі, тому вони не будуть втрачені при перезапуску контейнера.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
