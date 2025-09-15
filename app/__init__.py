@@ -49,6 +49,19 @@ def create_app():
     from app.routes import register_blueprints
     register_blueprints(app)
 
+    # Optional: run critical DB migrations on startup (idempotent per revision)
+    if os.getenv("AUTO_MIGRATE_ON_START", "true").lower() in ("1", "true", "yes"):  # default on
+        try:
+            from flask_migrate import upgrade as alembic_upgrade
+            with app.app_context():
+                for rev in ("31dcbe661935", "31dcbe661936", "b1a2c3d4e5f6"):
+                    try:
+                        alembic_upgrade(rev)
+                    except Exception as mig_err:
+                        app.logger.warning(f"Startup migration {rev} skipped or failed: {mig_err}")
+        except Exception as e:
+            app.logger.warning(f"AUTO_MIGRATE_ON_START failed to run: {e}")
+
     @app.context_processor
     def inject_settings():
         from app.models.settings import Settings
