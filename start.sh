@@ -25,6 +25,13 @@ flask db upgrade cafe4dadbeef || echo "[start.sh] Migration cafe4dadbeef already
 flask db upgrade dabbad00feed || echo "[start.sh] Migration dabbad00feed already applied or not required"
 flask db upgrade add_image_data_to_blocks || echo "[start.sh] Migration add_image_data_to_blocks already applied or not required"
 flask db upgrade add_name_slug_to_blocks || echo "[start.sh] Migration add_name_slug_to_blocks already applied or not required"
+flask db upgrade hotfix_name_slug_blocks || echo "[start.sh] Migration hotfix_name_slug_blocks already applied or not required"
+
+# Автоматически выполняем SQL для исправления структуры таблицы blocks
+echo "[start.sh] Применяем прямое SQL-исправление для таблицы blocks..."
+psql "$DATABASE_URL" -c "ALTER TABLE brama.blocks ADD COLUMN IF NOT EXISTS name VARCHAR(50) DEFAULT 'legacy';" || echo "[start.sh] Couldn't add name column, may already exist"
+psql "$DATABASE_URL" -c "ALTER TABLE brama.blocks ADD COLUMN IF NOT EXISTS slug VARCHAR(50);" || echo "[start.sh] Couldn't add slug column, may already exist"
+psql "$DATABASE_URL" -c "UPDATE brama.blocks SET name = 'legacy' WHERE name IS NULL;" || echo "[start.sh] Couldn't update NULL names"
 
 # 3) Start the app with eventlet for Socket.IO
 echo "[start.sh] Starting Gunicorn (eventlet worker)"

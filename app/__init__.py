@@ -54,11 +54,18 @@ def create_app():
         try:
             from flask_migrate import upgrade as alembic_upgrade
             with app.app_context():
-                for rev in ("31dcbe661935", "31dcbe661936", "b1a2c3d4e5f6", "cafe4dadbeef", "dabbad00feed"):
+                for rev in ("31dcbe661935", "31dcbe661936", "b1a2c3d4e5f6", "cafe4dadbeef", "dabbad00feed", 
+                           "add_image_data_to_blocks", "add_name_slug_to_blocks", "hotfix_name_slug_blocks"):
                     try:
                         alembic_upgrade(revision=rev)
                     except Exception as mig_err:
                         app.logger.warning(f"Startup migration {rev} skipped or failed: {mig_err}")
+                        
+            # Применяем дополнительный фикс для таблицы blocks
+            from app.database_fix import check_and_fix_blocks_table, monkey_patch_block_model
+            check_and_fix_blocks_table(app)  # Проверяем и исправляем структуру таблицы
+            monkey_patch_block_model()       # Применяем обходной путь к модели Block
+            
         except Exception as e:
             app.logger.warning(f"AUTO_MIGRATE_ON_START failed to run: {e}")
 
