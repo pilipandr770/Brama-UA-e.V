@@ -28,3 +28,12 @@ Thumbs.db
 
 # Other
 *.sqlite3 
+
+# Local SQLite databases and instance folder
+*.db
+instance/
+!/instance/README.md
+
+# Specific DB files (ensure not tracked)
+/site.db
+/instance/site.db
