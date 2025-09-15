@@ -17,10 +17,12 @@ class Config:
     
     # Engine options только для PostgreSQL
     if os.getenv("DATABASE_URL", "").startswith("postgresql"):
+        # Include both target schema and public in search_path to allow
+        # referencing tables that might have been created without explicit schema
+        target_schema = os.getenv('DB_SCHEMA', 'public')
         SQLALCHEMY_ENGINE_OPTIONS = {
             "connect_args": {
-                # правильный формат: опция -c и пробел
-                "options": f"-c search_path={os.getenv('DB_SCHEMA', 'public')}"
+                "options": f"-c search_path={target_schema},public"
             }
         }
     else:
