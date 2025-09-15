@@ -79,7 +79,14 @@ def create_block():
             # Устанавливаем URL для сохранения в БД
             image_url = url_for('static', filename=f'uploads/{unique_filename}')
         
+        from datetime import datetime
+        # Генерируем уникальное имя и slug
+        block_name = f"block_{type_}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        block_slug = block_name.lower().replace(" ", "_")
+        
         block = Block(
+            name=block_name,
+            slug=block_slug,
             title=title, 
             content=content, 
             type=type_, 
@@ -317,8 +324,8 @@ def delete_project(project_id):
 @admin_required
 def manage_founders():
     """Manage founder users as an admin"""
-    founders = User.query.filter_by(role=UserRole.founder).all()
-    regular_members = User.query.filter_by(is_member=True).filter(User.role != UserRole.founder).all()
+    founders = User.query.filter_by(role='founder').all()
+    regular_members = User.query.filter_by(is_member=True).filter(User.role != 'founder').all()
     
     if request.method == 'POST':
         action = request.form.get('action')
@@ -326,10 +333,10 @@ def manage_founders():
         user = User.query.get_or_404(user_id)
         
         if action == 'add':
-            user.role = UserRole.founder
+            user.role = 'founder'
             flash(f'{user.email} успішно додано як засновника!', 'success')
         elif action == 'remove':
-            user.role = UserRole.member
+            user.role = 'member'
             flash(f'{user.email} видалено з засновників!', 'success')
         
         db.session.commit()
