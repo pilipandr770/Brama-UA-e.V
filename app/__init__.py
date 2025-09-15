@@ -54,7 +54,7 @@ def create_app():
         try:
             from flask_migrate import upgrade as alembic_upgrade
             with app.app_context():
-                for rev in ("31dcbe661935", "31dcbe661936", "b1a2c3d4e5f6", "cafe4dadbeef"):
+                for rev in ("31dcbe661935", "31dcbe661936", "b1a2c3d4e5f6", "cafe4dadbeef", "dabbad00feed"):
                     try:
                         alembic_upgrade(revision=rev)
                     except Exception as mig_err:
