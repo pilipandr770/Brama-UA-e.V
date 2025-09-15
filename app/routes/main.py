@@ -225,8 +225,9 @@ def dashboard():
     if current_user.is_founder:
         return redirect(url_for('founder.dashboard'))
     
-    from sqlalchemy import func
-    total_contributions = db.session.query(func.sum(User.contributions)).scalar() or 0.0
+    from sqlalchemy import func, cast, Float
+    # Cast for safety; column is Float but this guards against legacy DBs
+    total_contributions = db.session.query(func.sum(cast(User.contributions, Float))).scalar() or 0.0
     last_contributor = User.query.filter(User.contributions > 0).order_by(User.contributions.desc()).first()
     
     return render_template('dashboard.html', total_contributions=total_contributions, last_contributor=last_contributor)
