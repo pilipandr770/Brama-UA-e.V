@@ -36,8 +36,8 @@ def send_meeting_reminders():
             print("No upcoming meetings that need reminders")
             return
         
-        # Get all founders
-        founders = User.query.filter_by(role=UserRole.founder).all()
+        # Get all founders - use string value since role is stored as string in DB
+        founders = User.query.filter_by(role='founder').all()
         if not founders:
             print("No founders found to send reminders to")
             return

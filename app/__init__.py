@@ -19,6 +19,15 @@ def create_app():
 
     app = Flask(__name__)
     app.config.from_object('config.Config')
+    
+    # Настраиваем расширенное логирование
+    if os.getenv("ENHANCED_LOGGING", "true").lower() in ("1", "true", "yes"):
+        try:
+            from app.enhanced_logging import setup_enhanced_logging
+            setup_enhanced_logging(app)
+            app.logger.info("Расширенное логирование активировано")
+        except Exception as e:
+            app.logger.warning(f"Не удалось настроить расширенное логирование: {e}")
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -86,6 +95,37 @@ def create_app():
     with app.app_context():
         from app import websockets
 
+    # Добавляем расширенную обработку ошибок
+    from flask import render_template, request
+    import traceback
+    
+    @app.errorhandler(500)
+    def internal_server_error(e):
+        error_traceback = traceback.format_exc()
+        app.logger.error(f"500 Internal Server Error: {error_traceback}")
+        return render_template('error.html', 
+                              error_code=500, 
+                              error_title="Внутренняя ошибка сервера", 
+                              error_message="Произошла внутренняя ошибка при обработке вашего запроса.", 
+                              error_details=error_traceback if app.debug else None), 500
+                              
+    @app.errorhandler(404)
+    def page_not_found(e):
+        app.logger.info(f"404 Not Found: {request.path}")
+        return render_template('error.html', 
+                              error_code=404, 
+                              error_title="Страница не найдена",
+                              error_message=f"Страница '{request.path}' не найдена."), 404
+                              
+    @app.errorhandler(Exception)
+    def handle_unhandled_exception(e):
+        error_traceback = traceback.format_exc()
+        app.logger.error(f"Unhandled Exception: {error_traceback}")
+        return render_template('error.html', 
+                              error_code=500, 
+                              error_title="Ошибка приложения",
+                              error_message=f"Произошла непредвиденная ошибка: {str(e)}", 
+                              error_details=error_traceback if app.debug else None), 500
 
     return app
 

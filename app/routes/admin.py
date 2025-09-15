@@ -340,6 +340,7 @@ def delete_project(project_id):
 @admin_required
 def manage_founders():
     """Manage founder users as an admin"""
+    # Using string value for consistency since role is stored as string in DB
     founders = User.query.filter_by(role='founder').all()
     regular_members = User.query.filter_by(is_member=True).filter(User.role != 'founder').all()
     
