@@ -18,9 +18,9 @@ echo "[start.sh] DB_SCHEMA=${DB_SCHEMA:-not-set}"
 
 # 2) Database migrations (run in strict order)
 echo "[start.sh] Applying Alembic migrations (targeted sequence)"
-python -m flask db upgrade 31dcbe661935 || echo "[start.sh] Migration 31dcbe661935 already applied or not required"
-python -m flask db upgrade 31dcbe661936 || echo "[start.sh] Migration 31dcbe661936 already applied or not required"
-python -m flask db upgrade b1a2c3d4e5f6 || echo "[start.sh] Migration b1a2c3d4e5f6 already applied or not required"
+flask db upgrade 31dcbe661935 || echo "[start.sh] Migration 31dcbe661935 already applied or not required"
+flask db upgrade 31dcbe661936 || echo "[start.sh] Migration 31dcbe661936 already applied or not required"
+flask db upgrade b1a2c3d4e5f6 || echo "[start.sh] Migration b1a2c3d4e5f6 already applied or not required"
 
 # 3) Start the app with eventlet for Socket.IO
 echo "[start.sh] Starting Gunicorn (eventlet worker)"

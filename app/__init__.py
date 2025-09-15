@@ -56,7 +56,7 @@ def create_app():
             with app.app_context():
                 for rev in ("31dcbe661935", "31dcbe661936", "b1a2c3d4e5f6"):
                     try:
-                        alembic_upgrade(rev)
+                        alembic_upgrade(revision=rev)
                     except Exception as mig_err:
                         app.logger.warning(f"Startup migration {rev} skipped or failed: {mig_err}")
         except Exception as e:
