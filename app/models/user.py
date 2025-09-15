@@ -54,7 +54,11 @@ class User(db.Model, UserMixin):
             
     @property
     def is_founder(self):
-        return self.role == UserRole.founder
+        # role stored as string; support old enum-based comparisons gracefully
+        try:
+            return (self.role == 'founder') or (isinstance(self.role, UserRole) and self.role == UserRole.founder)
+        except Exception:
+            return False
     
     @property
     def full_name(self):
