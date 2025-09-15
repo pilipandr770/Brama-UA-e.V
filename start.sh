@@ -23,6 +23,8 @@ flask db upgrade 31dcbe661936 || echo "[start.sh] Migration 31dcbe661936 already
 flask db upgrade b1a2c3d4e5f6 || echo "[start.sh] Migration b1a2c3d4e5f6 already applied or not required"
 flask db upgrade cafe4dadbeef || echo "[start.sh] Migration cafe4dadbeef already applied or not required"
 flask db upgrade dabbad00feed || echo "[start.sh] Migration dabbad00feed already applied or not required"
+flask db upgrade add_image_data_to_blocks || echo "[start.sh] Migration add_image_data_to_blocks already applied or not required"
+flask db upgrade add_name_slug_to_blocks || echo "[start.sh] Migration add_name_slug_to_blocks already applied or not required"
 
 # 3) Start the app with eventlet for Socket.IO
 echo "[start.sh] Starting Gunicorn (eventlet worker)"
