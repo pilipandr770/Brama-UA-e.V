@@ -20,14 +20,18 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')
     
-    # Настраиваем расширенное логирование
-    if os.getenv("ENHANCED_LOGGING", "true").lower() in ("1", "true", "yes"):
-        try:
-            from app.enhanced_logging import setup_enhanced_logging
-            setup_enhanced_logging(app)
-            app.logger.info("Расширенное логирование активировано")
-        except Exception as e:
-            app.logger.warning(f"Не удалось настроить расширенное логирование: {e}")
+    # Настраиваем стандартное логирование
+    import logging
+    app.logger.setLevel(logging.INFO)
+    # Добавляем обработчик для вывода логов в консоль
+    if not app.logger.handlers:
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(logging.Formatter(
+            '[%(asctime)s] [%(levelname)s] %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        ))
+        app.logger.addHandler(console_handler)
+        app.logger.info("Стандартное логирование активировано")
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -58,11 +62,19 @@ def create_app():
     from app.routes import register_blueprints
     register_blueprints(app)
     
-    # Регистрируем тестовые маршруты для отладки ошибок
-    if app.debug or app.testing:
+    # Регистрируем отладочные маршруты
+    try:
+        from app.debug_routes import register_debug_routes
+        register_debug_routes(app)
+    except ImportError:
+        app.logger.warning("Модуль debug_routes не найден, отладочные маршруты не зарегистрированы")
+        
+    # Тестовые маршруты для отладки отключены в продакшн режиме
+    if app.debug and os.environ.get('RENDER') != 'true':
         try:
             from app.test_error import register_test_error_routes
             register_test_error_routes(app)
+            app.logger.info("Тестовые маршруты для отладки ошибок зарегистрированы")
         except ImportError:
             app.logger.warning("Модуль test_error не найден, тестовые маршруты для ошибок не зарегистрированы")
 
@@ -103,97 +115,61 @@ def create_app():
     with app.app_context():
         from app import websockets
 
-    # Добавляем расширенную обработку ошибок
+    # Добавляем простую обработку ошибок
     from flask import render_template, request
     import traceback
+    import sys
     
     @app.errorhandler(500)
     def internal_server_error(e):
         error_traceback = traceback.format_exc()
+        app.logger.error(f"500 Internal Server Error: {str(e)}")
+        app.logger.error(error_traceback)
         
-        # Используем расширенное логирование, если доступно
-        if hasattr(app, 'log_exception'):
-            app.log_exception(e, 500)
-        else:
-            app.logger.error(f"500 Internal Server Error: {error_traceback}")
-            
-        # Отображаем стандартный шаблон ошибки
+        # Выводим ошибку также в stdout/stderr для гарантированного логирования на Render
+        print(f"500 Internal Server Error: {str(e)}", file=sys.stderr)
+        print(error_traceback, file=sys.stderr)
+        
         try:
-            # Сначала пробуем использовать новый шаблон с base.html
-            return render_template('error_base.html', 
+            return render_template('simple_error.html', 
                                 error_code=500, 
                                 error_title="Внутренняя ошибка сервера", 
                                 error_message="Произошла внутренняя ошибка при обработке вашего запроса.", 
                                 error_details=error_traceback if app.debug else None), 500
-        except Exception as base_err:
-            app.logger.error(f"Ошибка при рендеринге шаблона error_base.html: {base_err}")
-            try:
-                # Если не получилось, пробуем использовать автономный error.html
-                return render_template('error.html', 
-                                    error_code=500, 
-                                    error_title="Внутренняя ошибка сервера", 
-                                    error_message="Произошла внутренняя ошибка при обработке вашего запроса.", 
-                                    error_details=error_traceback if app.debug else None), 500
-            except Exception as template_err:
-                app.logger.error(f"Ошибка при рендеринге шаблона error.html: {template_err}")
-                # Возвращаем простой текст в крайнем случае
-                return "Внутренняя ошибка сервера (500). Пожалуйста, обратитесь к администратору.", 500
+        except Exception as template_err:
+            # Если шаблон не работает, возвращаем простой текст
+            return "Внутренняя ошибка сервера (500). Пожалуйста, обратитесь к администратору.", 500
                               
     @app.errorhandler(404)
     def page_not_found(e):
-        # Используем расширенное логирование, если доступно
-        if hasattr(app, 'log_exception'):
-            app.log_exception(e, 404)
-        else:
-            app.logger.info(f"404 Not Found: {request.path}")
-            
+        app.logger.info(f"404 Not Found: {request.path}")
+        
         try:
-            # Сначала пробуем использовать новый шаблон с base.html
-            return render_template('error_base.html', 
+            return render_template('simple_error.html', 
                                 error_code=404, 
                                 error_title="Страница не найдена",
                                 error_message=f"Страница '{request.path}' не найдена."), 404
-        except Exception as base_err:
-            app.logger.error(f"Ошибка при рендеринге шаблона error_base.html для 404: {base_err}")
-            try:
-                # Если не получилось, пробуем использовать автономный error.html
-                return render_template('error.html', 
-                                    error_code=404, 
-                                    error_title="Страница не найдена",
-                                    error_message=f"Страница '{request.path}' не найдена."), 404
-            except Exception as template_err:
-                app.logger.error(f"Ошибка при рендеринге шаблона error.html для 404: {template_err}")
-                return f"Страница '{request.path}' не найдена (404).", 404
+        except Exception:
+            return f"Страница '{request.path}' не найдена (404).", 404
                               
     @app.errorhandler(Exception)
     def handle_unhandled_exception(e):
         error_traceback = traceback.format_exc()
+        app.logger.error(f"Unhandled Exception: {str(e)}")
+        app.logger.error(error_traceback)
         
-        # Используем расширенное логирование, если доступно
-        if hasattr(app, 'log_exception'):
-            app.log_exception(e)
-        else:
-            app.logger.error(f"Unhandled Exception: {error_traceback}")
-            
+        # Выводим ошибку также в stdout/stderr для гарантированного логирования на Render
+        print(f"Unhandled Exception: {str(e)}", file=sys.stderr)
+        print(error_traceback, file=sys.stderr)
+        
         try:
-            # Сначала пробуем использовать новый шаблон с base.html
-            return render_template('error_base.html', 
+            return render_template('simple_error.html', 
                                 error_code=500, 
                                 error_title="Ошибка приложения",
                                 error_message="Произошла непредвиденная ошибка.", 
                                 error_details=error_traceback if app.debug else None), 500
-        except Exception as base_err:
-            app.logger.error(f"Ошибка при рендеринге шаблона error_base.html для исключения: {base_err}")
-            try:
-                # Если не получилось, пробуем использовать автономный error.html
-                return render_template('error.html', 
-                                    error_code=500, 
-                                    error_title="Ошибка приложения",
-                                    error_message="Произошла непредвиденная ошибка.", 
-                                    error_details=error_traceback if app.debug else None), 500
-            except Exception as template_err:
-                app.logger.error(f"Ошибка при рендеринге шаблона необработанного исключения: {template_err}")
-                return "Внутренняя ошибка сервера. Пожалуйста, обратитесь к администратору.", 500
+        except Exception:
+            return "Внутренняя ошибка сервера. Пожалуйста, обратитесь к администратору.", 500
 
     return app
 

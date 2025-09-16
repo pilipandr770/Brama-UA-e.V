@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ error_code }} - Ошибка</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .error-container {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .flag {
+            display: flex;
+            margin: 20px auto;
+            width: 100px;
+            height: 10px;
+        }
+        .blue {
+            background-color: #0057b7;
+            width: 50%;
+            height: 100%;
+        }
+        .yellow {
+            background-color: #ffd700;
+            width: 50%;
+            height: 100%;
+        }
+        pre {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 10px;
+            overflow-x: auto;
+            text-align: left;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <h1>{{ error_code }} - {{ error_title }}</h1>
+        
+        <div class="flag">
+            <div class="blue"></div>
+            <div class="yellow"></div>
+        </div>
+        
+        <p>{{ error_message }}</p>
+        <p>Пожалуйста, попробуйте еще раз позже или вернитесь на главную страницу.</p>
+        
+        <a href="/" class="btn">Вернуться на главную</a>
+        
+        {% if error_details %}
+        <pre>{{ error_details }}</pre>
+        {% endif %}
+    </div>
+</body>
+</html>
