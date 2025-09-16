@@ -15,16 +15,31 @@
         <option value="custom" {% if block and block.type=='custom' %}selected{% endif %}>Інший блок</option>
     </select><br>
     <label>Обкладинка:</label><br>
-    {% if block and block.image_url %}
+    {% if block %}
+        {% if block.image_data %}
+        <div style="margin: 10px 0;">
+            <img src="{{ url_for('block_images.block_image_file', block_id=block.id) }}" 
+                 alt="Поточна обкладинка" style="max-width: 200px; max-height: 150px; margin-bottom: 10px;">
+            <p>Поточне зображення (збережено в БД)</p>
+        </div>
+        {% elif block.image_url %}
         <div style="margin: 10px 0;">
             <img src="{{ block.image_url }}" 
                  alt="Поточна обкладинка" style="max-width: 200px; max-height: 150px; margin-bottom: 10px;">
-            <p>Поточне зображення</p>
+            <p>Поточне зображення (URL)</p>
         </div>
+        {% endif %}
     {% endif %}
     <input type="file" name="image_file" accept="image/*"><br>
     <small>Або вкажіть URL зображення:</small><br>
     <input type="url" name="image_url" value="{{ block.image_url if block else '' }}"><br>
+    
+    {% if block and (block.image_data or block.image_url) %}
+    <div style="margin-top: 10px;">
+        <button type="button" onclick="document.getElementById('remove_image').value='1'; this.form.submit();" class="btn btn-danger">Видалити зображення</button>
+        <input type="hidden" name="remove_image" id="remove_image" value="0">
+    </div>
+    {% endif %}
     <label>Контент:</label><br>
     <textarea name="content" rows="6">{{ block.content if block else '' }}</textarea><br>
     <button type="submit">Зберегти</button>
