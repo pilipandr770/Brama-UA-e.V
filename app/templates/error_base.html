@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ error_code }} - {{ error_title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h2>{{ error_code }} - {{ error_title }}</h2>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="flag d-flex mx-auto" style="width: 100px; height: 10px;">
+                            <div class="blue bg-primary" style="width: 50%; height: 100%;"></div>
+                            <div class="yellow bg-warning" style="width: 50%; height: 100%;"></div>
+                        </div>
+                    </div>
+                    
+                    <p class="lead text-center">{{ error_message }}</p>
+                    <p class="text-center">Пожалуйста, попробуйте позже или свяжитесь с администратором, если проблема повторяется.</p>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('main.index') }}" class="btn btn-primary">Повернутися на головну</a>
+                    </div>
+                </div>
+                
+                {% if error_details and config.DEBUG %}
+                <div class="card-footer">
+                    <h5>Технические детали ошибки:</h5>
+                    <pre class="border bg-light p-3" style="overflow-x: auto;"><code>{{ error_details }}</code></pre>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

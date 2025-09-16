@@ -57,6 +57,14 @@ def create_app():
     # Используем централизованную регистрацию blueprints
     from app.routes import register_blueprints
     register_blueprints(app)
+    
+    # Регистрируем тестовые маршруты для отладки ошибок
+    if app.debug or app.testing:
+        try:
+            from app.test_error import register_test_error_routes
+            register_test_error_routes(app)
+        except ImportError:
+            app.logger.warning("Модуль test_error не найден, тестовые маршруты для ошибок не зарегистрированы")
 
     # Optional: run critical DB migrations on startup (idempotent per revision)
     if os.getenv("AUTO_MIGRATE_ON_START", "true").lower() in ("1", "true", "yes"):  # default on
@@ -102,30 +110,90 @@ def create_app():
     @app.errorhandler(500)
     def internal_server_error(e):
         error_traceback = traceback.format_exc()
-        app.logger.error(f"500 Internal Server Error: {error_traceback}")
-        return render_template('error.html', 
-                              error_code=500, 
-                              error_title="Внутренняя ошибка сервера", 
-                              error_message="Произошла внутренняя ошибка при обработке вашего запроса.", 
-                              error_details=error_traceback if app.debug else None), 500
+        
+        # Используем расширенное логирование, если доступно
+        if hasattr(app, 'log_exception'):
+            app.log_exception(e, 500)
+        else:
+            app.logger.error(f"500 Internal Server Error: {error_traceback}")
+            
+        # Отображаем стандартный шаблон ошибки
+        try:
+            # Сначала пробуем использовать новый шаблон с base.html
+            return render_template('error_base.html', 
+                                error_code=500, 
+                                error_title="Внутренняя ошибка сервера", 
+                                error_message="Произошла внутренняя ошибка при обработке вашего запроса.", 
+                                error_details=error_traceback if app.debug else None), 500
+        except Exception as base_err:
+            app.logger.error(f"Ошибка при рендеринге шаблона error_base.html: {base_err}")
+            try:
+                # Если не получилось, пробуем использовать автономный error.html
+                return render_template('error.html', 
+                                    error_code=500, 
+                                    error_title="Внутренняя ошибка сервера", 
+                                    error_message="Произошла внутренняя ошибка при обработке вашего запроса.", 
+                                    error_details=error_traceback if app.debug else None), 500
+            except Exception as template_err:
+                app.logger.error(f"Ошибка при рендеринге шаблона error.html: {template_err}")
+                # Возвращаем простой текст в крайнем случае
+                return "Внутренняя ошибка сервера (500). Пожалуйста, обратитесь к администратору.", 500
                               
     @app.errorhandler(404)
     def page_not_found(e):
-        app.logger.info(f"404 Not Found: {request.path}")
-        return render_template('error.html', 
-                              error_code=404, 
-                              error_title="Страница не найдена",
-                              error_message=f"Страница '{request.path}' не найдена."), 404
+        # Используем расширенное логирование, если доступно
+        if hasattr(app, 'log_exception'):
+            app.log_exception(e, 404)
+        else:
+            app.logger.info(f"404 Not Found: {request.path}")
+            
+        try:
+            # Сначала пробуем использовать новый шаблон с base.html
+            return render_template('error_base.html', 
+                                error_code=404, 
+                                error_title="Страница не найдена",
+                                error_message=f"Страница '{request.path}' не найдена."), 404
+        except Exception as base_err:
+            app.logger.error(f"Ошибка при рендеринге шаблона error_base.html для 404: {base_err}")
+            try:
+                # Если не получилось, пробуем использовать автономный error.html
+                return render_template('error.html', 
+                                    error_code=404, 
+                                    error_title="Страница не найдена",
+                                    error_message=f"Страница '{request.path}' не найдена."), 404
+            except Exception as template_err:
+                app.logger.error(f"Ошибка при рендеринге шаблона error.html для 404: {template_err}")
+                return f"Страница '{request.path}' не найдена (404).", 404
                               
     @app.errorhandler(Exception)
     def handle_unhandled_exception(e):
         error_traceback = traceback.format_exc()
-        app.logger.error(f"Unhandled Exception: {error_traceback}")
-        return render_template('error.html', 
-                              error_code=500, 
-                              error_title="Ошибка приложения",
-                              error_message=f"Произошла непредвиденная ошибка: {str(e)}", 
-                              error_details=error_traceback if app.debug else None), 500
+        
+        # Используем расширенное логирование, если доступно
+        if hasattr(app, 'log_exception'):
+            app.log_exception(e)
+        else:
+            app.logger.error(f"Unhandled Exception: {error_traceback}")
+            
+        try:
+            # Сначала пробуем использовать новый шаблон с base.html
+            return render_template('error_base.html', 
+                                error_code=500, 
+                                error_title="Ошибка приложения",
+                                error_message="Произошла непредвиденная ошибка.", 
+                                error_details=error_traceback if app.debug else None), 500
+        except Exception as base_err:
+            app.logger.error(f"Ошибка при рендеринге шаблона error_base.html для исключения: {base_err}")
+            try:
+                # Если не получилось, пробуем использовать автономный error.html
+                return render_template('error.html', 
+                                    error_code=500, 
+                                    error_title="Ошибка приложения",
+                                    error_message="Произошла непредвиденная ошибка.", 
+                                    error_details=error_traceback if app.debug else None), 500
+            except Exception as template_err:
+                app.logger.error(f"Ошибка при рендеринге шаблона необработанного исключения: {template_err}")
+                return "Внутренняя ошибка сервера. Пожалуйста, обратитесь к администратору.", 500
 
     return app
 
