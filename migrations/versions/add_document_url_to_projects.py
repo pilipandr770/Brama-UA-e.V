@@ -18,20 +18,64 @@ depends_on = None
 
 def upgrade():
     """Add document_url column to projects table, with support for SQLite"""
-    # Detect if we're using SQLite
-    is_sqlite = op.get_bind().dialect.name == 'sqlite'
+    # Detect database dialect
+    dialect = op.get_bind().dialect.name
+    is_sqlite = dialect == 'sqlite'
+    is_postgresql = dialect == 'postgresql'
     
     try:
         if is_sqlite:
             # SQLite doesn't support schema
             with op.batch_alter_table('projects') as batch_op:
                 batch_op.add_column(sa.Column('document_url', sa.String(300), nullable=True))
+                
+                # Add image_data and image_mimetype columns if they don't exist
+                try:
+                    inspector = sa.inspect(op.get_bind())
+                    columns = [c['name'] for c in inspector.get_columns('projects')]
+                    
+                    if 'image_data' not in columns:
+                        batch_op.add_column(sa.Column('image_data', sa.LargeBinary(), nullable=True))
+                        print("Added 'image_data' column to projects table")
+                        
+                    if 'image_mimetype' not in columns:
+                        batch_op.add_column(sa.Column('image_mimetype', sa.String(64), nullable=True))
+                        print("Added 'image_mimetype' column to projects table")
+                except Exception as e:
+                    print(f"Warning: Error checking/adding image columns: {e}")
+                
                 print("Added 'document_url' column to projects table")
         else:
             # PostgreSQL with schema
             op.add_column('projects', 
                         sa.Column('document_url', sa.String(300), nullable=True),
                         schema='brama')
+                        
+            # Add image_data and image_mimetype columns if they don't exist
+            try:
+                inspector = sa.inspect(op.get_bind())
+                columns = [c['name'] for c in inspector.get_columns('projects', schema='brama')]
+                
+                if 'image_data' not in columns:
+                    if is_postgresql:
+                        from sqlalchemy.dialects.postgresql import BYTEA
+                        op.add_column('projects', 
+                                    sa.Column('image_data', BYTEA(), nullable=True),
+                                    schema='brama')
+                    else:
+                        op.add_column('projects', 
+                                    sa.Column('image_data', sa.LargeBinary(), nullable=True),
+                                    schema='brama')
+                    print("Added 'image_data' column to brama.projects table")
+                    
+                if 'image_mimetype' not in columns:
+                    op.add_column('projects', 
+                                sa.Column('image_mimetype', sa.String(64), nullable=True),
+                                schema='brama')
+                    print("Added 'image_mimetype' column to brama.projects table")
+            except Exception as e:
+                print(f"Warning: Error checking/adding image columns: {e}")
+            
             print("Added 'document_url' column to brama.projects table")
     except Exception as e:
         print(f"Warning: Error adding document_url column: {e}")

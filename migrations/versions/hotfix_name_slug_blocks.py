@@ -60,7 +60,12 @@ def upgrade():
                 print(f"Added 'slug' column to {table_name}")
                 
             if 'image_data' not in columns:
-                batch_op.add_column(sa.Column('image_data', sa.LargeBinary, nullable=True))
+                # Use BYTEA for PostgreSQL, LargeBinary for others
+                if dialect == 'postgresql':
+                    from sqlalchemy.dialects.postgresql import BYTEA
+                    batch_op.add_column(sa.Column('image_data', BYTEA(), nullable=True))
+                else:
+                    batch_op.add_column(sa.Column('image_data', sa.LargeBinary(), nullable=True))
                 print(f"Added 'image_data' column to {table_name}")
                 
             if 'image_mimetype' not in columns:

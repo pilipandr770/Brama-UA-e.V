@@ -2,142 +2,199 @@ from app import db
 from app.models.helpers import get_table_args
 from datetime import datetime
 import sqlalchemy as sa
+import logging
+
+# Set up logging
+logger = logging.getLogger('app.models.block')
 
 class Block(db.Model):
     """
-    Модель для блоков контента на сайте.
+    Model for content blocks on the website.
     
-    Специально реализовано так, чтобы работало даже без полей name и slug в базе,
-    используя переопределенный __mapper_args__ для предотвращения включения этих
-    полей в SQL-запросы при их отсутствии.
+    Designed to work even without the name and slug fields in the database,
+    using deferred loading and column reflection to handle missing columns.
+    Both read and write operations are protected against missing columns.
     """
     __tablename__ = 'blocks'
     __table_args__ = get_table_args()
     id = db.Column(db.Integer, primary_key=True)
     
-    # Определяем name и slug как отложенные загружаемые колонки, чтобы избежать ошибок
-    # при отсутствии их в базе данных. Они будут загружены только при явном доступе.
-    _name = db.deferred(db.Column('name', db.String(50), nullable=True))
-    _slug = db.deferred(db.Column('slug', db.String(50), nullable=True))
-    
-    # Устанавливаем mapper_args для предотвращения проблем в случае отсутствия колонок
-    @classmethod
-    def __declare_last__(cls):
-        """
-        Hook called after mapper configuration is complete
-        We use it to exclude columns that might not exist in the DB
-        """
-        from sqlalchemy import inspect
-        
-        # Try to detect if columns exist in the database
-        try:
-            engine = db.engine
-            insp = inspect(engine)
-            
-            # Try to get columns for different schema scenarios
-            existing_columns = set()
-            schemas_to_check = ['brama', None]  # None = без схемы (как в SQLite)
-            
-            for schema in schemas_to_check:
-                try:
-                    cols = insp.get_columns(cls.__tablename__, schema=schema)
-                    existing_columns = {col['name'] for col in cols}
-                    break  # Found table, exit loop
-                except Exception:
-                    continue
-            
-            # Exclude properties if columns don't exist
-            exclude_props = []
-            if 'name' not in existing_columns:
-                exclude_props.append('_name')
-            if 'slug' not in existing_columns:
-                exclude_props.append('_slug')
-            if 'image_data' not in existing_columns:
-                exclude_props.append('image_data')
-            if 'image_mimetype' not in existing_columns:
-                exclude_props.append('image_mimetype')
-                
-            # Apply exclude_properties only if needed
-            if exclude_props:
-                # Get current mapper
-                mapper = inspect(cls).mapper
-                # Update exclude_properties in __mapper_args__
-                if hasattr(mapper, 'exclude_properties'):
-                    mapper.exclude_properties = list(set(mapper.exclude_properties) | set(exclude_props))
-                else:
-                    mapper._exclude_properties = exclude_props
-        except Exception as e:
-            import logging
-            logging.getLogger('app.models.block').warning(f"Error in __declare_last__: {e}")
-            # If any error occurs, just continue without updating mapper
-            pass
-    
-    # Основные поля
+    # Basic required fields that should exist in all DB versions
     title = db.Column(db.String(128), nullable=False)
     content = db.Column(db.Text, nullable=True)
     type = db.Column(db.String(32), nullable=False)  # info, gallery, projects
     is_active = db.Column(db.Boolean, default=True)
-    image_url = db.Column(db.String(300), nullable=True)  # обкладинка URL
-    translations = db.Column(db.Text, nullable=True)  # JSON для многоязычного контента
+    image_url = db.Column(db.String(300), nullable=True)  # cover URL
+    translations = db.Column(db.Text, nullable=True)  # JSON for multilingual content
     
-    # Новые поля для хранения изображения в БД - используем deferred для безопасного доступа
-    # если колонки отсутствуют в БД
-    image_data = db.deferred(db.Column(db.LargeBinary, nullable=True))  # бинарные данные
-    image_mimetype = db.deferred(db.Column(db.String(64), nullable=True))  # тип файла
+    # Optional fields that might not exist in older database versions
+    # Using deferred loading to avoid errors when querying
+    _name = db.deferred(db.Column('name', db.String(50), nullable=True))
+    _slug = db.deferred(db.Column('slug', db.String(50), nullable=True))
+    image_data = db.deferred(db.Column(db.LargeBinary, nullable=True))
+    image_mimetype = db.deferred(db.Column(db.String(64), nullable=True))
     
-    # Виртуальные свойства для безопасного доступа к name и slug
+    # Dictionary to track which columns actually exist in the database
+    # Will be populated in __declare_last__
+    _existing_columns = None
+    
+    @classmethod
+    def __declare_last__(cls):
+        """
+        SQLAlchemy hook called after mapper configuration is complete.
+        Detects which columns actually exist in the database and configures
+        the mapper to exclude non-existent columns from SQL operations.
+        """
+        from sqlalchemy import inspect
+        
+        try:
+            engine = db.engine
+            insp = inspect(engine)
+            
+            # Store existing columns at class level for later checks
+            cls._existing_columns = set()
+            
+            # Try to detect columns from different schema scenarios
+            schemas_to_check = ['brama', None]  # None = no schema (like in SQLite)
+            
+            for schema in schemas_to_check:
+                try:
+                    cols = insp.get_columns(cls.__tablename__, schema=schema)
+                    if cols:  # If we found columns, store them and break
+                        cls._existing_columns = {col['name'] for col in cols}
+                        logger.info(f"Found {len(cls._existing_columns)} columns in {cls.__tablename__} table")
+                        break
+                except Exception as e:
+                    logger.debug(f"Could not inspect schema {schema}: {e}")
+                    continue
+            
+            # Identify which columns are missing
+            missing_columns = []
+            optional_columns = ['name', 'slug', 'image_data', 'image_mimetype']
+            
+            for col_name in optional_columns:
+                actual_name = col_name
+                if col_name == 'name':
+                    actual_name = '_name'  # Handle our property name mapping
+                elif col_name == 'slug':
+                    actual_name = '_slug'  # Handle our property name mapping
+                
+                if col_name not in cls._existing_columns:
+                    missing_columns.append(actual_name)
+                    logger.info(f"Column '{col_name}' does not exist in the database")
+            
+            # Configure the mapper to exclude these columns
+            if missing_columns:
+                # Get all columns that should be included
+                include_properties = [c.name for c in cls.__table__.c 
+                                    if c.name not in missing_columns]
+                
+                # Set the __mapper_args__ with include_properties
+                if not hasattr(cls, '__mapper_args__'):
+                    cls.__mapper_args__ = {}
+                
+                cls.__mapper_args__['include_properties'] = include_properties
+                logger.info(f"Set include_properties for {cls.__name__}: {include_properties}")
+                
+        except Exception as e:
+            logger.warning(f"Error in Block.__declare_last__: {e}")
+            # If any error occurs, continue without modifying mapper
+            # This means we'll attempt to use all columns
+    
+    # Virtual properties for safe access to name and slug
     @property
     def name(self):
-        try:
-            if hasattr(self, '_name') and self._name is not None:
-                return self._name
-        except (sa.exc.SQLAlchemyError, AttributeError):
-            pass
+        """
+        Get the name of the block. If name column doesn't exist or the value is None,
+        generates a default name based on block type and id.
+        """
+        # If name column doesn't exist in DB
+        if self._existing_columns is not None and 'name' not in self._existing_columns:
+            return f"block_{self.type}_{self.id}"
+            
+        # If name column exists but value is None
+        if hasattr(self, '_name'):
+            try:
+                if self._name is not None:
+                    return self._name
+            except sa.exc.SQLAlchemyError as e:
+                logger.debug(f"SQLAlchemy error accessing name: {e}")
+                
+        # Default name if everything else fails
         return f"block_{self.type}_{self.id}"
     
     @name.setter
     def name(self, value):
-        try:
-            self._name = value
-        except (sa.exc.SQLAlchemyError, AttributeError):
-            pass  # Silently ignore if column doesn't exist
+        """
+        Set the name of the block. Silently ignores if column doesn't exist.
+        """
+        # Only try to set if column exists in DB
+        if self._existing_columns is None or 'name' in self._existing_columns:
+            try:
+                self._name = value
+            except sa.exc.SQLAlchemyError as e:
+                logger.debug(f"SQLAlchemy error setting name: {e}")
     
     @property
     def slug(self):
-        try:
-            if hasattr(self, '_slug') and self._slug is not None:
-                return self._slug
+        """
+        Get the slug of the block. If slug column doesn't exist or the value is None,
+        generates a default slug based on name or block type and id.
+        """
+        # If slug column doesn't exist in DB
+        if self._existing_columns is not None and 'slug' not in self._existing_columns:
+            # Generate slug from name if available
             if hasattr(self, '_name') and self._name is not None:
-                return self._name.lower().replace(" ", "_")
-        except (sa.exc.SQLAlchemyError, AttributeError):
-            pass
+                try:
+                    return self._name.lower().replace(" ", "_")
+                except (AttributeError, sa.exc.SQLAlchemyError):
+                    pass
+            return f"block_{self.type}_{self.id}".lower()
+            
+        # If slug column exists but value is None
+        if hasattr(self, '_slug'):
+            try:
+                if self._slug is not None:
+                    return self._slug
+                # Try to generate from name if slug is None
+                if hasattr(self, '_name') and self._name is not None:
+                    return self._name.lower().replace(" ", "_")
+            except sa.exc.SQLAlchemyError as e:
+                logger.debug(f"SQLAlchemy error accessing slug: {e}")
+                
+        # Default slug if everything else fails
         return f"block_{self.type}_{self.id}".lower()
     
     @slug.setter
     def slug(self, value):
-        try:
-            self._slug = value
-        except (sa.exc.SQLAlchemyError, AttributeError):
-            pass  # Silently ignore if column doesn't exist
+        """
+        Set the slug of the block. Silently ignores if column doesn't exist.
+        """
+        # Only try to set if column exists in DB
+        if self._existing_columns is None or 'slug' in self._existing_columns:
+            try:
+                self._slug = value
+            except sa.exc.SQLAlchemyError as e:
+                logger.debug(f"SQLAlchemy error setting slug: {e}")
     
     def __init__(self, **kwargs):
-        # Если не указаны name и slug, генерируем их
+        """
+        Initialize a new Block instance, safely handling name and slug fields
+        that might not exist in the database.
+        """
+        # Extract name and slug values before passing kwargs to parent
         name_value = kwargs.pop('name', None)
         slug_value = kwargs.pop('slug', None)
         
-        # Remove these keys if they exist in kwargs to prevent errors
+        # Remove internal attribute names to prevent errors
         kwargs.pop('_name', None)
         kwargs.pop('_slug', None)
         
-        # Инициализируем основные поля
+        # Initialize with basic fields
         super(Block, self).__init__(**kwargs)
         
-        # После инициализации, устанавливаем name и slug, если они переданы
-        try:
-            if name_value:
-                self.name = name_value
-            if slug_value:
-                self.slug = slug_value
-        except (sa.exc.SQLAlchemyError, AttributeError):
-            # Silently ignore if columns don't exist in the DB
-            pass
+        # After initialization, set name and slug if provided
+        if name_value:
+            self.name = name_value
+        if slug_value:
+            self.slug = slug_value

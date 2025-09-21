@@ -53,7 +53,7 @@ def check_and_fix_blocks_table(app: Flask):
             missing_columns = {
                 'name': "VARCHAR(50) DEFAULT 'legacy'",
                 'slug': "VARCHAR(50)",
-                'image_data': "BLOB",  # SQLite тип для бинарных данных
+                'image_data': "BYTEA" if 'postgresql' in db_url.lower() else "BLOB",  # PostgreSQL использует BYTEA, SQLite использует BLOB
                 'image_mimetype': "VARCHAR(64)"
             }
             
@@ -65,27 +65,40 @@ def check_and_fix_blocks_table(app: Flask):
                         # SQLite синтаксис отличается от PostgreSQL
                         if 'sqlite' in db_url.lower():
                             conn.execute(text(f"ALTER TABLE blocks ADD COLUMN {col_name} {col_type};"))
+                            conn.commit()
                         else:
-                            conn.execute(text(f"ALTER TABLE {table_ref} ADD COLUMN {col_name} {col_type};"))
+                            # В PostgreSQL выполняем каждое изменение в отдельной транзакции
+                            # чтобы избежать проблем с прерванными транзакциями
+                            with engine.begin() as transaction:
+                                transaction.execute(text(f"ALTER TABLE {table_ref} ADD COLUMN {col_name} {col_type};"))
                         
-                        # Если это имя, заполняем его значением по умолчанию
+                        # Если это имя, заполняем его значением по умолчанию в отдельной транзакции
                         if col_name == 'name':
                             if 'sqlite' in db_url.lower():
                                 conn.execute(text(f"UPDATE blocks SET name = 'legacy' WHERE name IS NULL;"))
+                                conn.commit()
                             else:
-                                conn.execute(text(f"UPDATE {table_ref} SET name = 'legacy' WHERE name IS NULL;"))
+                                with engine.begin() as transaction:
+                                    transaction.execute(text(f"UPDATE {table_ref} SET name = 'legacy' WHERE name IS NULL;"))
                         
-                        # Если это slug, генерируем его на основе id
+                        # Если это slug, генерируем его на основе id в отдельной транзакции
                         if col_name == 'slug':
                             if 'sqlite' in db_url.lower():
                                 conn.execute(text(f"UPDATE blocks SET slug = 'block_' || id WHERE slug IS NULL;"))
+                                conn.commit()
                             else:
-                                conn.execute(text(f"UPDATE {table_ref} SET slug = 'block_' || id WHERE slug IS NULL;"))
+                                with engine.begin() as transaction:
+                                    transaction.execute(text(f"UPDATE {table_ref} SET slug = 'block_' || id WHERE slug IS NULL;"))
                         
-                        conn.commit()
                         logger.info(f"Added column '{col_name}' to blocks table")
                     except SQLAlchemyError as e:
                         logger.error(f"Failed to add column '{col_name}': {e}")
+                        if 'sqlite' not in db_url.lower():
+                            # Для PostgreSQL попытаемся сбросить состояние транзакции
+                            try:
+                                conn.execute(text("ROLLBACK;"))
+                            except:
+                                pass
             
     except Exception as e:
         logger.error(f"Error checking/fixing blocks table: {e}")
@@ -147,7 +160,7 @@ def check_and_fix_projects_table(app: Flask):
             # Словарь отсутствующих колонок и их типов
             missing_columns = {
                 'document_url': "VARCHAR(300)",
-                'image_data': "BLOB",  # SQLite тип для бинарных данных
+                'image_data': "BYTEA" if 'postgresql' in db_url.lower() else "BLOB",  # PostgreSQL использует BYTEA, SQLite использует BLOB
                 'image_mimetype': "VARCHAR(64)"
             }
             
@@ -159,13 +172,22 @@ def check_and_fix_projects_table(app: Flask):
                         # SQLite синтаксис отличается от PostgreSQL
                         if 'sqlite' in db_url.lower():
                             conn.execute(text(f"ALTER TABLE projects ADD COLUMN {col_name} {col_type};"))
+                            conn.commit()
                         else:
-                            conn.execute(text(f"ALTER TABLE {table_ref} ADD COLUMN {col_name} {col_type};"))
+                            # В PostgreSQL выполняем каждое изменение в отдельной транзакции
+                            # чтобы избежать проблем с прерванными транзакциями
+                            with engine.begin() as transaction:
+                                transaction.execute(text(f"ALTER TABLE {table_ref} ADD COLUMN {col_name} {col_type};"))
                         
-                        conn.commit()
                         logger.info(f"Added column '{col_name}' to projects table")
                     except SQLAlchemyError as e:
                         logger.error(f"Failed to add column '{col_name}': {e}")
+                        if 'sqlite' not in db_url.lower():
+                            # Для PostgreSQL попытаемся сбросить состояние транзакции
+                            try:
+                                conn.execute(text("ROLLBACK;"))
+                            except:
+                                pass
             
     except Exception as e:
         logger.error(f"Error checking/fixing projects table: {e}")

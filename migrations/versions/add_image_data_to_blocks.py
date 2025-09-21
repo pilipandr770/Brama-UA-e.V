@@ -19,7 +19,9 @@ depends_on = None
 def upgrade():
     """Add image_data and image_mimetype columns to blocks table, with support for SQLite"""
     # Detect if we're using SQLite
-    is_sqlite = op.get_bind().dialect.name == 'sqlite'
+    dialect = op.get_bind().dialect.name
+    is_sqlite = dialect == 'sqlite'
+    is_postgresql = dialect == 'postgresql'
     
     try:
         if is_sqlite:
@@ -29,9 +31,17 @@ def upgrade():
                 batch_op.add_column(sa.Column('image_mimetype', sa.String(64), nullable=True))
         else:
             # PostgreSQL with schema
-            op.add_column('blocks', 
-                        sa.Column('image_data', sa.LargeBinary(), nullable=True),
-                        schema='brama')
+            # Use explicit BYTEA type for PostgreSQL
+            if is_postgresql:
+                from sqlalchemy.dialects.postgresql import BYTEA
+                op.add_column('blocks', 
+                            sa.Column('image_data', BYTEA(), nullable=True),
+                            schema='brama')
+            else:
+                op.add_column('blocks', 
+                            sa.Column('image_data', sa.LargeBinary(), nullable=True),
+                            schema='brama')
+                
             op.add_column('blocks', 
                         sa.Column('image_mimetype', sa.String(64), nullable=True),
                         schema='brama')
