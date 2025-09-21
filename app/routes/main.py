@@ -226,31 +226,42 @@ def dashboard():
         return redirect(url_for('founder.dashboard'))
     
     # Calculate total contributions by processing each user's contribution value
-    users = User.query.all()
-    total = 0.0
-    for user in users:
-        if user.contributions:
-            try:
-                total += float(user.contributions)
-            except (ValueError, TypeError):
-                # Skip if contributions can't be converted to float
-                pass
+    from sqlalchemy import func, cast, Float
     
-    # Find the user with the highest contribution
-    last_contributor = None
-    highest_contrib = 0.0
+    try:
+        # Try the more efficient SQL approach first
+        total_contributions = db.session.query(func.sum(cast(User.contributions, Float))).scalar() or 0.0
+        last_contributor = User.query.filter(User.contributions > 0).order_by(User.contributions.desc()).first()
+    except:
+        # Fall back to Python processing if SQL approach fails
+        users = User.query.all()
+        total = 0.0
+        for user in users:
+            if user.contributions:
+                try:
+                    total += float(user.contributions)
+                except (ValueError, TypeError):
+                    # Skip if contributions can't be converted to float
+                    pass
+        
+        # Find the user with the highest contribution
+        last_contributor = None
+        highest_contrib = 0.0
     
-    for user in users:
-        if user.contributions:
-            try:
-                contrib = float(user.contributions)
-                if contrib > highest_contrib:
-                    highest_contrib = contrib
-                    last_contributor = user
-            except (ValueError, TypeError):
-                pass
+        # Only execute if using the fallback approach
+        for user in users:
+            if user.contributions:
+                try:
+                    contrib = float(user.contributions)
+                    if contrib > highest_contrib:
+                        highest_contrib = contrib
+                        last_contributor = user
+                except (ValueError, TypeError):
+                    pass
+        
+        total_contributions = str(total)
     
-    return render_template('dashboard.html', total_contributions=str(total), last_contributor=last_contributor)
+    return render_template('dashboard.html', total_contributions=total_contributions, last_contributor=last_contributor)
 
 @main_bp.route('/privacy')
 def privacy():

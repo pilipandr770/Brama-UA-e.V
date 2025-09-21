@@ -22,13 +22,15 @@ if not ASSISTANT_ID:
 print(f"[assistant] API ключ: {'Присутній' if api_key else 'Відсутній'}")
 print(f"[assistant] ID асистента: {ASSISTANT_ID}")
 
-# Create a client instance
+# Create a client instance (в локальном режиме используем заглушку)
 openai.api_key = api_key
 
 # Only create the client if API key is available
-client = None
-if api_key:
-    client = OpenAI(api_key=api_key)
+try:
+    client = OpenAI(api_key=api_key) if api_key else None
+except Exception as e:
+    print(f"Warning: Failed to initialize OpenAI client: {e}")
+    client = None
 
 @api_bp.route('/tts', methods=['GET'])
 def text_to_speech():
@@ -38,6 +40,8 @@ def text_to_speech():
     
     if not client:
         return jsonify({'error': 'OpenAI API key not configured'}), 503
+        return jsonify({'error': 'TTS service not available in local mode'}), 503
+>>>>>>> 9ee506657362399df86f37908184aea35f62b025
     
     try:
         # Create a temporary file to store the audio

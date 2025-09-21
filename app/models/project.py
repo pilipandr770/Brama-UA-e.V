@@ -1,10 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app import db
 from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
 from app.models.helpers import get_table_args
-
-main_bp = Blueprint('main', __name__)
 
 class Vote(db.Model):
     __tablename__ = 'votes'
@@ -40,52 +36,11 @@ class Project(db.Model):
     image_url = db.Column(db.String(300), nullable=True)
     image_data = db.Column(db.LargeBinary, nullable=True)
     image_mimetype = db.Column(db.String(64), nullable=True)
-    document_url = db.String(300)
+    document_url = db.Column(db.String(300), nullable=True)
     status = db.Column(db.String(20), default='pending')
-    user_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id' if not get_table_args() else 'brama.users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     votes = db.relationship('Vote', backref='project', lazy='dynamic')
     block_id = db.Column(db.Integer, db.ForeignKey('blocks.id' if not get_table_args() else 'brama.blocks.id'), nullable=True)
     block = db.relationship('Block', backref=db.backref('projects', lazy='dynamic'))
 
-@main_bp.route('/')
-def index():
-    # Отримаємо всі проекти для головної сторінки (поки що всі)
-    projects = Project.query.order_by(Project.created_at.desc()).all()
-    return render_template('index.html', projects=projects)
-
-@main_bp.route('/submit-project', methods=['GET', 'POST'])
-def submit_project():
-    if request.method == 'POST':
-        try:
-            project = Project(
-                title=request.form['title'],
-                problem_description=request.form['problem_description'],
-                goal=request.form['goal'],
-                target_audience=request.form['target_audience'],
-                implementation_plan=request.form['implementation_plan'],
-                executor_info=request.form['executor_info'],
-                total_budget=request.form['total_budget'],
-                budget_breakdown=request.form['budget_breakdown'],
-                expected_result=request.form['expected_result'],
-                risks=request.form['risks'],
-                duration=request.form['duration'],
-                reporting_plan=request.form['reporting_plan'],
-                category=request.form.get('category'),
-                location=request.form.get('location'),
-                website=request.form.get('website'),
-                social_links=request.form.get('social_links'),
-                image_url=request.form.get('image_url'),
-                image_data=request.form.get('image_data'),
-                image_mimetype=request.form.get('image_mimetype'),
-                document_url=request.form.get('document_url'),
-                user_id=1  # тимчасово хардкод, поки немає логіну
-            )
-            db.session.add(project)
-            db.session.commit()
-            flash("Проєкт успішно подано!", "success")
-            return redirect(url_for('main.index'))
-        except Exception as e:
-            flash(f"Помилка при збереженні: {e}", "danger")
-
-    return render_template('submit_project.html')

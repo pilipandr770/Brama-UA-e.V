@@ -56,34 +56,57 @@ def create_block():
         
         # Обработка загруженного файла
         image_file = request.files.get('image_file')
+        image_data = None
+        image_mimetype = None
+        
         if image_file and image_file.filename:
-            # Генерируем уникальное имя файла
-            import os
-            from werkzeug.utils import secure_filename
-            from datetime import datetime
+            # Читаем файл целиком в память для сохранения в базе данных
+            image_data = image_file.read()
+            image_mimetype = image_file.mimetype
             
-            # Создаем директорию для загрузок, если она не существует
-            upload_dir = os.path.join(os.getcwd(), 'app', 'static', 'uploads')
-            if not os.path.exists(upload_dir):
-                os.makedirs(upload_dir)
-            
-            # Создаем уникальное имя файла
-            filename = secure_filename(image_file.filename)
-            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-            unique_filename = f"{timestamp}_{filename}"
-            file_path = os.path.join(upload_dir, unique_filename)
-            
-            # Сохраняем файл
-            image_file.save(file_path)
-            
-            # Устанавливаем URL для сохранения в БД
-            image_url = url_for('static', filename=f'uploads/{unique_filename}')
+            # Можем опционально сохранить и URL, если нужна совместимость
+            try:
+                # Генерируем уникальное имя файла
+                import os
+                from werkzeug.utils import secure_filename
+                from datetime import datetime
+                
+                # Создаем директорию для загрузок, если она не существует
+                upload_dir = os.path.join(os.getcwd(), 'app', 'static', 'uploads')
+                if not os.path.exists(upload_dir):
+                    os.makedirs(upload_dir)
+                
+                # Создаем уникальное имя файла
+                filename = secure_filename(image_file.filename)
+                timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+                unique_filename = f"{timestamp}_{filename}"
+                file_path = os.path.join(upload_dir, unique_filename)
+                
+                # Сохраняем файл и с диска тоже (для совместимости)
+                with open(file_path, 'wb') as f:
+                    f.write(image_data)
+                
+                # Устанавливаем URL для сохранения в БД
+                image_url = url_for('static', filename=f'uploads/{unique_filename}')
+            except Exception as e:
+                # В случае ошибки сохранения файла на диск,
+                # продолжаем работу, так как изображение уже есть в памяти
+                print(f"Warning: Could not save image to disk: {e}")
+        
+        from datetime import datetime
+        # Генерируем уникальное имя и slug
+        block_name = f"block_{type_}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        block_slug = block_name.lower().replace(" ", "_")
         
         block = Block(
+            name=block_name,
+            slug=block_slug,
             title=title, 
             content=content, 
             type=type_, 
-            image_url=image_url
+            image_url=image_url,
+            image_data=image_data,
+            image_mimetype=image_mimetype
         )
         db.session.add(block)
         db.session.commit()
@@ -103,30 +126,54 @@ def edit_block(block_id):
         # Сначала проверяем загруженный файл
         image_file = request.files.get('image_file')
         if image_file and image_file.filename:
-            # Генерируем уникальное имя файла
-            import os
-            from werkzeug.utils import secure_filename
-            from datetime import datetime
+            # Читаем файл целиком в память для сохранения в базе данных
+            image_data = image_file.read()
+            block.image_data = image_data
+            block.image_mimetype = image_file.mimetype
             
-            # Создаем директорию для загрузок, если она не существует
-            upload_dir = os.path.join(os.getcwd(), 'app', 'static', 'uploads')
-            if not os.path.exists(upload_dir):
-                os.makedirs(upload_dir)
-            
-            # Создаем уникальное имя файла
-            filename = secure_filename(image_file.filename)
-            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-            unique_filename = f"{timestamp}_{filename}"
-            file_path = os.path.join(upload_dir, unique_filename)
-            
-            # Сохраняем файл
-            image_file.save(file_path)
-            
-            # Устанавливаем URL для сохранения в БД
-            block.image_url = url_for('static', filename=f'uploads/{unique_filename}')
+            # Также сохраняем на диск для совместимости
+            try:
+                # Генерируем уникальное имя файла
+                import os
+                from werkzeug.utils import secure_filename
+                from datetime import datetime
+                
+                # Создаем директорию для загрузок, если она не существует
+                upload_dir = os.path.join(os.getcwd(), 'app', 'static', 'uploads')
+                if not os.path.exists(upload_dir):
+                    os.makedirs(upload_dir)
+                
+                # Создаем уникальное имя файла
+                filename = secure_filename(image_file.filename)
+                timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+                unique_filename = f"{timestamp}_{filename}"
+                file_path = os.path.join(upload_dir, unique_filename)
+                
+                # Сохраняем файл
+                with open(file_path, 'wb') as f:
+                    f.write(image_data)
+                
+                # Устанавливаем URL для сохранения в БД (для совместимости)
+                block.image_url = url_for('static', filename=f'uploads/{unique_filename}')
+            except Exception as e:
+                # В случае ошибки сохранения файла на диск,
+                # продолжаем работу, так как изображение уже есть в памяти
+                print(f"Warning: Could not save image to disk: {e}")
+        elif request.form.get('remove_image') == '1':
+            # Если пользователь хочет удалить изображение
+            block.image_url = None
+            block.image_data = None
+            block.image_mimetype = None
+            flash('Зображення видалено!', 'success')
         else:
             # Если файл не загружен, используем URL из формы
-            block.image_url = request.form.get('image_url')
+            url = request.form.get('image_url')
+            if url != block.image_url:  # Если URL изменился
+                block.image_url = url
+                # Если URL изменился и изображение сохранено в БД, очистим его
+                if block.image_data:
+                    block.image_data = None
+                    block.image_mimetype = None
                 
         db.session.commit()
         flash('Блок оновлено!', 'success')
@@ -317,8 +364,9 @@ def delete_project(project_id):
 @admin_required
 def manage_founders():
     """Manage founder users as an admin"""
-    founders = User.query.filter_by(role=UserRole.founder).all()
-    regular_members = User.query.filter_by(is_member=True).filter(User.role != UserRole.founder).all()
+    # Using string value for consistency since role is stored as string in DB
+    founders = User.query.filter_by(role='founder').all()
+    regular_members = User.query.filter_by(is_member=True).filter(User.role != 'founder').all()
     
     if request.method == 'POST':
         action = request.form.get('action')
@@ -326,10 +374,10 @@ def manage_founders():
         user = User.query.get_or_404(user_id)
         
         if action == 'add':
-            user.role = UserRole.founder
+            user.role = 'founder'
             flash(f'{user.email} успішно додано як засновника!', 'success')
         elif action == 'remove':
-            user.role = UserRole.member
+            user.role = 'member'
             flash(f'{user.email} видалено з засновників!', 'success')
         
         db.session.commit()

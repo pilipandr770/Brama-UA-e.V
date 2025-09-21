@@ -22,7 +22,7 @@ class MeetingDocument(db.Model):
     uploaded_by = db.Column(db.Integer, db.ForeignKey('users.id' if not get_table_args() else 'brama.users.id'))
     uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_public = db.Column(db.Boolean, default=False)  # If False, only founders can see it
-    
+
     # Define relationships
     meeting = db.relationship('Meeting', backref=db.backref('documents', lazy='dynamic', cascade='all, delete-orphan'))
     uploader = db.relationship('User', backref=db.backref('uploaded_documents', lazy='dynamic'))

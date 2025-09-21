@@ -29,7 +29,7 @@ class User(db.Model, UserMixin):
     phone = db.Column(db.String(50))
     is_member = db.Column(db.Boolean, default=False)
     consent_given = db.Column(db.Boolean, default=False)
-    contributions = db.Column(db.Text)
+    contributions = db.Column(db.Float)
     profile_photo_url = db.Column(db.String(255), nullable=True)
     role = db.Column(db.String(50), default='member')
 
@@ -57,7 +57,11 @@ class User(db.Model, UserMixin):
             
     @property
     def is_founder(self):
-        return self.role == UserRole.founder
+        # role stored as string; support old enum-based comparisons gracefully
+        try:
+            return (self.role == 'founder') or (isinstance(self.role, UserRole) and self.role == UserRole.founder)
+        except Exception:
+            return False
     
     @property
     def full_name(self):

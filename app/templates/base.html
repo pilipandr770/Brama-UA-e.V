@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   {% block head %}{% endblock %}
 </head>
-<body class="{% if current_user and current_user.is_founder %}founder-user{% endif %}"
+<body class="{% if current_user and current_user.is_founder %}founder-user{% endif %}">
 
 <!-- ХЕДЕР -->
 <header class="main-header">

@@ -9,7 +9,9 @@
     <!-- Отображение стандартных блоков -->
     {% if info_block %}
     <div class="main-card info-block" onclick="openModal('info')">
-      {% if info_block.image_url %}
+      {% if info_block.image_data %}
+      <img src="{{ url_for('block_images.block_image_file', block_id=info_block.id) }}" alt="" class="block-cover">
+      {% elif info_block.image_url %}
       <img src="{{ info_block.image_url }}" alt="" class="block-cover">
       {% endif %}
       <h3>{{ info_block.translated_title or info_block.title }}</h3>
@@ -19,7 +21,9 @@
 
     {% if gallery_block %}
     <div class="main-card gallery-block" onclick="openModal('gallery')">
-      {% if gallery_block.image_url %}
+      {% if gallery_block.image_data %}
+      <img src="{{ url_for('block_images.block_image_file', block_id=gallery_block.id) }}" alt="" class="block-cover">
+      {% elif gallery_block.image_url %}
       <img src="{{ gallery_block.image_url }}" alt="" class="block-cover">
       {% endif %}
       <h3>{{ gallery_block.translated_title or gallery_block.title }}</h3>
@@ -29,7 +33,9 @@
 
     {% if projects_block %}
     <div class="main-card projects-block" onclick="openModal('projects')">
-      {% if projects_block.image_url %}
+      {% if projects_block.image_data %}
+      <img src="{{ url_for('block_images.block_image_file', block_id=projects_block.id) }}" alt="" class="block-cover">
+      {% elif projects_block.image_url %}
       <img src="{{ projects_block.image_url }}" alt="" class="block-cover">
       {% endif %}
       <h3>{{ projects_block.translated_title or projects_block.title }}</h3>
@@ -41,7 +47,9 @@
     {% for block in additional_blocks %}
     {% if block.is_active %}
     <div class="main-card {{ block.type }}-block" onclick="openModal('additional-{{ block.id }}')">
-      {% if block.image_url %}
+      {% if block.image_data %}
+      <img src="{{ url_for('block_images.block_image_file', block_id=block.id) }}" alt="" class="block-cover">
+      {% elif block.image_url %}
       <img src="{{ block.image_url }}" alt="" class="block-cover">
       {% endif %}
       <h3>{{ block.translated_title or block.title }}</h3>
