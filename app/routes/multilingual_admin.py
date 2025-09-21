@@ -52,7 +52,7 @@ def edit_block_multilingual(block_id):
         # Save translations as JSON string
         block.translations = json.dumps(translations)
         
-        # Process image uploads similar to the original edit_block function
+        # Process image uploads - сохраняем и в БД и на диск для надежности
         image_file = request.files.get('image_file')
         if image_file and image_file.filename:
             # Generate unique filename
@@ -71,10 +71,16 @@ def edit_block_multilingual(block_id):
             unique_filename = f"{timestamp}_{filename}"
             file_path = os.path.join(upload_dir, unique_filename)
             
-            # Save file
-            image_file.save(file_path)
+            # Сохраняем изображение в базе данных
+            image_data = image_file.read()
+            block.image_data = image_data
+            block.image_mimetype = image_file.mimetype
             
-            # Set URL for database
+            # Сохраняем также файл на диск для совместимости
+            with open(file_path, 'wb') as f:
+                f.write(image_data)
+            
+            # Устанавливаем URL для совместимости
             block.image_url = url_for('static', filename=f'uploads/{unique_filename}')
         else:
             # If no file uploaded, use URL from form
@@ -143,7 +149,7 @@ def create_block_multilingual():
         if translations:
             block.translations = json.dumps(translations)
         
-        # Process image uploads
+        # Process image uploads - сохраняем и в БД и на диск для надежности
         image_file = request.files.get('image_file')
         if image_file and image_file.filename:
             # Generate unique filename
@@ -162,10 +168,16 @@ def create_block_multilingual():
             unique_filename = f"{timestamp}_{filename}"
             file_path = os.path.join(upload_dir, unique_filename)
             
-            # Save file
-            image_file.save(file_path)
+            # Сохраняем изображение в базе данных
+            image_data = image_file.read()
+            block.image_data = image_data
+            block.image_mimetype = image_file.mimetype
             
-            # Set URL for database
+            # Сохраняем также файл на диск для совместимости
+            with open(file_path, 'wb') as f:
+                f.write(image_data)
+            
+            # Устанавливаем URL для совместимости
             block.image_url = url_for('static', filename=f'uploads/{unique_filename}')
         else:
             # If no file uploaded, use URL from form

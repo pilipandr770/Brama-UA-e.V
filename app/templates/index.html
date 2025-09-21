@@ -71,6 +71,15 @@
     {% if info_block %}
     <div id="modal-details-info" class="modal-details" style="display: none;">
       <h2>{{ info_block.translated_title or info_block.title }}</h2>
+      {% if info_block.image_data %}
+      <div class="modal-image-container">
+        <img src="{{ url_for('block_images.block_image_file', block_id=info_block.id) }}" alt="" class="modal-image">
+      </div>
+      {% elif info_block.image_url %}
+      <div class="modal-image-container">
+        <img src="{{ info_block.image_url }}" alt="" class="modal-image">
+      </div>
+      {% endif %}
       <div>{{ (info_block.translated_content or info_block.content)|safe }}</div>
     </div>
     {% endif %}
@@ -78,6 +87,17 @@
     {% if gallery_block %}
     <div id="modal-details-gallery" class="modal-details" style="display: none;">
       <h2>{{ gallery_block.translated_title or gallery_block.title }}</h2>
+      
+      {% if gallery_block.image_data %}
+      <div class="modal-image-container">
+        <img src="{{ url_for('block_images.block_image_file', block_id=gallery_block.id) }}" alt="" class="modal-image">
+      </div>
+      {% elif gallery_block.image_url %}
+      <div class="modal-image-container">
+        <img src="{{ gallery_block.image_url }}" alt="" class="modal-image">
+      </div>
+      {% endif %}
+      
       <div>{{ (gallery_block.translated_content or gallery_block.content)|safe }}</div>
 
       <div id="gallery-carousel" class="gallery-carousel">
@@ -85,10 +105,22 @@
         <div id="gallery-slide" class="gallery-slide">
           {% for img in gallery_images %}
           <div class="gallery-item" data-index="{{ loop.index0 }}">
-            <img src="{% if img.image_data %}{{ url_for('main.gallery_image_file', image_id=img.id) }}{% elif img.image_url %}{{ img.image_url }}{% else %}{{ url_for('static', filename='placeholder.png') }}{% endif %}" 
+            {% if img.image_data %}
+            <img src="{{ url_for('main.gallery_image_file', image_id=img.id) }}" 
                  alt="{{ img.description or 'Галерея' }}" 
                  class="gallery-img"
                  loading="lazy">
+            {% elif img.image_url %}
+            <img src="{{ img.image_url }}" 
+                 alt="{{ img.description or 'Галерея' }}" 
+                 class="gallery-img"
+                 loading="lazy">
+            {% else %}
+            <img src="{{ url_for('static', filename='placeholder.png') }}" 
+                 alt="Placeholder" 
+                 class="gallery-img"
+                 loading="lazy">
+            {% endif %}
             <div class="gallery-desc">{{ img.description }}</div>
           </div>
           {% endfor %}
@@ -104,6 +136,15 @@
     {% if projects_block %}
     <div id="modal-details-projects" class="modal-details" style="display: none;">
       <h2>{{ projects_block.translated_title or projects_block.title }}</h2>
+      {% if projects_block.image_data %}
+      <div class="modal-image-container">
+        <img src="{{ url_for('block_images.block_image_file', block_id=projects_block.id) }}" alt="" class="modal-image">
+      </div>
+      {% elif projects_block.image_url %}
+      <div class="modal-image-container">
+        <img src="{{ projects_block.image_url }}" alt="" class="modal-image">
+      </div>
+      {% endif %}
       <div>{{ (projects_block.translated_content or projects_block.content)|safe }}</div>
 
       <!-- Проекти як картки в модальному вікні -->
@@ -133,6 +174,15 @@
     {% if block.is_active %}
     <div id="modal-details-additional-{{ block.id }}" class="modal-details" style="display: none;">
       <h2>{{ block.translated_title or block.title }}</h2>
+      {% if block.image_data %}
+      <div class="modal-image-container">
+        <img src="{{ url_for('block_images.block_image_file', block_id=block.id) }}" alt="" class="modal-image">
+      </div>
+      {% elif block.image_url %}
+      <div class="modal-image-container">
+        <img src="{{ block.image_url }}" alt="" class="modal-image">
+      </div>
+      {% endif %}
       <div>{{ (block.translated_content or block.content)|safe }}</div>
     </div>
     {% endif %}
