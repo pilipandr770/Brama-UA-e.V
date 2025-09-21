@@ -90,9 +90,10 @@ def create_app():
                     except Exception as mig_err:
                         app.logger.warning(f"Startup migration {rev} skipped or failed: {mig_err}")
                         
-            # Применяем дополнительный фикс для таблицы blocks
-            from app.database_fix import check_and_fix_blocks_table, monkey_patch_block_model
-            check_and_fix_blocks_table(app)  # Проверяем и исправляем структуру таблицы
+            # Применяем дополнительный фикс для таблицы blocks и projects
+            from app.database_fix import check_and_fix_blocks_table, check_and_fix_projects_table, monkey_patch_block_model
+            check_and_fix_blocks_table(app)  # Проверяем и исправляем структуру таблицы blocks
+            check_and_fix_projects_table(app)  # Проверяем и исправляем структуру таблицы projects
             monkey_patch_block_model()       # Применяем обходной путь к модели Block
             
         except Exception as e:

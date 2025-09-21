@@ -40,8 +40,6 @@ def text_to_speech():
     
     if not client:
         return jsonify({'error': 'OpenAI API key not configured'}), 503
-        return jsonify({'error': 'TTS service not available in local mode'}), 503
->>>>>>> 9ee506657362399df86f37908184aea35f62b025
     
     try:
         # Create a temporary file to store the audio
