@@ -8,9 +8,11 @@ class UserRole(enum.Enum):
     admin = "admin"
     founder = "founder"
 
+from app.models.helpers import get_table_args
+
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
-    __table_args__ = {'schema': 'brama'}
+    __table_args__ = get_table_args()
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
@@ -33,7 +35,8 @@ class User(db.Model, UserMixin):
 
     # Relationship with meetings
     created_meetings = db.relationship('Meeting', backref='creator', lazy='dynamic', foreign_keys='Meeting.creator_id')
-    attended_meetings = db.relationship('MeetingAttendee', backref='user', lazy='dynamic')
+    attended_meetings = db.relationship('MeetingAttendee', backref='user', lazy='dynamic', 
+                                      primaryjoin="User.id==MeetingAttendee.user_id")
     project_votes = db.relationship('Vote', backref='user', lazy='dynamic')
     meeting_votes = db.relationship('MeetingVote', backref='user', lazy='dynamic')
     messages = db.relationship('Message', backref='user', lazy='dynamic')

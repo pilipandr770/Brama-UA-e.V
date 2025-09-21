@@ -2,20 +2,21 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app import db
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from app.models.helpers import get_table_args
 
 main_bp = Blueprint('main', __name__)
 
 class Vote(db.Model):
     __tablename__ = 'votes'
-    __table_args__ = {'schema': 'brama'}
+    __table_args__ = get_table_args()
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('brama.users.id'), nullable=False)
-    project_id = db.Column(db.Integer, db.ForeignKey('brama.projects.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id' if not get_table_args() else 'brama.users.id'), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id' if not get_table_args() else 'brama.projects.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Project(db.Model):
     __tablename__ = 'projects'
-    __table_args__ = {'schema': 'brama'}
+    __table_args__ = get_table_args()
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
@@ -44,8 +45,8 @@ class Project(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     votes = db.relationship('Vote', backref='project', lazy='dynamic')
-    block_id = db.Column(db.Integer, db.ForeignKey('brama.blocks.id'), nullable=True)
-    block = db.relationship('Block', backref='projects')
+    block_id = db.Column(db.Integer, db.ForeignKey('blocks.id' if not get_table_args() else 'brama.blocks.id'), nullable=True)
+    block = db.relationship('Block', backref=db.backref('projects', lazy='dynamic'))
 
 @main_bp.route('/')
 def index():

@@ -4,17 +4,22 @@ Model for meeting documents
 from app import db
 from datetime import datetime
 
+from app.models.helpers import get_table_args
+
 class MeetingDocument(db.Model):
     __tablename__ = 'meeting_documents'
+    __table_args__ = get_table_args()
     
     id = db.Column(db.Integer, primary_key=True)
-    meeting_id = db.Column(db.Integer, db.ForeignKey('meetings.id'))
+    # Foreign key references adjusted based on database type
+    meeting_id = db.Column(db.Integer, db.ForeignKey('meetings.id' if not get_table_args() else 'brama.meetings.id'))
     name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
     file_data = db.Column(db.LargeBinary, nullable=False)  # Binary data of the file
     file_mimetype = db.Column(db.String(128), nullable=False)  # MIME type of the file
     file_size = db.Column(db.Integer, nullable=False)  # Size of file in bytes
-    uploaded_by = db.Column(db.Integer, db.ForeignKey('users.id'))
+    # Foreign key references adjusted based on database type
+    uploaded_by = db.Column(db.Integer, db.ForeignKey('users.id' if not get_table_args() else 'brama.users.id'))
     uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_public = db.Column(db.Boolean, default=False)  # If False, only founders can see it
     

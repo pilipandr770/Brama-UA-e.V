@@ -29,8 +29,10 @@ def run_migrations_offline():
 def run_migrations_online():
     """Run migrations in 'online' mode."""
     # Використовуємо URL з env, задаем его в Alembic Config
-    db_url = os.environ.get('DATABASE_URL') or config.get_main_option('sqlalchemy.url')
-    if db_url.startswith('postgres://'):
+    db_url = os.environ.get('DATABASE_URL')
+    if not db_url:
+        db_url = config.get_main_option('sqlalchemy.url')
+    if db_url and db_url.startswith('postgres://'):
         db_url = db_url.replace('postgres://', 'postgresql://', 1)
     # Устанавливаем URL для Alembic
     config.set_main_option('sqlalchemy.url', db_url)

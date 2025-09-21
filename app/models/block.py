@@ -1,8 +1,9 @@
 from app import db
+from app.models.helpers import get_table_args
 
 class Block(db.Model):
     __tablename__ = 'blocks'
-    __table_args__ = {'schema': 'brama'}
+    __table_args__ = get_table_args()
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128), nullable=False)
     content = db.Column(db.Text, nullable=True)

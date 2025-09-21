@@ -1,5 +1,17 @@
 import json
+import os
 from flask import session
+
+def get_table_args():
+    """
+    Returns appropriate table arguments based on database configuration.
+    If using PostgreSQL, includes schema specification; if using SQLite, returns empty dict.
+    """
+    # If DATABASE_URL is set, we're using PostgreSQL
+    if os.getenv("DATABASE_URL"):
+        return {'schema': os.getenv('DB_SCHEMA', 'brama')}
+    # Otherwise, we're using SQLite which doesn't support schemas
+    return {}
 
 def get_translated_content(obj, field_name, default_field=None):
     """

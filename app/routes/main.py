@@ -225,11 +225,32 @@ def dashboard():
     if current_user.is_founder:
         return redirect(url_for('founder.dashboard'))
     
-    from sqlalchemy import func
-    total_contributions = db.session.query(func.sum(User.contributions)).scalar() or 0.0
-    last_contributor = User.query.filter(User.contributions > 0).order_by(User.contributions.desc()).first()
+    # Calculate total contributions by processing each user's contribution value
+    users = User.query.all()
+    total = 0.0
+    for user in users:
+        if user.contributions:
+            try:
+                total += float(user.contributions)
+            except (ValueError, TypeError):
+                # Skip if contributions can't be converted to float
+                pass
     
-    return render_template('dashboard.html', total_contributions=total_contributions, last_contributor=last_contributor)
+    # Find the user with the highest contribution
+    last_contributor = None
+    highest_contrib = 0.0
+    
+    for user in users:
+        if user.contributions:
+            try:
+                contrib = float(user.contributions)
+                if contrib > highest_contrib:
+                    highest_contrib = contrib
+                    last_contributor = user
+            except (ValueError, TypeError):
+                pass
+    
+    return render_template('dashboard.html', total_contributions=str(total), last_contributor=last_contributor)
 
 @main_bp.route('/privacy')
 def privacy():

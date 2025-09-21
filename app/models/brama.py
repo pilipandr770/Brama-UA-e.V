@@ -1,8 +1,10 @@
 from app import db
 from datetime import datetime
+from app.models.helpers import get_table_args
 
 class Brama(db.Model):
     __tablename__ = 'brama'
+    __table_args__ = get_table_args()
     
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)

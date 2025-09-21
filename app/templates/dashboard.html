@@ -38,18 +38,18 @@
         <!-- Contributions Section -->
         <div class="dashboard-card contribution-card">
             <h3>Баланс ферайну</h3>
-            <div class="contribution-amount">&euro;{{ total_contributions|round(2) }}</div>
+            <div class="contribution-amount">&euro;{{ total_contributions|float|round(2) if total_contributions else '0.00' }}</div>
             
             <div class="contribution-info">
                 <h4>Ваш баланс</h4>
-                <div class="personal-contribution">&euro;{{ current_user.contributions|round(2) }}</div>
+                <div class="personal-contribution">&euro;{{ current_user.contributions|float|round(2) if current_user.contributions else '0.00' }}</div>
             </div>
             
             {% if last_contributor %}
             <div class="last-contribution">
                 <h4>Останній внесок</h4>
                 <div class="last-contributor">
-                    {{ last_contributor.first_name }} {{ last_contributor.last_name }} — <strong>&euro;{{ last_contributor.contributions|round(2) }}</strong>
+                    {{ last_contributor.first_name }} {{ last_contributor.last_name }} — <strong>&euro;{{ last_contributor.contributions|float|round(2) if last_contributor.contributions else '0.00' }}</strong>
                 </div>
             </div>
             {% endif %}

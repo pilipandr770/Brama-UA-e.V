@@ -24,13 +24,20 @@ print(f"[assistant] ID асистента: {ASSISTANT_ID}")
 
 # Create a client instance
 openai.api_key = api_key
-client = OpenAI(api_key=api_key)
+
+# Only create the client if API key is available
+client = None
+if api_key:
+    client = OpenAI(api_key=api_key)
 
 @api_bp.route('/tts', methods=['GET'])
 def text_to_speech():
     text = request.args.get('text')
     if not text:
         return jsonify({'error': 'No text provided'}), 400
+    
+    if not client:
+        return jsonify({'error': 'OpenAI API key not configured'}), 503
     
     try:
         # Create a temporary file to store the audio
