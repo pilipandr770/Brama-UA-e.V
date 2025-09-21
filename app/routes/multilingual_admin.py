@@ -92,20 +92,29 @@ def edit_block_multilingual(block_id):
         return redirect(url_for('admin.dashboard'))
     
     # For GET request, prepare translations for template
-    translations = {'de': {}, 'en': {}}
+    translations_dict = {'de': {}, 'en': {}}
     
     if hasattr(block, 'translations') and block.translations:
         try:
-            saved_translations = json.loads(block.translations)
+            # Если это строка JSON, десериализуем ее
+            if isinstance(block.translations, str):
+                saved_translations = json.loads(block.translations)
+            # Если это уже словарь, используем напрямую
+            elif isinstance(block.translations, dict):
+                saved_translations = block.translations
+            else:
+                saved_translations = {}
+                
             if 'de' in saved_translations:
-                translations['de'] = saved_translations['de']
+                translations_dict['de'] = saved_translations['de']
             if 'en' in saved_translations:
-                translations['en'] = saved_translations['en']
+                translations_dict['en'] = saved_translations['en']
         except json.JSONDecodeError:
             pass
     
-    # Add translations to block for template rendering
-    block.translations = translations
+    # Добавляем словарь переводов как отдельное свойство для шаблона
+    # Сохраняем оригинальное значение translations для совместимости
+    block.translations_dict = translations_dict
     
     return render_template('admin/edit_block_multilingual.html', block=block)
 
@@ -123,33 +132,32 @@ def create_block_multilingual():
         )
         
         # Process translations
-        translations = {}
+        translations_dict = {}
         
         # Process German translations
         if 'title_de' in request.form or 'content_de' in request.form:
-            translations['de'] = {}
+            translations_dict['de'] = {}
             
             if request.form.get('title_de'):
-                translations['de']['title'] = request.form['title_de']
+                translations_dict['de']['title'] = request.form['title_de']
             
             if request.form.get('content_de'):
-                translations['de']['content'] = request.form['content_de']
+                translations_dict['de']['content'] = request.form['content_de']
         
         # Process English translations
         if 'title_en' in request.form or 'content_en' in request.form:
-            translations['en'] = {}
+            translations_dict['en'] = {}
             
             if request.form.get('title_en'):
-                translations['en']['title'] = request.form['title_en']
+                translations_dict['en']['title'] = request.form['title_en']
             
             if request.form.get('content_en'):
-                translations['en']['content'] = request.form['content_en']
+                translations_dict['en']['content'] = request.form['content_en']
         
         # Save translations as JSON string if there are any
-        if translations:
-            block.translations = json.dumps(translations)
-        
-        # Process image uploads - сохраняем и в БД и на диск для надежности
+        if translations_dict:
+            # Сохраняем как строку JSON, а не как словарь
+            block.translations = json.dumps(translations_dict)        # Process image uploads - сохраняем и в БД и на диск для надежности
         image_file = request.files.get('image_file')
         if image_file and image_file.filename:
             # Generate unique filename

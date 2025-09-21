@@ -33,14 +33,22 @@ def get_translated_content(obj, field_name, default_field=None):
         return getattr(obj, default_field or field_name)
     
     try:
-        translations = json.loads(obj.translations)
+        # Обработка случая, когда translations уже является словарем
+        if isinstance(obj.translations, dict):
+            translations = obj.translations
+        else:
+            # Пробуем десериализовать JSON строку
+            translations = json.loads(obj.translations)
+            
+        # Проверяем наличие перевода для текущего языка и поля
         if lang in translations and field_name in translations[lang]:
             translated = translations[lang][field_name]
-            # Return the default field if the translation is empty
+            # Возвращаем перевод только если он не пустой
             if translated:
                 return translated
-    except (json.JSONDecodeError, AttributeError, KeyError):
-        pass
+    except (json.JSONDecodeError, AttributeError, KeyError, TypeError) as e:
+        # Добавил TypeError для обработки случаев, когда translations имеет неподходящий тип
+        print(f"Ошибка при обработке перевода для {obj.__class__.__name__}.{field_name}: {e}, тип translations: {type(obj.translations)}")
     
     # Return the default field if translation not found
     return getattr(obj, default_field or field_name)

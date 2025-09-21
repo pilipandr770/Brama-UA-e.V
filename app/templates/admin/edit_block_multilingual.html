@@ -24,18 +24,18 @@
     <div class="lang-content de">
         <h3>{{ _('Німецька версія') }}</h3>
         <label>{{ _('Заголовок (німецькою):') }}</label><br>
-        <input type="text" name="title_de" value="{{ block.translations.de.title if block and block.translations and block.translations.de else '' }}"><br>
+        <input type="text" name="title_de" value="{{ block.translations_dict.de.title if block and block.translations_dict and block.translations_dict.de and 'title' in block.translations_dict.de else '' }}"><br>
         <label>{{ _('Контент (німецькою):') }}</label><br>
-        <textarea name="content_de" rows="6">{{ block.translations.de.content if block and block.translations and block.translations.de else '' }}</textarea><br>
+        <textarea name="content_de" rows="6">{{ block.translations_dict.de.content if block and block.translations_dict and block.translations_dict.de and 'content' in block.translations_dict.de else '' }}</textarea><br>
     </div>
     
     <!-- English translation -->
     <div class="lang-content en">
         <h3>{{ _('Англійська версія') }}</h3>
         <label>{{ _('Заголовок (англійською):') }}</label><br>
-        <input type="text" name="title_en" value="{{ block.translations.en.title if block and block.translations and block.translations.en else '' }}"><br>
+        <input type="text" name="title_en" value="{{ block.translations_dict.en.title if block and block.translations_dict and block.translations_dict.en and 'title' in block.translations_dict.en else '' }}"><br>
         <label>{{ _('Контент (англійською):') }}</label><br>
-        <textarea name="content_en" rows="6">{{ block.translations.en.content if block and block.translations and block.translations.en else '' }}</textarea><br>
+        <textarea name="content_en" rows="6">{{ block.translations_dict.en.content if block and block.translations_dict and block.translations_dict.en and 'content' in block.translations_dict.en else '' }}</textarea><br>
     </div>
 
     <!-- Common fields for all languages -->

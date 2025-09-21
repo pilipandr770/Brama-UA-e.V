@@ -28,7 +28,11 @@ def translate_block(block_id):
     if not block.translations:
         block.translations = json.dumps({})
     
-    translations = json.loads(block.translations)
+    # Handle both JSON string and dictionary formats
+    if isinstance(block.translations, dict):
+        translations = block.translations
+    else:
+        translations = json.loads(block.translations)
     
     # Update translations for this language
     if language not in translations:
@@ -53,7 +57,12 @@ def get_block_translation(block, language=None):
         return block.title, block.content
     
     try:
-        translations = json.loads(block.translations)
+        # Handle both JSON string and dictionary formats
+        if isinstance(block.translations, dict):
+            translations = block.translations
+        else:
+            translations = json.loads(block.translations)
+            
         if language in translations:
             title = translations[language].get('title') or block.title
             content = translations[language].get('content') or block.content
