@@ -51,8 +51,8 @@ def check_and_fix_blocks_table(app: Flask):
             
             # Словарь отсутствующих колонок и их типов
             missing_columns = {
-                'name': "VARCHAR(50) DEFAULT 'legacy'",
-                'slug': "VARCHAR(50)",
+                'name': "VARCHAR(50) NOT NULL DEFAULT 'legacy'",  # Added NOT NULL constraint
+                'slug': "VARCHAR(50) NOT NULL DEFAULT 'legacy-slug'",  # Added NOT NULL constraint
                 'image_data': "BYTEA" if 'postgresql' in db_url.lower() else "BLOB",  # PostgreSQL использует BYTEA, SQLite использует BLOB
                 'image_mimetype': "VARCHAR(64)"
             }

@@ -108,9 +108,9 @@ class Block(db.Model):
         Get the name of the block. If name column doesn't exist or the value is None,
         generates a default name based on block type and id.
         """
-        # If name column doesn't exist in DB
+        # If name column doesn't exist in DB, generate a default
         if self._existing_columns is not None and 'name' not in self._existing_columns:
-            return f"block_{self.type}_{self.id}"
+            return f"block_{self.type}_{self.id or 'new'}"
             
         # If name column exists but value is None
         if hasattr(self, '_name'):
@@ -120,18 +120,38 @@ class Block(db.Model):
             except sa.exc.SQLAlchemyError as e:
                 logger.debug(f"SQLAlchemy error accessing name: {e}")
                 
-        # Default name if everything else fails
-        return f"block_{self.type}_{self.id}"
+        # Generate a default name if needed (ensures we never return None)
+        if hasattr(self, 'id') and self.id:
+            default_name = f"block_{self.type}_{self.id}"
+        else:
+            default_name = f"block_{self.type}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        
+        # If column exists in DB, update it with the default
+        if self._existing_columns is None or 'name' in self._existing_columns:
+            try:
+                self._name = default_name
+            except sa.exc.SQLAlchemyError as e:
+                logger.debug(f"SQLAlchemy error setting default name: {e}")
+                
+        return default_name
     
     @name.setter
     def name(self, value):
         """
         Set the name of the block. Silently ignores if column doesn't exist.
+        Always ensures a non-NULL value is set if the column exists.
         """
         # Only try to set if column exists in DB
         if self._existing_columns is None or 'name' in self._existing_columns:
             try:
-                self._name = value
+                if value is None:
+                    # Never set NULL values for name
+                    if hasattr(self, 'id') and self.id:
+                        self._name = f"block_{self.type}_{self.id}"
+                    else:
+                        self._name = f"block_{self.type}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+                else:
+                    self._name = value
             except sa.exc.SQLAlchemyError as e:
                 logger.debug(f"SQLAlchemy error setting name: {e}")
     
@@ -149,7 +169,7 @@ class Block(db.Model):
                     return self._name.lower().replace(" ", "_")
                 except (AttributeError, sa.exc.SQLAlchemyError):
                     pass
-            return f"block_{self.type}_{self.id}".lower()
+            return f"block_{self.type}_{self.id or 'new'}".lower()
             
         # If slug column exists but value is None
         if hasattr(self, '_slug'):
@@ -161,19 +181,39 @@ class Block(db.Model):
                     return self._name.lower().replace(" ", "_")
             except sa.exc.SQLAlchemyError as e:
                 logger.debug(f"SQLAlchemy error accessing slug: {e}")
+        
+        # Generate a default slug if needed (ensures we never return None)
+        if hasattr(self, 'id') and self.id:
+            default_slug = f"block_{self.type}_{self.id}".lower()
+        else:
+            default_slug = f"block_{self.type}_{datetime.now().strftime('%Y%m%d%H%M%S')}".lower()
+        
+        # If column exists in DB, update it with the default
+        if self._existing_columns is None or 'slug' in self._existing_columns:
+            try:
+                self._slug = default_slug
+            except sa.exc.SQLAlchemyError as e:
+                logger.debug(f"SQLAlchemy error setting default slug: {e}")
                 
-        # Default slug if everything else fails
-        return f"block_{self.type}_{self.id}".lower()
+        return default_slug
     
     @slug.setter
     def slug(self, value):
         """
         Set the slug of the block. Silently ignores if column doesn't exist.
+        Always ensures a non-NULL value is set if the column exists.
         """
         # Only try to set if column exists in DB
         if self._existing_columns is None or 'slug' in self._existing_columns:
             try:
-                self._slug = value
+                if value is None:
+                    # Never set NULL values for slug
+                    if hasattr(self, 'id') and self.id:
+                        self._slug = f"block_{self.type}_{self.id}".lower()
+                    else:
+                        self._slug = f"block_{self.type}_{datetime.now().strftime('%Y%m%d%H%M%S')}".lower()
+                else:
+                    self._slug = value
             except sa.exc.SQLAlchemyError as e:
                 logger.debug(f"SQLAlchemy error setting slug: {e}")
     
@@ -193,8 +233,25 @@ class Block(db.Model):
         # Initialize with basic fields
         super(Block, self).__init__(**kwargs)
         
-        # After initialization, set name and slug if provided
-        if name_value:
-            self.name = name_value
-        if slug_value:
-            self.slug = slug_value
+        # Generate default values for name and slug if they're needed
+        if hasattr(self, 'type') and hasattr(self, 'id'):
+            default_name = f"block_{self.type}_{self.id or 'new'}"
+            default_slug = default_name.lower()
+        else:
+            # Fallback if type or id is not available yet
+            default_name = f"block_{kwargs.get('type', 'unknown')}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+            default_slug = default_name.lower()
+        
+        # Always set name and slug values, using defaults if none provided
+        # This ensures we never have NULL values for columns that require values
+        if self._existing_columns is None or 'name' in self._existing_columns:
+            try:
+                self._name = name_value if name_value is not None else default_name
+            except sa.exc.SQLAlchemyError as e:
+                logger.debug(f"SQLAlchemy error setting name: {e}")
+        
+        if self._existing_columns is None or 'slug' in self._existing_columns:
+            try:
+                self._slug = slug_value if slug_value is not None else default_slug
+            except sa.exc.SQLAlchemyError as e:
+                logger.debug(f"SQLAlchemy error setting slug: {e}")
