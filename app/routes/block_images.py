@@ -14,11 +14,13 @@ def block_image_file(block_id):
         
         # Если есть бинарные данные изображения в БД
         if block.image_data:
-            return send_file(
+            response = send_file(
                 io.BytesIO(block.image_data), 
-                mimetype=block.image_mimetype, 
-                cache_timeout=31536000  # 1 год кеширования
+                mimetype=block.image_mimetype
             )
+            # Устанавливаем заголовок кэширования вручную
+            response.headers['Cache-Control'] = 'public, max-age=31536000'
+            return response
         # Иначе, если есть URL, перенаправляем на него
         elif block.image_url:
             return redirect(block.image_url)

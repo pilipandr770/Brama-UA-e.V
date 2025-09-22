@@ -241,9 +241,9 @@ def gallery_image_file(image_id):
         if img.image_data:
             response = send_file(
                 io.BytesIO(img.image_data), 
-                mimetype=img.image_mimetype, 
-                cache_timeout=31536000  # 1 год кеширования
+                mimetype=img.image_mimetype
             )
+            # Устанавливаем заголовок кэширования вручную
             response.headers['Cache-Control'] = 'public, max-age=31536000'
             return response
         elif img.image_url:
