@@ -34,8 +34,22 @@ psql "$DATABASE_URL" -c "ALTER TABLE brama.blocks ADD COLUMN IF NOT EXISTS slug 
 psql "$DATABASE_URL" -c "UPDATE brama.blocks SET name = 'legacy' WHERE name IS NULL;" || echo "[start.sh] Couldn't update NULL names"
 
 # 3) Start the app with eventlet for Socket.IO
-echo "[start.sh] Starting Gunicorn (eventlet worker)"
-exec gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:$PORT run:app
+echo "[start.sh] Starting Gunicorn with optimized settings"
 
-# Use eventlet worker for Socket.IO compatibility
-gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:$PORT run:app
+# Вычисляем количество воркеров (2 * CPU + 1) или минимум 3
+NUM_WORKERS=${WEB_CONCURRENCY:-3}  # По умолчанию используем 3 воркера
+
+# Настройки таймаута
+TIMEOUT=${GUNICORN_TIMEOUT:-60}  # 60 секунд таймаута для воркеров
+KEEPALIVE=${GUNICORN_KEEPALIVE:-5}  # 5 секунд keepalive для соединений
+
+# Запускаем с оптимизированными настройками
+exec gunicorn --worker-class eventlet \
+    --workers $NUM_WORKERS \
+    --timeout $TIMEOUT \
+    --keep-alive $KEEPALIVE \
+    --log-level info \
+    --access-logfile - \
+    --error-logfile - \
+    --bind 0.0.0.0:$PORT \
+    run:app

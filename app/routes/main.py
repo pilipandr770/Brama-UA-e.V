@@ -9,6 +9,7 @@ from app.models.settings import Settings
 from app.forms import EditProfileForm, LoginForm, RegistrationForm
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.utils import secure_filename
+from app.cache import cache
 import io
 import os
 from datetime import datetime
@@ -19,6 +20,7 @@ main_bp = Blueprint('main', __name__)
 from app.models.helpers import get_translated_content
 
 @main_bp.route('/')
+@cache.cached(timeout=300)  # Кэширование главной страницы на 5 минут
 def index():
     # Стандартні блоки
     info_block = Block.query.filter_by(type='info', is_active=True).first()
@@ -125,6 +127,7 @@ def project_image_file(project_id):
         return '', 404
 
 @main_bp.route('/gallery/image/<int:image_id>')
+@cache.cached(timeout=86400)  # Кэш на 24 часа для изображений галереи
 def gallery_image_file(image_id):
     try:
         img = GalleryImage.query.get_or_404(image_id)
@@ -133,8 +136,10 @@ def gallery_image_file(image_id):
                 io.BytesIO(img.image_data), 
                 mimetype=img.image_mimetype
             )
-            # Устанавливаем заголовок кэширования вручную
+            # Устанавливаем заголовок кэширования вручную с длительным сроком
             response.headers['Cache-Control'] = 'public, max-age=31536000'
+            # Добавляем ETag для проверки изменений
+            response.add_etag()
             return response
         elif img.image_url:
             return redirect(img.image_url)

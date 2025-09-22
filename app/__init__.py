@@ -13,6 +13,7 @@ login_manager = LoginManager()
 
 # Import our babel setup (needs to be after initializing the other extensions)
 from app.babel import init_babel
+from app.cache import init_cache, cache
 
 def create_app():
     load_dotenv()
@@ -37,6 +38,7 @@ def create_app():
     migrate.init_app(app, db)
     init_babel(app)  # Initialize Babel with our custom locale selector
     socketio.init_app(app, cors_allowed_origins="*")
+    init_cache(app)  # Initialize caching
     
     # Настраиваем Flask-Login
     login_manager.init_app(app)

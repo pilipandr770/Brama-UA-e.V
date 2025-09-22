@@ -6,6 +6,7 @@ from app.models.gallery_image import GalleryImage
 from app.models.project import Project
 from app.models.settings import Settings
 from app.models.report import Report
+from app.cache import cache
 from functools import wraps
 import io
 
@@ -235,6 +236,7 @@ def add_gallery_image():
     return render_template('admin/add_gallery_image.html', blocks=blocks)
 
 @admin_bp.route('/gallery/image/<int:image_id>')
+@cache.cached(timeout=86400)  # Кэш на 24 часа для изображений галереи
 def gallery_image_file(image_id):
     try:
         img = GalleryImage.query.get_or_404(image_id)
@@ -243,8 +245,10 @@ def gallery_image_file(image_id):
                 io.BytesIO(img.image_data), 
                 mimetype=img.image_mimetype
             )
-            # Устанавливаем заголовок кэширования вручную
+            # Устанавливаем заголовок кэширования вручную с длительным сроком
             response.headers['Cache-Control'] = 'public, max-age=31536000'
+            # Добавляем ETag для проверки изменений
+            response.add_etag()
             return response
         elif img.image_url:
             return redirect(img.image_url)
