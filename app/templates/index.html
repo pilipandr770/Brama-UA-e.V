@@ -228,6 +228,8 @@
 function openModal(type) {
   const modal = document.getElementById('block-modal');
   if (modal) {
+    // Сначала применяем эффект появления
+    modal.style.opacity = '0';
     modal.style.display = 'flex';
     
     // Сначала скрываем все детали
@@ -240,25 +242,88 @@ function openModal(type) {
     const modalDetails = document.getElementById('modal-details-' + type);
     if (modalDetails) {
       modalDetails.style.display = 'block';
-      modalDetails.scrollIntoView({ behavior: 'smooth' });
-      if (type === 'gallery') {
-        initGalleryCarousel();
-      }
+      
+      // Добавляем плавное появление
+      setTimeout(() => {
+        modal.style.opacity = '1';
+        modal.style.transition = 'opacity 0.4s ease';
+        
+        // Обрабатываем изображения для правильного отображения
+        const modalImages = modalDetails.querySelectorAll('.modal-image');
+        if (modalImages.length > 0) {
+          modalImages.forEach(img => {
+            // Проверяем, загружено ли изображение
+            if (img.complete) {
+              enhanceImage(img);
+            } else {
+              img.onload = () => enhanceImage(img);
+            }
+          });
+        }
+        
+        // Инициализируем карусель, если это галерея
+        if (type === 'gallery') {
+          initGalleryCarousel();
+        }
+      }, 50);
+      
+      document.body.style.overflow = 'hidden';
     } else {
       console.error('Modal details for type "' + type + '" not found');
     }
-    document.body.style.overflow = 'hidden';
   } else {
     console.error('Modal element not found');
+  }
+}
+
+// Функция для улучшения отображения изображений
+function enhanceImage(img) {
+  // Проверяем размеры изображения и адаптируем контейнер
+  const container = img.parentElement;
+  if (container && container.classList.contains('modal-image-container')) {
+    // Если изображение большое, добавляем возможность клика для увеличения
+    img.style.cursor = 'pointer';
+    img.addEventListener('click', function() {
+      if (this.classList.contains('expanded')) {
+        this.classList.remove('expanded');
+        this.style.maxHeight = '';
+        this.style.objectFit = '';
+        container.style.maxHeight = '';
+      } else {
+        this.classList.add('expanded');
+        this.style.maxHeight = '95vh';
+        this.style.objectFit = 'contain';
+        container.style.maxHeight = '95vh';
+      }
+    });
   }
 }
 
 function closeModal() {
   const modal = document.getElementById('block-modal');
   if (modal) {
-    modal.style.display = 'none';
-    const modalDetails = modal.querySelectorAll('.modal-details');
-    modalDetails.forEach(detail => detail.style.display = 'none');
+    // Плавное скрытие модального окна
+    modal.style.opacity = '0';
+    modal.style.transition = 'opacity 0.3s ease';
+    
+    // После завершения анимации скрываем окно
+    setTimeout(() => {
+      modal.style.display = 'none';
+      const modalDetails = modal.querySelectorAll('.modal-details');
+      modalDetails.forEach(detail => detail.style.display = 'none');
+      
+      // Сбрасываем стили у изображений
+      const modalImages = modal.querySelectorAll('.modal-image');
+      modalImages.forEach(img => {
+        img.classList.remove('expanded');
+        img.style.maxHeight = '';
+        img.style.objectFit = '';
+        if (img.parentElement) {
+          img.parentElement.style.maxHeight = '';
+        }
+      });
+    }, 300);
+    
     document.body.style.overflow = '';
   } else {
     console.error('Modal element not found');
