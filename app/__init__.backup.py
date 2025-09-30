@@ -3,7 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_socketio import SocketIO
 from flask_login import LoginManager
-from flask_compress import Compress  # +++
 from dotenv import load_dotenv
 import os
 
@@ -11,7 +10,6 @@ db = SQLAlchemy()
 migrate = Migrate()
 socketio = SocketIO()
 login_manager = LoginManager()
-compress = Compress()  # +++
 
 # Import our babel setup (needs to be after initializing the other extensions)
 from app.babel import init_babel
@@ -41,7 +39,6 @@ def create_app():
     init_babel(app)  # Initialize Babel with our custom locale selector
     socketio.init_app(app, cors_allowed_origins="*")
     init_cache(app)  # Initialize caching
-    compress.init_app(app)  # +++ enable gzip/br compression
     
     # Настраиваем Flask-Login
     login_manager.init_app(app)

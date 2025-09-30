@@ -16,3 +16,5 @@ flask-login
 email_validator
 Flask-Caching
 requests
+
+Flask-Compress

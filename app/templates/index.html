@@ -73,11 +73,11 @@
       <h2>{{ info_block.translated_title or info_block.title }}</h2>
       {% if info_block.image_data %}
       <div class="modal-image-container">
-        <img src="{{ url_for('block_images.block_image_file', block_id=info_block.id) }}" alt="" class="modal-image">
+        <img src="{{ url_for('block_images.block_image_file', block_id=info_block.id) }}" alt="" class="modal-image" loading="lazy" decoding="async">
       </div>
       {% elif info_block.image_url %}
       <div class="modal-image-container">
-        <img src="{{ info_block.image_url }}" alt="" class="modal-image">
+        <img src="{{ info_block.image_url }}" alt="" class="modal-image" loading="lazy" decoding="async">
       </div>
       {% endif %}
       <div>{{ (info_block.translated_content or info_block.content)|safe }}</div>

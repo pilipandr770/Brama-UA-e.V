@@ -144,81 +144,78 @@ def transcribe_audio():
         }), 500
 
 @api_bp.route('/api/assistant', methods=['POST'])
-def assistant_ask():
-    """
-    Приймає question і (опціонально) thread_id.
-    Повертає готову відповідь або статус 'processing' з thread_id для подальшого опитування.
-    """
-    data = request.get_json(silent=True) or {}
-    user_message = (data.get('question') or data.get('message') or '').strip()
+def assistant():
+    print("[assistant] Запит отримано")
+    data = request.json
+    if not data:
+        print("[assistant] Помилка: Invalid JSON content")
+        return jsonify({'error': 'Invalid JSON content'}), 400
+    
+    user_message = data.get('message')
     thread_id = data.get('thread_id')
-
+    print(f"[assistant] Отримано текст: {user_message}")
+    print(f"[assistant] thread_id з фронта: {thread_id}")
     if not user_message:
-        return jsonify({'error': 'question is required'}), 400
+        print("[assistant] Помилка: No message provided")
+        return jsonify({'error': 'No message provided'}), 400
 
+    # 2. Використовуємо існуючий thread або створюємо новий
+    client = OpenAI(api_key=api_key)
     try:
-        client = _get_client()
-
-        # 1) Гарантуємо thread
         if thread_id:
+            print(f"[assistant] Використовую thread_id: {thread_id}")
             thread = client.beta.threads.retrieve(thread_id=thread_id)
         else:
             thread = client.beta.threads.create()
             thread_id = thread.id
+            print(f"[assistant] Створено новий thread_id: {thread_id}")
 
-        # 2) Додаємо повідомлення
+        # 3. Додаємо повідомлення користувача у thread
+        print(f"[assistant] Додаю повідомлення у thread {thread_id}")
         client.beta.threads.messages.create(
             thread_id=thread_id,
             role="user",
             content=user_message
         )
-
-        # 3) Запускаємо run
+        
+        # 4. Запускаємо асистента
+        print(f"[assistant] Запускаю асистента {ASSISTANT_ID} для thread {thread_id}")
         run = client.beta.threads.runs.create(
             thread_id=thread_id,
             assistant_id=ASSISTANT_ID
         )
-
-        # 4) Чекаємо НЕ ДОВШЕ за MAX_WAIT_SECONDS
-        waited = 0.0
-        answer = None
-        while waited < MAX_WAIT_SECONDS:
-            run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
-            if run.status in ("completed", "requires_action", "failed", "cancelled", "expired"):
-                # спробуємо взяти відповідь
-                msgs = client.beta.threads.messages.list(thread_id=thread_id, limit=10)
-                answer = _extract_answer(msgs)
+        
+        # 5. Чекаємо завершення run (polling)
+        for i in range(30):
+            run_status = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
+            print(f"[assistant] Polling {i}: run status = {run_status.status}")
+            if run_status.status in ["completed", "failed", "cancelled"]:
                 break
-            time.sleep(POLL_INTERVAL_SEC)
-            waited += POLL_INTERVAL_SEC
+            time.sleep(1)
 
-        if answer:
-            return jsonify({'status': 'done', 'answer': answer, 'thread_id': thread_id})
+        if run_status.status != "completed":
+            print(f"[assistant] Run не завершено: {run_status.status}")
+            return jsonify({'error': f'Assistant run status: {run_status.status}'}), 500
 
-        # Якщо ще немає — повертаємо processing (фронт сам допитає status)
-        return jsonify({'status': 'processing', 'thread_id': thread_id})
+        # 6. Отримуємо відповідь асистента
+        messages = client.beta.threads.messages.list(thread_id=thread_id)
+        print(f"[assistant] Отримано {len(messages.data)} повідомлень у thread")
+        # Беремо останнє повідомлення від асистента
+        answer = None
+        for msg in reversed(messages.data):
+            if msg.role == "assistant":
+                answer = msg.content[0].text.value
+                print(f"[assistant] Відповідь асистента: {answer}")
+                break
+        if not answer:
+            print("[assistant] Помилка: No answer from assistant")
+            return jsonify({'error': 'No answer from assistant'}), 500
 
+        print(f"[assistant] Повертаю відповідь у фронт. thread_id: {thread_id}")
+        return jsonify({
+            'answer': answer,
+            'thread_id': thread_id
+        })
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-@api_bp.route('/api/assistant/status', methods=['GET'])
-def assistant_status():
-    """
-    GET /api/assistant/status?thread_id=...
-    Перевіряє, чи з'явилася відповідь у thread.
-    """
-    thread_id = request.args.get('thread_id', '').strip()
-    if not thread_id:
-        return jsonify({'error': 'thread_id is required'}), 400
-
-    try:
-        client = _get_client()
-        msgs = client.beta.threads.messages.list(thread_id=thread_id, limit=10)
-        answer = _extract_answer(msgs)
-        if answer:
-            return jsonify({'status': 'done', 'answer': answer, 'thread_id': thread_id})
-        # ще обробляється
-        return jsonify({'status': 'processing', 'thread_id': thread_id})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        print(f"[assistant] Error: {e}")
+        return jsonify({'error': f'Error: {str(e)}'}), 500
