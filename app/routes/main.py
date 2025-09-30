@@ -9,7 +9,7 @@ from app.models.settings import Settings
 from app.forms import EditProfileForm, LoginForm, RegistrationForm
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.utils import secure_filename
-from app.cache import cache
+from app.cache import cache, get_active_blocks, get_gallery_images, get_approved_projects, get_settings
 import io
 import os
 from datetime import datetime
@@ -22,51 +22,44 @@ from app.models.helpers import get_translated_content
 @main_bp.route('/')
 @cache.cached(timeout=300)  # Кэширование главной страницы на 5 минут
 def index():
-    # Стандартні блоки
-    info_block = Block.query.filter_by(type='info', is_active=True).first()
-    gallery_block = Block.query.filter_by(type='gallery', is_active=True).first()
-    gallery_images = GalleryImage.query.filter_by(block_id=gallery_block.id).all() if gallery_block else []
-    projects_block = Block.query.filter_by(type='projects', is_active=True).first()
+    # Используем кэшированные функции для оптимизации
+    all_active_blocks = get_active_blocks()
+
+    # Разделяем блоки по типам для обратной совместимости с шаблоном
+    info_block = next((block for block in all_active_blocks if block.type == 'info'), None)
+    gallery_block = next((block for block in all_active_blocks if block.type == 'gallery'), None)
+    projects_block = next((block for block in all_active_blocks if block.type == 'projects'), None)
+
+    # Получаем дополнительные блоки (все кроме стандартных типов)
+    additional_blocks = [block for block in all_active_blocks
+                        if block.type not in ['info', 'gallery', 'projects']]
+
+    # Получаем изображения галереи только если есть блок галереи
+    gallery_images = []
+    if gallery_block:
+        gallery_images = get_gallery_images(gallery_block.id)
+
+    # Получаем проекты только если есть блок проектов
     projects = []
     if projects_block:
-        projects = Project.query.filter_by(status='approved', block_id=projects_block.id).order_by(Project.created_at.desc()).all()
-    
-    # Получаем все другие активные блоки
-    additional_blocks = Block.query.filter(
-        Block.is_active==True,
-        Block.type.notin_(['info', 'gallery', 'projects'])
-    ).all()
-    
-    # Debug print
-    print(f"[DEBUG] Additional blocks found: {len(additional_blocks)}")
-    for block in additional_blocks:
-        print(f"[DEBUG] Block: {block.id}, {block.title}, {block.type}, active: {block.is_active}")
-    
-    settings = Settings.query.first()
-    
-    # Process translations for blocks
-    if info_block:
-        info_block.translated_title = get_translated_content(info_block, 'title')
-        info_block.translated_content = get_translated_content(info_block, 'content')
-    
-    if gallery_block:
-        gallery_block.translated_title = get_translated_content(gallery_block, 'title')
-        gallery_block.translated_content = get_translated_content(gallery_block, 'content')
-    
-    if projects_block:
-        projects_block.translated_title = get_translated_content(projects_block, 'title')
-        projects_block.translated_content = get_translated_content(projects_block, 'content')
-    
-    for block in additional_blocks:
+        projects = get_approved_projects(projects_block.id)
+
+    # Получаем настройки
+    settings = get_settings()
+
+    # Process translations for blocks (оптимизировано - только для видимых блоков)
+    blocks_to_translate = [b for b in [info_block, gallery_block, projects_block] + additional_blocks if b]
+
+    for block in blocks_to_translate:
         block.translated_title = get_translated_content(block, 'title')
         block.translated_content = get_translated_content(block, 'content')
-    
+
     return render_template(
-        'index.html', 
-        info_block=info_block, 
-        gallery_block=gallery_block, 
-        gallery_images=gallery_images, 
-        projects_block=projects_block, 
+        'index.html',
+        info_block=info_block,
+        gallery_block=gallery_block,
+        gallery_images=gallery_images,
+        projects_block=projects_block,
         projects=projects,
         additional_blocks=additional_blocks,
         settings=settings

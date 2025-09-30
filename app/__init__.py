@@ -81,7 +81,9 @@ def create_app():
             app.logger.warning("Модуль test_error не найден, тестовые маршруты для ошибок не зарегистрированы")
 
     # Optional: run critical DB migrations on startup (idempotent per revision)
-    if os.getenv("AUTO_MIGRATE_ON_START", "true").lower() in ("1", "true", "yes"):  # default on
+    # DISABLED: Running migrations on startup is too slow for production
+    # if os.getenv("AUTO_MIGRATE_ON_START", "false").lower() in ("1", "true", "yes"):  # default off
+    if False:  # Temporarily disabled for performance
         try:
             from flask_migrate import upgrade as alembic_upgrade
             with app.app_context():
@@ -93,10 +95,11 @@ def create_app():
                         app.logger.warning(f"Startup migration {rev} skipped or failed: {mig_err}")
                         
             # Применяем дополнительный фикс для таблицы blocks и projects
-            from app.database_fix import check_and_fix_blocks_table, check_and_fix_projects_table, monkey_patch_block_model
-            check_and_fix_blocks_table(app)  # Проверяем и исправляем структуру таблицы blocks
-            check_and_fix_projects_table(app)  # Проверяем и исправляем структуру таблицы projects
-            monkey_patch_block_model()       # Применяем обходной путь к модели Block
+            # DISABLED: Database fixes on startup are too slow for production
+            # from app.database_fix import check_and_fix_blocks_table, check_and_fix_projects_table, monkey_patch_block_model
+            # check_and_fix_blocks_table(app)  # Проверяем и исправляем структуру таблицы blocks
+            # check_and_fix_projects_table(app)  # Проверяем и исправляем структуру таблицы projects
+            # monkey_patch_block_model()       # Применяем обходной путь к модели Block
             
         except Exception as e:
             app.logger.warning(f"AUTO_MIGRATE_ON_START failed to run: {e}")
