@@ -50,6 +50,42 @@ def test_error():
         current_app.logger.error(traceback.format_exc())
         raise
 
+@debug_bp.route('/translations')
+def test_translations():
+    """
+    Тестирует работу переводов на разных языках.
+    """
+    from flask_babel import gettext as _
+    from flask import session
+
+    # Test current translations
+    translations = {
+        'current_locale': str(session.get('language', 'default')),
+        'impressum': _('Impressum'),
+        'agb': _('AGB'),
+        'datenschutz': _('Datenschutz'),
+        'agb_title': _('AGB'),
+        'agb_section1': _('1. Geltungsbereich'),
+        'agb_section2': _('2. Nutzung der Website')
+    }
+
+    # Test with English locale
+    session['language'] = 'en'
+    translations['en'] = {
+        'impressum': _('Impressum'),
+        'agb': _('AGB'),
+        'datenschutz': _('Datenschutz'),
+        'agb_title': _('AGB'),
+        'agb_section1': _('1. Geltungsbereich'),
+        'agb_section2': _('2. Nutzung der Website')
+    }
+
+    # Reset to default
+    if 'language' in session:
+        del session['language']
+
+    return jsonify(translations)
+
 def register_debug_routes(app):
     """
     Регистрирует отладочные маршруты.

@@ -1234,3 +1234,79 @@ msgstr "Registrierungsnummer: VR 12345 B"
 msgid "Відповідальний за контент: Іван Петренко"
 msgstr "Verantwortlich für den Inhalt: Ivan Petrenko"
 
+#: app/templates/base.html:72
+msgid "Impressum"
+msgstr "Impressum"
+
+#: app/templates/base.html:73
+msgid "AGB"
+msgstr "AGB"
+
+#: app/templates/base.html:74
+msgid "Datenschutz"
+msgstr "Datenschutz"
+
+#: app/templates/agb.html:3
+msgid "AGB"
+msgstr "AGB"
+
+#: app/templates/agb.html:5
+msgid "Allgemeine Geschäftsbedingungen"
+msgstr "Allgemeine Geschäftsbedingungen"
+
+#: app/templates/agb.html:6
+msgid "Allgemeine Geschäftsbedingungen (AGB) für Brama UA e.V."
+msgstr "Allgemeine Geschäftsbedingungen (AGB) für Brama UA e.V."
+
+#: app/templates/agb.html:8
+msgid "1. Geltungsbereich"
+msgstr "1. Geltungsbereich"
+
+#: app/templates/agb.html:9
+msgid "Diese Allgemeinen Geschäftsbedingungen gelten für alle Nutzer der Website und Dienstleistungen von Brama UA e.V."
+msgstr "Diese Allgemeinen Geschäftsbedingungen gelten für alle Nutzer der Website und Dienstleistungen von Brama UA e.V."
+
+#: app/templates/agb.html:11
+msgid "2. Nutzung der Website"
+msgstr "2. Nutzung der Website"
+
+#: app/templates/agb.html:12
+msgid "Die Nutzung unserer Website ist kostenlos. Sie verpflichten sich, die Website nur für rechtmäßige Zwecke zu nutzen."
+msgstr "Die Nutzung unserer Website ist kostenlos. Sie verpflichten sich, die Website nur für rechtmäßige Zwecke zu nutzen."
+
+#: app/templates/agb.html:14
+msgid "3. Haftung"
+msgstr "3. Haftung"
+
+#: app/templates/agb.html:15
+msgid "Brama UA e.V. haftet nicht für Schäden, die durch die Nutzung der Website entstehen, es sei denn, sie beruhen auf grober Fahrlässigkeit oder Vorsatz."
+msgstr "Brama UA e.V. haftet nicht für Schäden, die durch die Nutzung der Website entstehen, es sei denn, sie beruhen auf grober Fahrlässigkeit oder Vorsatz."
+
+#: app/templates/agb.html:17
+msgid "4. Datenschutz"
+msgstr "4. Datenschutz"
+
+#: app/templates/agb.html:18
+msgid "Der Datenschutz richtet sich nach unserer Datenschutzerklärung, die Sie unter \"Datenschutz\" finden."
+msgstr "Der Datenschutz richtet sich nach unserer Datenschutzerklärung, die Sie unter \"Datenschutz\" finden."
+
+#: app/templates/agb.html:20
+msgid "5. Änderungen"
+msgstr "5. Änderungen"
+
+#: app/templates/agb.html:21
+msgid "Wir behalten uns das Recht vor, diese AGB jederzeit zu ändern. Die geänderten Bedingungen werden auf der Website veröffentlicht."
+msgstr "Wir behalten uns das Recht vor, diese AGB jederzeit zu ändern. Die geänderten Bedingungen werden auf der Website veröffentlicht."
+
+#: app/templates/agb.html:23
+msgid "6. Schlussbestimmungen"
+msgstr "6. Schlussbestimmungen"
+
+#: app/templates/agb.html:24
+msgid "Es gilt deutsches Recht. Gerichtsstand ist Berlin."
+msgstr "Es gilt deutsches Recht. Gerichtsstand ist Berlin."
+
+#: app/templates/agb.html:26
+msgid "Stand: September 2025"
+msgstr "Stand: September 2025"
+

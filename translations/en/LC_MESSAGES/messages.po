@@ -247,15 +247,85 @@ msgstr "Register"
 msgid "Політика конфіденційності"
 msgstr "Privacy Policy"
 
-#: app/templates/base.html:73 app/templates/contact.html:2
-#: app/templates/contact.html:5
-msgid "Контакти"
-msgstr "Contacts"
+#: app/templates/base.html:73
+msgid "Impressum"
+msgstr "Imprint"
 
-#: app/templates/base.html:74 app/templates/impressum.html:2
-#: app/templates/impressum.html:5
-msgid "Імпресум"
-msgstr "Impressum"
+#: app/templates/base.html:74
+msgid "AGB"
+msgstr "Terms & Conditions"
+
+#: app/templates/base.html:75
+msgid "Datenschutz"
+msgstr "Privacy Policy"
+
+#: app/templates/agb.html:3
+msgid "AGB"
+msgstr "Terms & Conditions"
+
+#: app/templates/agb.html:5
+msgid "Allgemeine Geschäftsbedingungen"
+msgstr "General Terms and Conditions"
+
+#: app/templates/agb.html:6
+msgid "Allgemeine Geschäftsbedingungen (AGB) für Brama UA e.V."
+msgstr "General Terms and Conditions (GTC) for Brama UA e.V."
+
+#: app/templates/agb.html:8
+msgid "1. Geltungsbereich"
+msgstr "1. Scope of Application"
+
+#: app/templates/agb.html:9
+msgid "Diese Allgemeinen Geschäftsbedingungen gelten für alle Nutzer der Website und Dienstleistungen von Brama UA e.V."
+msgstr "These General Terms and Conditions apply to all users of the website and services of Brama UA e.V."
+
+#: app/templates/agb.html:11
+msgid "2. Nutzung der Website"
+msgstr "2. Use of the Website"
+
+#: app/templates/agb.html:12
+msgid "Die Nutzung unserer Website ist kostenlos. Sie verpflichten sich, die Website nur für rechtmäßige Zwecke zu nutzen."
+msgstr "The use of our website is free of charge. You agree to use the website only for lawful purposes."
+
+#: app/templates/agb.html:14
+msgid "3. Haftung"
+msgstr "3. Liability"
+
+#: app/templates/agb.html:15
+msgid "Brama UA e.V. haftet nicht für Schäden, die durch die Nutzung der Website entstehen, es sei denn, sie beruhen auf grober Fahrlässigkeit oder Vorsatz."
+msgstr "Brama UA e.V. is not liable for damages arising from the use of the website, unless they are based on gross negligence or intent."
+
+#: app/templates/agb.html:17
+msgid "4. Datenschutz"
+msgstr "4. Data Protection"
+
+#: app/templates/agb.html:18
+msgid "Der Datenschutz richtet sich nach unserer Datenschutzerklärung, die Sie unter \"Datenschutz\" finden."
+msgstr "Data protection is governed by our privacy policy, which you can find under \"Privacy Policy\"."
+
+#: app/templates/agb.html:20
+msgid "5. Änderungen"
+msgstr "5. Changes"
+
+#: app/templates/agb.html:21
+msgid "Wir behalten uns das Recht vor, diese AGB jederzeit zu ändern. Die geänderten Bedingungen werden auf der Website veröffentlicht."
+msgstr "We reserve the right to change these GTC at any time. The amended conditions will be published on the website."
+
+#: app/templates/agb.html:23
+msgid "6. Schlussbestimmungen"
+msgstr "6. Final Provisions"
+
+#: app/templates/agb.html:24
+msgid "Es gilt deutsches Recht. Gerichtsstand ist Berlin."
+msgstr "German law applies. Place of jurisdiction is Berlin."
+
+#: app/templates/agb.html:26
+msgid "Stand: September 2025"
+msgstr "As of: September 2025"
+
+#: app/templates/impressum.html:15
+msgid "Р’С–РґРїРѕРІС–РґР°Р»СЊРЅРёР№ Р·Р° РєРѕРЅС‚РµРЅС‚: Р†РІР
+°РЅ РџРµС‚СЂРµРЅРєРѕ"                                         msgstr "Responsible for content: Ivan Petrenko"
 
 #: app/templates/contact.html:6
 msgid "Зв'яжіться з нами для співпраці, питань чи пропозицій:"
@@ -818,7 +888,7 @@ msgstr "View Details"
 
 #: app/templates/meetings/list.html:53
 msgid "No meetings found."
-msgstr "No meetings found."
+msgstr ""
 
 #: venv/Lib/site-packages/click/_termui_impl.py:600
 #, python-brace-format
@@ -1215,6 +1285,6 @@ msgid "Реєстраційний номер: VR 12345 B"
 msgstr "Registration number: VR 12345 B"
 
 #: app/templates/impressum.html:15
-msgid "Відповідальний за контент: Іван Петренко"
-msgstr "Responsible for content: Ivan Petrenko"
+msgid "Р’С–РґРїРѕРІС–РґР°Р»СЊРЅРёР№ Р·Р° РєРѕРЅС‚РµРЅС‚: Р†РІР
+°РЅ РџРµС‚СЂРµРЅРєРѕ"                                         msgstr "Responsible for content: Ivan Petrenko"
 

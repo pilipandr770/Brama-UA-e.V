@@ -269,6 +269,10 @@ def privacy():
 def impressum():
     return render_template('impressum.html')
 
+@main_bp.route('/agb')
+def agb():
+    return render_template('agb.html')
+
 @main_bp.route('/contact')
 def contact():
     return render_template('contact.html')
