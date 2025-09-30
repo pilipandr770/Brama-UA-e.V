@@ -899,7 +899,7 @@ msgstr[1] ""
 #: venv/Lib/site-packages/click/core.py:2404
 #, python-brace-format
 msgid ""
-"DeprecationWarning: The {param_type} {name!r} is "
+"DeprecationWarning: The {param_type} {name!r} "
 "deprecated.{extra_message}"
 msgstr ""
 
@@ -1138,204 +1138,99 @@ msgid_plural "{len_type} values are required, but {len_value} were given."
 msgstr[0] ""
 msgstr[1] ""
 
-#~ msgid "{editor}: Editing failed"
-#~ msgstr ""
+#: app/templates/privacy.html:6
+msgid "Ми, Brama UA e.V., поважаємо вашу приватність та захищаємо персональні дані відповідно до законодавства України та ЄС (GDPR)."
+msgstr "Wir, Brama UA e.V., respektieren Ihre Privatsphäre und schützen personenbezogene Daten gemäß der Gesetzgebung der Ukraine und der EU (GDPR)."
 
-#~ msgid "{editor}: Editing failed: {e}"
-#~ msgstr ""
+#: app/templates/privacy.html:7
+msgid "Які дані ми збираємо?"
+msgstr "Welche Daten sammeln wir?"
 
-#~ msgid "{text} {deprecated_message}"
-#~ msgstr ""
+#: app/templates/privacy.html:9
+msgid "Ім'я, email, контактні дані для реєстрації та зв'язку"
+msgstr "Name, E-Mail, Kontaktdaten für Registrierung und Kommunikation"
 
-#~ msgid "Options"
-#~ msgstr ""
+#: app/templates/privacy.html:10
+msgid "Дані про подані проєкти"
+msgstr "Daten über eingereichte Projekte"
 
-#~ msgid "Got unexpected extra argument ({args})"
-#~ msgid_plural "Got unexpected extra arguments ({args})"
-#~ msgstr[0] ""
-#~ msgstr[1] ""
+#: app/templates/privacy.html:11
+msgid "Технічна інформація (IP, cookies)"
+msgstr "Technische Informationen (IP, Cookies)"
 
-#~ msgid "DeprecationWarning: The command {name!r} is deprecated.{extra_message}"
-#~ msgstr ""
+#: app/templates/privacy.html:13
+msgid "Як ми використовуємо дані?"
+msgstr "Wie verwenden wir die Daten?"
 
-#~ msgid "Aborted!"
-#~ msgstr ""
+#: app/templates/privacy.html:15
+msgid "Для реєстрації та ідентифікації користувачів"
+msgstr "Für Registrierung und Identifizierung von Benutzern"
 
-#~ msgid "Commands"
-#~ msgstr ""
+#: app/templates/privacy.html:16
+msgid "Для зв'язку з вами щодо проєктів"
+msgstr "Für die Kommunikation mit Ihnen bezüglich Projekte"
 
-#~ msgid "Missing command."
-#~ msgstr ""
+#: app/templates/privacy.html:17
+msgid "Для покращення роботи сайту"
+msgstr "Zur Verbesserung der Website-Funktionalität"
 
-#~ msgid "No such command {name!r}."
-#~ msgstr ""
+#: app/templates/privacy.html:19
+msgid "Захист даних"
+msgstr "Datenschutz"
 
-#~ msgid "Value must be an iterable."
-#~ msgstr ""
+#: app/templates/privacy.html:20
+msgid "Ми не передаємо ваші дані третім особам без вашої згоди, окрім випадків, передбачених законом."
+msgstr "Wir geben Ihre Daten nicht an Dritte weiter ohne Ihre Zustimmung, außer in Fällen, die gesetzlich vorgesehen sind."
 
-#~ msgid "Takes {nargs} values but 1 was given."
-#~ msgid_plural "Takes {nargs} values but {len} were given."
-#~ msgstr[0] ""
-#~ msgstr[1] ""
+#: app/templates/privacy.html:22
+msgid "Ваші права"
+msgstr "Ihre Rechte"
 
-#~ msgid ""
-#~ "DeprecationWarning: The {param_type} {name!r} "
-#~ "is deprecated.{extra_message}"
-#~ msgstr ""
+#: app/templates/privacy.html:24
+msgid "Дізнатися, які дані ми зберігаємо"
+msgstr "Erfahren, welche Daten wir speichern"
 
-#~ msgid "env var: {var}"
-#~ msgstr ""
+#: app/templates/privacy.html:25
+msgid "Вимагати змінити або видалити ваші дані"
+msgstr "Verlangen, Ihre Daten zu ändern oder zu löschen"
 
-#~ msgid "default: {default}"
-#~ msgstr ""
+#: app/templates/privacy.html:26
+msgid "Відкликати згоду на обробку"
+msgstr "Die Zustimmung zur Verarbeitung widerrufen"
 
-#~ msgid "required"
-#~ msgstr ""
+#: app/templates/privacy.html:28
+msgid "З питань захисту даних пишіть на"
+msgstr "Bei Fragen zum Datenschutz schreiben Sie an"
 
-#~ msgid "(dynamic)"
-#~ msgstr ""
+#: app/templates/impressum.html:6
+msgid "Вулиця: Musterstraße 1"
+msgstr "Straße: Musterstraße 1"
 
-#~ msgid "%(prog)s, version %(version)s"
-#~ msgstr ""
+#: app/templates/impressum.html:7
+msgid "Місто: 12345 Берлін"
+msgstr "Stadt: 12345 Berlin"
 
-#~ msgid "Show the version and exit."
-#~ msgstr ""
+#: app/templates/impressum.html:8
+msgid "Країна: Німеччина"
+msgstr "Land: Deutschland"
 
-#~ msgid "Show this message and exit."
-#~ msgstr ""
+#: app/templates/impressum.html:10
+msgid "Голова правління: Іван Петренко"
+msgstr "Vorsitzender: Ivan Petrenko"
 
-#~ msgid "Error: {message}"
-#~ msgstr ""
+#: app/templates/impressum.html:11
+msgid "Телефон: +49 123 4567890"
+msgstr "Telefon: +49 123 4567890"
 
-#~ msgid "Try '{command} {option}' for help."
-#~ msgstr ""
+#: app/templates/impressum.html:12
+msgid "Email:"
+msgstr "E-Mail:"
 
-#~ msgid "Invalid value: {message}"
-#~ msgstr ""
+#: app/templates/impressum.html:14
+msgid "Реєстраційний номер: VR 12345 B"
+msgstr "Registrierungsnummer: VR 12345 B"
 
-#~ msgid "Invalid value for {param_hint}: {message}"
-#~ msgstr ""
-
-#~ msgid "Missing argument"
-#~ msgstr ""
-
-#~ msgid "Missing option"
-#~ msgstr ""
-
-#~ msgid "Missing parameter"
-#~ msgstr ""
-
-#~ msgid "Missing {param_type}"
-#~ msgstr ""
-
-#~ msgid "Missing parameter: {param_name}"
-#~ msgstr ""
-
-#~ msgid "No such option: {name}"
-#~ msgstr ""
-
-#~ msgid "Did you mean {possibility}?"
-#~ msgid_plural "(Possible options: {possibilities})"
-#~ msgstr[0] ""
-#~ msgstr[1] ""
-
-#~ msgid "unknown error"
-#~ msgstr ""
-
-#~ msgid "Could not open file {filename!r}: {message}"
-#~ msgstr ""
-
-#~ msgid "Argument {name!r} takes {nargs} values."
-#~ msgstr ""
-
-#~ msgid "Option {name!r} does not take a value."
-#~ msgstr ""
-
-#~ msgid "Option {name!r} requires an argument."
-#~ msgid_plural "Option {name!r} requires {nargs} arguments."
-#~ msgstr[0] ""
-#~ msgstr[1] ""
-
-#~ msgid "Shell completion is not supported for Bash versions older than 4.4."
-#~ msgstr ""
-
-#~ msgid "Couldn't detect Bash version, shell completion is not supported."
-#~ msgstr ""
-
-#~ msgid "Repeat for confirmation"
-#~ msgstr ""
-
-#~ msgid "Error: The value you entered was invalid."
-#~ msgstr ""
-
-#~ msgid "Error: {e.message}"
-#~ msgstr ""
-
-#~ msgid "Error: The two entered values do not match."
-#~ msgstr ""
-
-#~ msgid "Error: invalid input"
-#~ msgstr ""
-
-#~ msgid "Press any key to continue..."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Choose from:\n"
-#~ "\t{choices}"
-#~ msgstr ""
-
-#~ msgid "{value!r} is not {choice}."
-#~ msgid_plural "{value!r} is not one of {choices}."
-#~ msgstr[0] ""
-#~ msgstr[1] ""
-
-#~ msgid "{value!r} does not match the format {format}."
-#~ msgid_plural "{value!r} does not match the formats {formats}."
-#~ msgstr[0] ""
-#~ msgstr[1] ""
-
-#~ msgid "{value!r} is not a valid {number_type}."
-#~ msgstr ""
-
-#~ msgid "{value} is not in the range {range}."
-#~ msgstr ""
-
-#~ msgid "{value!r} is not a valid boolean."
-#~ msgstr ""
-
-#~ msgid "{value!r} is not a valid UUID."
-#~ msgstr ""
-
-#~ msgid "file"
-#~ msgstr ""
-
-#~ msgid "directory"
-#~ msgstr ""
-
-#~ msgid "path"
-#~ msgstr ""
-
-#~ msgid "{name} {filename!r} does not exist."
-#~ msgstr ""
-
-#~ msgid "{name} {filename!r} is a file."
-#~ msgstr ""
-
-#~ msgid "{name} {filename!r} is a directory."
-#~ msgstr ""
-
-#~ msgid "{name} {filename!r} is not readable."
-#~ msgstr ""
-
-#~ msgid "{name} {filename!r} is not writable."
-#~ msgstr ""
-
-#~ msgid "{name} {filename!r} is not executable."
-#~ msgstr ""
-
-#~ msgid "{len_type} values are required, but {len_value} was given."
-#~ msgid_plural "{len_type} values are required, but {len_value} were given."
-#~ msgstr[0] ""
-#~ msgstr[1] ""
+#: app/templates/impressum.html:15
+msgid "Відповідальний за контент: Іван Петренко"
+msgstr "Verantwortlich für den Inhalt: Ivan Petrenko"
 

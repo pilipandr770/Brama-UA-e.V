@@ -1122,3 +1122,99 @@ msgid_plural "{len_type} values are required, but {len_value} were given."
 msgstr[0] ""
 msgstr[1] ""
 
+#: app/templates/privacy.html:6
+msgid "Ми, Brama UA e.V., поважаємо вашу приватність та захищаємо персональні дані відповідно до законодавства України та ЄС (GDPR)."
+msgstr "We, Brama UA e.V., respect your privacy and protect personal data in accordance with the legislation of Ukraine and the EU (GDPR)."
+
+#: app/templates/privacy.html:7
+msgid "Які дані ми збираємо?"
+msgstr "What data do we collect?"
+
+#: app/templates/privacy.html:9
+msgid "Ім'я, email, контактні дані для реєстрації та зв'язку"
+msgstr "Name, email, contact details for registration and communication"
+
+#: app/templates/privacy.html:10
+msgid "Дані про подані проєкти"
+msgstr "Data about submitted projects"
+
+#: app/templates/privacy.html:11
+msgid "Технічна інформація (IP, cookies)"
+msgstr "Technical information (IP, cookies)"
+
+#: app/templates/privacy.html:13
+msgid "Як ми використовуємо дані?"
+msgstr "How do we use the data?"
+
+#: app/templates/privacy.html:15
+msgid "Для реєстрації та ідентифікації користувачів"
+msgstr "For user registration and identification"
+
+#: app/templates/privacy.html:16
+msgid "Для зв'язку з вами щодо проєктів"
+msgstr "For communication with you regarding projects"
+
+#: app/templates/privacy.html:17
+msgid "Для покращення роботи сайту"
+msgstr "To improve the website functionality"
+
+#: app/templates/privacy.html:19
+msgid "Захист даних"
+msgstr "Data Protection"
+
+#: app/templates/privacy.html:20
+msgid "Ми не передаємо ваші дані третім особам без вашої згоди, окрім випадків, передбачених законом."
+msgstr "We do not transfer your data to third parties without your consent, except in cases provided by law."
+
+#: app/templates/privacy.html:22
+msgid "Ваші права"
+msgstr "Your rights"
+
+#: app/templates/privacy.html:24
+msgid "Дізнатися, які дані ми зберігаємо"
+msgstr "Find out what data we store"
+
+#: app/templates/privacy.html:25
+msgid "Вимагати змінити або видалити ваші дані"
+msgstr "Request to change or delete your data"
+
+#: app/templates/privacy.html:26
+msgid "Відкликати згоду на обробку"
+msgstr "Revoke consent to processing"
+
+#: app/templates/privacy.html:28
+msgid "З питань захисту даних пишіть на"
+msgstr "For data protection questions, write to"
+
+#: app/templates/impressum.html:6
+msgid "Вулиця: Musterstraße 1"
+msgstr "Street: Musterstraße 1"
+
+#: app/templates/impressum.html:7
+msgid "Місто: 12345 Берлін"
+msgstr "City: 12345 Berlin"
+
+#: app/templates/impressum.html:8
+msgid "Країна: Німеччина"
+msgstr "Country: Germany"
+
+#: app/templates/impressum.html:10
+msgid "Голова правління: Іван Петренко"
+msgstr "Chairman: Ivan Petrenko"
+
+#: app/templates/impressum.html:11
+msgid "Телефон: +49 123 4567890"
+msgstr "Phone: +49 123 4567890"
+
+#: app/templates/impressum.html:12
+msgid "Email:"
+msgstr "Email:"
+
+#: app/templates/impressum.html:14
+msgid "Реєстраційний номер: VR 12345 B"
+msgstr "Registration number: VR 12345 B"
+
+#: app/templates/impressum.html:15
+msgid "Відповідальний за контент: Іван Петренко"
+msgstr "Responsible for content: Ivan Petrenko"
+
