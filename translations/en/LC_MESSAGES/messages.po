@@ -265,7 +265,7 @@ msgstr "Terms & Conditions"
 
 #: app/templates/agb.html:5
 msgid "Allgemeine Geschäftsbedingungen"
-msgstr "General Terms and Conditions"
+msgstr "Terms & Conditions"
 
 #: app/templates/agb.html:6
 msgid "Allgemeine Geschäftsbedingungen (AGB) für Brama UA e.V."
@@ -276,50 +276,86 @@ msgid "1. Geltungsbereich"
 msgstr "1. Scope of Application"
 
 #: app/templates/agb.html:9
-msgid "Diese Allgemeinen Geschäftsbedingungen gelten für alle Nutzer der Website und Dienstleistungen von Brama UA e.V."
-msgstr "These General Terms and Conditions apply to all users of the website and services of Brama UA e.V."
+msgid "Diese Allgemeinen Geschäftsbedingungen gelten для всіх користувачів веб-сайту та послуг Brama UA e.V., зокрема для членства в асоціації."
+msgstr "These General Terms and Conditions apply to all users of the website and services of Brama UA e.V., in particular for membership in the association."
 
 #: app/templates/agb.html:11
-msgid "2. Nutzung der Website"
-msgstr "2. Use of the Website"
+msgid "2. Mitgliedschaft"
+msgstr "2. Membership"
 
 #: app/templates/agb.html:12
-msgid "Die Nutzung unserer Website ist kostenlos. Sie verpflichten sich, die Website nur für rechtmäßige Zwecke zu nutzen."
-msgstr "The use of our website is free of charge. You agree to use the website only for lawful purposes."
+msgid "Die Mitgliedschaft bei Brama UA e.V. ist freiwillig. Mit der Registrierung auf unserer Website erklären Sie sich mit diesen AGB einverstanden."
+msgstr "Membership with Brama UA e.V. is voluntary. By registering on our website, you agree to these GTC."
 
 #: app/templates/agb.html:14
-msgid "3. Haftung"
-msgstr "3. Liability"
+msgid "Mitglieder erhalten Zugang zu exklusiven Inhalten und Veranstaltungen"
+msgstr "Members receive access to exclusive content and events"
 
 #: app/templates/agb.html:15
+msgid "Die Mitgliedschaft kann jederzeit gekündigt werden"
+msgstr "Membership can be terminated at any time"
+
+#: app/templates/agb.html:16
+msgid "Beiträge sind freiwillig und werden nicht erhoben"
+msgstr "Contributions are voluntary and are not collected"
+
+#: app/templates/agb.html:18
+msgid "3. Datenschutz und Datenverarbeitung"
+msgstr "3. Data Protection and Data Processing"
+
+#: app/templates/agb.html:19
+msgid "Mit Ihrer Mitgliedschaft willigen Sie в зберігання та обробку ваших персональних даних. Ці дані використовуються виключно для цілей асоціації та не передаються третім особам."
+msgstr "With your membership, you consent to the storage and processing of your personal data. These will be used exclusively for association purposes and will not be disclosed to third parties."
+
+#: app/templates/agb.html:20
+msgid "Sie haben jederzeit das Recht, Auskunft über Ihre Daten zu erhalten, diese zu korrigieren oder löschen zu lassen."
+msgstr "You have the right at any time to receive information about your data, to have them corrected or deleted."
+
+#: app/templates/agb.html:22
+msgid "4. Nutzung der Website"
+msgstr "4. Use of the Website"
+
+#: app/templates/agb.html:23
+msgid "Die Nutzung unserer Website є безкоштовною. Ви погоджуєтеся використовувати веб-сайт лише для законних цілей і не завантажувати жоден вміст, який порушує чинне законодавство."
+msgstr "The use of our website is free of charge. You agree to use the website only for lawful purposes and not to upload any content that violates applicable law."
+
+#: app/templates/agb.html:25
+msgid "5. Kommunikation"
+msgstr "5. Communication"
+
+#: app/templates/agb.html:26
+msgid "Als Mitglied erklären Sie sich damit einverstanden, dass wir Sie per Email, Telefon oder über die Website über Vereinsaktivitäten informieren dürfen."
+msgstr "As a member, you agree that we may inform you about association activities via email, telephone, or the website."
+
+#: app/templates/agb.html:28
+msgid "6. Haftung"
+msgstr "6. Liability"
+
+#: app/templates/agb.html:29
 msgid "Brama UA e.V. haftet nicht für Schäden, die durch die Nutzung der Website entstehen, es sei denn, sie beruhen auf grober Fahrlässigkeit oder Vorsatz."
 msgstr "Brama UA e.V. is not liable for damages arising from the use of the website, unless they are based on gross negligence or intent."
 
-#: app/templates/agb.html:17
-msgid "4. Datenschutz"
-msgstr "4. Data Protection"
+#: app/templates/agb.html:31
+msgid "7. Änderungen"
+msgstr "7. Changes"
 
-#: app/templates/agb.html:18
-msgid "Der Datenschutz richtet sich nach unserer Datenschutzerklärung, die Sie unter \"Datenschutz\" finden."
-msgstr "Data protection is governed by our privacy policy, which you can find under \"Privacy Policy\"."
+#: app/templates/agb.html:32
+msgid "Wir behalten uns das Recht vor, diese AGB jederzeit zu ändern. Die geänderten Bedingungen werden auf der Website veröffentlicht und gelten ab dem Zeitpunkt der Veröffentlichung."
+msgstr "We reserve the right to change these GTC at any time. The amended conditions will be published on the website and apply from the time of publication."
 
-#: app/templates/agb.html:20
-msgid "5. Änderungen"
-msgstr "5. Changes"
+#: app/templates/agb.html:34
+msgid "8. Schlussbestimmungen"
+msgstr "8. Final Provisions"
 
-#: app/templates/agb.html:21
-msgid "Wir behalten uns das Recht vor, diese AGB jederzeit zu ändern. Die geänderten Bedingungen werden auf der Website veröffentlicht."
-msgstr "We reserve the right to change these GTC at any time. The amended conditions will be published on the website."
+#: app/templates/agb.html:35
+msgid "Es gilt deutsches Recht. Gerichtsstand ist Frankfurt am Main."
+msgstr "German law applies. Place of jurisdiction is Frankfurt am Main."
 
-#: app/templates/agb.html:23
-msgid "6. Schlussbestimmungen"
-msgstr "6. Final Provisions"
+#: app/templates/agb.html:36
+msgid "Sollten einzelne Bestimmungen dieser AGB unwirksam sein, bleibt die Wirksamkeit der übrigen Bestimmungen unberührt."
+msgstr "If individual provisions of these GTC are invalid, the validity of the remaining provisions remains unaffected."
 
-#: app/templates/agb.html:24
-msgid "Es gilt deutsches Recht. Gerichtsstand ist Berlin."
-msgstr "German law applies. Place of jurisdiction is Berlin."
-
-#: app/templates/agb.html:26
+#: app/templates/agb.html:38
 msgid "Stand: September 2025"
 msgstr "As of: September 2025"
 
@@ -844,52 +880,6 @@ msgstr "Save"
 msgid "An error occurred while processing your vote"
 msgstr ""
 
-#: app/templates/meetings/edit.html:38
-msgid "Status"
-msgstr "Status"
-
-#: app/templates/meetings/edit.html:41 app/templates/meetings/list.html:24
-msgid "Planned"
-msgstr "Planned"
-
-#: app/templates/meetings/edit.html:44 app/templates/meetings/list.html:26
-msgid "Active"
-msgstr "Active"
-
-#: app/templates/meetings/edit.html:47 app/templates/meetings/list.html:28
-msgid "Completed"
-msgstr "Completed"
-
-#: app/templates/meetings/edit.html:50 app/templates/meetings/list.html:30
-msgid "Cancelled"
-msgstr "Cancelled"
-
-#: app/templates/meetings/edit.html:56
-#: app/templates/meetings/edit_agenda_item.html:39
-msgid "Save Changes"
-msgstr "Save Changes"
-
-#: app/templates/meetings/edit_agenda_item.html:3
-#: app/templates/meetings/edit_agenda_item.html:18
-msgid "Edit Agenda Item"
-msgstr ""
-
-#: app/templates/meetings/edit_agenda_item.html:10
-msgid "Meeting"
-msgstr ""
-
-#: app/templates/meetings/edit_agenda_item.html:12
-msgid "Edit Item"
-msgstr ""
-
-#: app/templates/meetings/list.html:39
-msgid "View Details"
-msgstr "View Details"
-
-#: app/templates/meetings/list.html:53
-msgid "No meetings found."
-msgstr ""
-
 #: venv/Lib/site-packages/click/_termui_impl.py:600
 #, python-brace-format
 msgid "{editor}: Editing failed"
@@ -1192,99 +1182,195 @@ msgid_plural "{len_type} values are required, but {len_value} were given."
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/templates/privacy.html:6
-msgid "Ми, Brama UA e.V., поважаємо вашу приватність та захищаємо персональні дані відповідно до законодавства України та ЄС (GDPR)."
-msgstr "We, Brama UA e.V., respect your privacy and protect personal data in accordance with the legislation of Ukraine and the EU (GDPR)."
+#: app/templates/privacy.html:3
+msgid "Datenschutz"
+msgstr "Privacy Policy"
 
-#: app/templates/privacy.html:7
-msgid "Які дані ми збираємо?"
-msgstr "What data do we collect?"
+#: app/templates/privacy.html:5
+msgid "Datenschutzerklärung"
+msgstr "Privacy Policy"
+
+#: app/templates/privacy.html:6
+msgid "Wir, Brama UA e.V., nehmen den Schutz Ihrer persönlichen Daten sehr ernst und halten uns strikt an die Vorschriften der Datenschutz-Grundverordnung (DSGVO) і дес Федерального закону про захист даних (BDSG)."
+msgstr "We, Brama UA e.V., take the protection of your personal data very seriously and strictly adhere to the provisions of the General Data Protection Regulation (GDPR) and the Federal Data Protection Act (BDSG)."
+
+#: app/templates/privacy.html:8
+msgid "1. Verantwortlicher"
+msgstr "1. Controller"
 
 #: app/templates/privacy.html:9
-msgid "Ім'я, email, контактні дані для реєстрації та зв'язку"
-msgstr "Name, email, contact details for registration and communication"
+msgid "Verantwortlich für die Datenverarbeitung ist:"
+msgstr "Responsible for data processing is:"
 
 #: app/templates/privacy.html:10
-msgid "Дані про подані проєкти"
-msgstr "Data about submitted projects"
+msgid "Brama UA e.V."
+msgstr "Brama UA e.V."
 
 #: app/templates/privacy.html:11
-msgid "Технічна інформація (IP, cookies)"
-msgstr "Technical information (IP, cookies)"
+msgid "Nussyahl 55"
+msgstr "Nussyahl 55"
+
+#: app/templates/privacy.html:12
+msgid "60388 Frankfurt am Main"
+msgstr "60388 Frankfurt am Main"
 
 #: app/templates/privacy.html:13
-msgid "Як ми використовуємо дані?"
-msgstr "How do we use the data?"
+msgid "Deutschland"
+msgstr "Germany"
 
-#: app/templates/privacy.html:15
-msgid "Для реєстрації та ідентифікації користувачів"
-msgstr "For user registration and identification"
+#: app/templates/privacy.html:14
+msgid "Email: pylypchukandrii770@gmail.com"
+msgstr "Email: pylypchukandrii770@gmail.com"
 
 #: app/templates/privacy.html:16
-msgid "Для зв'язку з вами щодо проєктів"
-msgstr "For communication with you regarding projects"
+msgid "2. Welche Daten erheben wir?"
+msgstr "2. What data do we collect?"
 
-#: app/templates/privacy.html:17
-msgid "Для покращення роботи сайту"
-msgstr "To improve the website functionality"
+#: app/templates/privacy.html:18
+msgid "Persönliche Daten bei der Registrierung: Name, Vorname, Email-Adresse, Telefonnummer"
+msgstr "Personal data during registration: Name, first name, email address, telephone number"
 
 #: app/templates/privacy.html:19
-msgid "Захист даних"
-msgstr "Data Protection"
+msgid "Kommunikationsdaten: Nachrichten, Projektvorschläge, Mitgliedsanfragen"
+msgstr "Communication data: Messages, project proposals, membership requests"
 
 #: app/templates/privacy.html:20
-msgid "Ми не передаємо ваші дані третім особам без вашої згоди, окрім випадків, передбачених законом."
-msgstr "We do not transfer your data to third parties without your consent, except in cases provided by law."
+msgid "Technische Daten: IP-Adresse, Browser-Informationen, Cookies für Session-Management"
+msgstr "Technical data: IP address, browser information, cookies for session management"
 
-#: app/templates/privacy.html:22
-msgid "Ваші права"
-msgstr "Your rights"
+#: app/templates/privacy.html:21
+msgid "Mitgliedschaftsdaten: Informationen über Ihre Beteiligung am Verein"
+msgstr "Membership data: Information about your participation in the association"
 
-#: app/templates/privacy.html:24
-msgid "Дізнатися, які дані ми зберігаємо"
-msgstr "Find out what data we store"
+#: app/templates/privacy.html:23
+msgid "3. Zwecke der Datenverarbeitung"
+msgstr "3. Purposes of data processing"
 
 #: app/templates/privacy.html:25
-msgid "Вимагати змінити або видалити ваші дані"
-msgstr "Request to change or delete your data"
+msgid "Mitgliederverwaltung und Kommunikation innerhalb des Vereins"
+msgstr "Membership management and communication within the association"
 
 #: app/templates/privacy.html:26
-msgid "Відкликати згоду на обробку"
-msgstr "Revoke consent to processing"
+msgid "Organisation von Veranstaltungen und Projekten"
+msgstr "Organization of events and projects"
+
+#: app/templates/privacy.html:27
+msgid "Information über Vereinsaktivitäten per Email oder Telefon"
+msgstr "Information about association activities via email or telephone"
 
 #: app/templates/privacy.html:28
-msgid "З питань захисту даних пишіть на"
-msgstr "For data protection questions, write to"
+msgid "Sicherstellung der technischen Funktionalität der Website"
+msgstr "Ensuring the technical functionality of the website"
 
-#: app/templates/impressum.html:6
-msgid "Вулиця: Musterstraße 1"
-msgstr "Street: Musterstraße 1"
+#: app/templates/privacy.html:30
+msgid "4. Rechtsgrundlagen"
+msgstr "4. Legal bases"
 
-#: app/templates/impressum.html:7
-msgid "Місто: 12345 Берлін"
-msgstr "City: 12345 Berlin"
+#: app/templates/privacy.html:31
+msgid "Die Verarbeitung Ihrer Daten erfolgt auf folgenden Rechtsgrundlagen:"
+msgstr "The processing of your data is based on the following legal grounds:"
 
-#: app/templates/impressum.html:8
-msgid "Країна: Німеччина"
-msgstr "Country: Germany"
+#: app/templates/privacy.html:33
+msgid "Art. 6 Abs. 1 lit. a DSGVO: Einwilligung"
+msgstr "Art. 6 para. 1 lit. a GDPR: Consent"
 
-#: app/templates/impressum.html:10
-msgid "Голова правління: Іван Петренко"
-msgstr "Chairman: Ivan Petrenko"
+#: app/templates/privacy.html:34
+msgid "Art. 6 Abs. 1 lit. b DSGVO: Vertragserfüllung (Mitgliedschaft)"
+msgstr "Art. 6 para. 1 lit. b GDPR: Contract fulfillment (membership)"
 
-#: app/templates/impressum.html:11
-msgid "Телефон: +49 123 4567890"
-msgstr "Phone: +49 123 4567890"
+#: app/templates/privacy.html:35
+msgid "Art. 6 Abs. 1 lit. f DSGVO: Berechtigtes Interesse (Vereinszwecke)"
+msgstr "Art. 6 para. 1 lit. f GDPR: Legitimate interest (association purposes)"
 
-#: app/templates/impressum.html:12
-msgid "Email:"
-msgstr "Email:"
+#: app/templates/privacy.html:37
+msgid "5. Datenweitergabe"
+msgstr "5. Data sharing"
 
-#: app/templates/impressum.html:14
-msgid "Реєстраційний номер: VR 12345 B"
-msgstr "Registration number: VR 12345 B"
+#: app/templates/privacy.html:38
+msgid "Ihre Daten werden nicht an Dritte weitergegeben, außer:"
+msgstr "Your data will not be shared with third parties, except:"
 
-#: app/templates/impressum.html:15
-msgid "Р’С–РґРїРѕРІС–РґР°Р»СЊРЅРёР№ Р·Р° РєРѕРЅС‚РµРЅС‚: Р†РІР
-°РЅ РџРµС‚СЂРµРЅРєРѕ"                                         msgstr "Responsible for content: Ivan Petrenko"
+#: app/templates/privacy.html:40
+msgid "Bei gesetzlicher Verpflichtung"
+msgstr "In case of legal obligation"
+
+#: app/templates/privacy.html:41
+msgid "Zur Erfüllung vertraglicher Pflichten (z.B. Bankdaten bei Spenden)"
+msgstr "To fulfill contractual obligations (e.g., bank details for donations)"
+
+#: app/templates/privacy.html:42
+msgid "Mit Ihrer ausdrücklichen Einwilligung"
+msgstr "With your express consent"
+
+#: app/templates/privacy.html:44
+msgid "6. Datensicherheit"
+msgstr "6. Data security"
+
+#: app/templates/privacy.html:45
+msgid "Wir setzen technische und organisatorische Sicherheitsmaßnahmen ein, um Ihre Daten vor unbefugtem Zugriff, Verlust oder Manipulation zu schützen."
+msgstr "We implement technical and organizational security measures to protect your data from unauthorized access, loss, or manipulation."
+
+#: app/templates/privacy.html:47
+msgid "7. Ihre Rechte"
+msgstr "7. Your rights"
+
+#: app/templates/privacy.html:49
+msgid "Recht auf Auskunft über Ihre gespeicherten Daten"
+msgstr "Right to information about your stored data"
+
+#: app/templates/privacy.html:50
+msgid "Recht auf Berichtigung unrichtiger Daten"
+msgstr "Right to rectification of incorrect data"
+
+#: app/templates/privacy.html:51
+msgid "Recht auf Löschung Ihrer Daten"
+msgstr "Right to erasure of your data"
+
+#: app/templates/privacy.html:52
+msgid "Recht auf Einschränkung der Verarbeitung"
+msgstr "Right to restriction of processing"
+
+#: app/templates/privacy.html:53
+msgid "Recht auf Datenübertragbarkeit"
+msgstr "Right to data portability"
+
+#: app/templates/privacy.html:54
+msgid "Recht auf Widerspruch gegen die Verarbeitung"
+msgstr "Right to object to processing"
+
+#: app/templates/privacy.html:55
+msgid "Recht auf Widerruf der Einwilligung"
+msgstr "Right to withdraw consent"
+
+#: app/templates/privacy.html:57
+msgid "8. Cookies"
+msgstr "8. Cookies"
+
+#: app/templates/privacy.html:58
+msgid "Wir verwenden Cookies zur Sitzungsverwaltung und zur Verbesserung der Benutzerfreundlichkeit. Sie können Cookies in Ihren Browsereinstellungen deaktivieren."
+msgstr "We use cookies for session management and to improve user experience. You can disable cookies in your browser settings."
+
+#: app/templates/privacy.html:60
+msgid "9. Kontakt"
+msgstr "9. Contact"
+
+#: app/templates/privacy.html:61
+msgid "Bei Fragen zum Datenschutz wenden Sie sich bitte an:"
+msgstr "For questions about data protection, please contact:"
+
+#: app/templates/privacy.html:62
+msgid "Andrii Pylypchuk"
+msgstr "Andrii Pylypchuk"
+
+#: app/templates/privacy.html:63
+msgid "Email: pylypchukandrii770@gmail.com"
+msgstr "Email: pylypchukandrii770@gmail.com"
+
+#: app/templates/privacy.html:64
+msgid "Telefon: +49 160 95030120"
+msgstr "Phone: +49 160 95030120"
+
+#: app/templates/privacy.html:66
+msgid "Stand: September 2025"
+msgstr "As of: September 2025"
 

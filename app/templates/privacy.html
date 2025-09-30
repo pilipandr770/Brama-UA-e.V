@@ -1,29 +1,73 @@
 {% extends "base.html" %}
-{% block title %}{{ _('Політика конфіденційності') }}{% endblock %}
+{% block title %}{{ _('Datenschutz') }}{% endblock %}
 {% block content %}
 <div style="text-align:center; max-width:700px; margin:40px auto;">
-  <h2>{{ _('Політика конфіденційності') }}</h2>
-  <p>{{ _('Ми, Brama UA e.V., поважаємо вашу приватність та захищаємо персональні дані відповідно до законодавства України та ЄС (GDPR).') }}</p>
-  <h3>{{ _('Які дані ми збираємо?') }}</h3>
+  <h2>{{ _('Datenschutzerklärung') }}</h2>
+  <p>{{ _('Wir, Brama UA e.V., nehmen den Schutz Ihrer persönlichen Daten sehr ernst und halten uns strikt an die Vorschriften der Datenschutz-Grundverordnung (DSGVO) und des Bundesdatenschutzgesetzes (BDSG).') }}</p>
+
+  <h3>{{ _('1. Verantwortlicher') }}</h3>
+  <p>{{ _('Verantwortlich für die Datenverarbeitung ist:') }}<br>
+  {{ _('Brama UA e.V.') }}<br>
+  {{ _('Nussyahl 55') }}<br>
+  {{ _('60388 Frankfurt am Main') }}<br>
+  {{ _('Deutschland') }}<br>
+  {{ _('Email: pylypchukandrii770@gmail.com') }}</p>
+
+  <h3>{{ _('2. Welche Daten erheben wir?') }}</h3>
   <ul style="text-align:left; display:inline-block;">
-    <li>{{ _('Ім\'я, email, контактні дані для реєстрації та зв\'язку') }}</li>
-    <li>{{ _('Дані про подані проєкти') }}</li>
-    <li>{{ _('Технічна інформація (IP, cookies)') }}</li>
+    <li>{{ _('Persönliche Daten bei der Registrierung: Name, Vorname, Email-Adresse, Telefonnummer') }}</li>
+    <li>{{ _('Kommunikationsdaten: Nachrichten, Projektvorschläge, Mitgliedsanfragen') }}</li>
+    <li>{{ _('Technische Daten: IP-Adresse, Browser-Informationen, Cookies für Session-Management') }}</li>
+    <li>{{ _('Mitgliedschaftsdaten: Informationen über Ihre Beteiligung am Verein') }}</li>
   </ul>
-  <h3>{{ _('Як ми використовуємо дані?') }}</h3>
+
+  <h3>{{ _('3. Zwecke der Datenverarbeitung') }}</h3>
   <ul style="text-align:left; display:inline-block;">
-    <li>{{ _('Для реєстрації та ідентифікації користувачів') }}</li>
-    <li>{{ _('Для зв\'язку з вами щодо проєктів') }}</li>
-    <li>{{ _('Для покращення роботи сайту') }}</li>
+    <li>{{ _('Mitgliederverwaltung und Kommunikation innerhalb des Vereins') }}</li>
+    <li>{{ _('Organisation von Veranstaltungen und Projekten') }}</li>
+    <li>{{ _('Information über Vereinsaktivitäten per Email oder Telefon') }}</li>
+    <li>{{ _('Sicherstellung der technischen Funktionalität der Website') }}</li>
   </ul>
-  <h3>{{ _('Захист даних') }}</h3>
-  <p>{{ _('Ми не передаємо ваші дані третім особам без вашої згоди, окрім випадків, передбачених законом.') }}</p>
-  <h3>{{ _('Ваші права') }}</h3>
+
+  <h3>{{ _('4. Rechtsgrundlagen') }}</h3>
+  <p>{{ _('Die Verarbeitung Ihrer Daten erfolgt auf folgenden Rechtsgrundlagen:') }}</p>
   <ul style="text-align:left; display:inline-block;">
-    <li>{{ _('Дізнатися, які дані ми зберігаємо') }}</li>
-    <li>{{ _('Вимагати змінити або видалити ваші дані') }}</li>
-    <li>{{ _('Відкликати згоду на обробку') }}</li>
+    <li>{{ _('Art. 6 Abs. 1 lit. a DSGVO: Einwilligung') }}</li>
+    <li>{{ _('Art. 6 Abs. 1 lit. b DSGVO: Vertragserfüllung (Mitgliedschaft)') }}</li>
+    <li>{{ _('Art. 6 Abs. 1 lit. f DSGVO: Berechtigtes Interesse (Vereinszwecke)') }}</li>
   </ul>
-  <p>{{ _('З питань захисту даних пишіть на') }} <a href="mailto:info@brama-ua.org">info@brama-ua.org</a>.</p>
+
+  <h3>{{ _('5. Datenweitergabe') }}</h3>
+  <p>{{ _('Ihre Daten werden nicht an Dritte weitergegeben, außer:') }}</p>
+  <ul style="text-align:left; display:inline-block;">
+    <li>{{ _('Bei gesetzlicher Verpflichtung') }}</li>
+    <li>{{ _('Zur Erfüllung vertraglicher Pflichten (z.B. Bankdaten bei Spenden)') }}</li>
+    <li>{{ _('Mit Ihrer ausdrücklichen Einwilligung') }}</li>
+  </ul>
+
+  <h3>{{ _('6. Datensicherheit') }}</h3>
+  <p>{{ _('Wir setzen technische und organisatorische Sicherheitsmaßnahmen ein, um Ihre Daten vor unbefugtem Zugriff, Verlust oder Manipulation zu schützen.') }}</p>
+
+  <h3>{{ _('7. Ihre Rechte') }}</h3>
+  <ul style="text-align:left; display:inline-block;">
+    <li>{{ _('Recht auf Auskunft über Ihre gespeicherten Daten') }}</li>
+    <li>{{ _('Recht auf Berichtigung unrichtiger Daten') }}</li>
+    <li>{{ _('Recht auf Löschung Ihrer Daten') }}</li>
+    <li>{{ _('Recht auf Einschränkung der Verarbeitung') }}</li>
+    <li>{{ _('Recht auf Datenübertragbarkeit') }}</li>
+    <li>{{ _('Recht auf Widerspruch gegen die Verarbeitung') }}</li>
+    <li>{{ _('Recht auf Widerruf der Einwilligung') }}</li>
+  </ul>
+
+  <h3>{{ _('8. Cookies') }}</h3>
+  <p>{{ _('Wir verwenden Cookies zur Sitzungsverwaltung und zur Verbesserung der Benutzerfreundlichkeit. Sie können Cookies in Ihren Browsereinstellungen deaktivieren.') }}</p>
+
+  <h3>{{ _('9. Kontakt') }}</h3>
+  <p>{{ _('Bei Fragen zum Datenschutz wenden Sie sich bitte an:') }}<br>
+  {{ _('Andrii Pylypchuk') }}<br>
+  {{ _('Email: pylypchukandrii770@gmail.com') }}<br>
+  {{ _('Telefon: +49 160 95030120') }}</p>
+
+  <p><em>{{ _('Stand: September 2025') }}</em></p>
 </div>
 {% endblock %} 

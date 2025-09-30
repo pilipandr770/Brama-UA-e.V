@@ -19,6 +19,15 @@ main_bp = Blueprint('main', __name__)
 
 from app.models.helpers import get_translated_content
 
+def get_language_specific_template(base_name):
+    """Helper function to get language-specific template"""
+    language = session.get('language', 'de')  # Default to German
+
+    if language == 'en':
+        return f"{base_name}_en.html"
+    else:
+        return f"{base_name}.html"
+
 @main_bp.route('/')
 @cache.cached(timeout=300)  # Кэширование главной страницы на 5 минут
 def index():
@@ -263,15 +272,15 @@ def dashboard():
 
 @main_bp.route('/privacy')
 def privacy():
-    return render_template('privacy.html')
+    return render_template(get_language_specific_template('privacy'))
 
 @main_bp.route('/impressum')
 def impressum():
-    return render_template('impressum.html')
+    return render_template(get_language_specific_template('impressum'))
 
 @main_bp.route('/agb')
 def agb():
-    return render_template('agb.html')
+    return render_template(get_language_specific_template('agb'))
 
 @main_bp.route('/contact')
 def contact():
