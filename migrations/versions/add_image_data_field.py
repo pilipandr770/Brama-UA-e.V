@@ -1,6 +1,6 @@
 """добавлены поля image_data и image_mimetype в модель Block
 
-Revision ID: add_image_fields_to_block
+Revision ID: add_image_data_field
 Revises: d3555f676b02
 Create Date: 2025-06-27 10:00:00.000000
 
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'add_image_fields_to_block'
+revision = 'add_image_data_field'
 down_revision = 'd3555f676b02'  # Замените на последний ID ревизии
 branch_labels = None
 depends_on = None

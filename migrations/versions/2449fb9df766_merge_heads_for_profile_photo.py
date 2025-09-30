@@ -1,7 +1,7 @@
 """merge heads for profile photo
 
 Revision ID: 2449fb9df766
-Revises: 924f6a78e525, add_image_fields_to_block, add_profile_photo_to_user
+Revises: 924f6a78e525, add_image_data_field, add_profile_photo_to_user
 Create Date: 2025-06-27 12:44:53.448349
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '2449fb9df766'
-down_revision = ('924f6a78e525', 'add_image_fields_to_block', 'add_profile_photo_to_user')
+down_revision = ('924f6a78e525', 'add_image_data_field', 'add_profile_photo_to_user')
 branch_labels = None
 depends_on = None
 
