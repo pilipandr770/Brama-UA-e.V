@@ -9,10 +9,8 @@
     <!-- Отображение стандартных блоков -->
     {% if info_block %}
     <div class="main-card info-block" onclick="openModal('info')">
-      {% if info_block.image_data %}
+      {% if info_block.image_data or info_block.image_url %}
       <img src="{{ url_for('block_images.block_image_file', block_id=info_block.id) }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
-      {% elif info_block.image_url %}
-      <img src="{{ info_block.image_url }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
       {% endif %}
       <h3>{{ info_block.translated_title or info_block.title }}</h3>
       <div class="block-short">{{ (info_block.translated_content or info_block.content)[:80] }}...</div>
@@ -21,10 +19,8 @@
 
     {% if gallery_block %}
     <div class="main-card gallery-block" onclick="openModal('gallery')">
-      {% if gallery_block.image_data %}
+      {% if gallery_block.image_data or gallery_block.image_url %}
       <img src="{{ url_for('block_images.block_image_file', block_id=gallery_block.id) }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
-      {% elif gallery_block.image_url %}
-      <img src="{{ gallery_block.image_url }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
       {% endif %}
       <h3>{{ gallery_block.translated_title or gallery_block.title }}</h3>
       <div class="block-short">{{ (gallery_block.translated_content or gallery_block.content)[:80] }}...</div>
@@ -33,10 +29,8 @@
 
     {% if projects_block %}
     <div class="main-card projects-block" onclick="openModal('projects')">
-      {% if projects_block.image_data %}
+      {% if projects_block.image_data or projects_block.image_url %}
       <img src="{{ url_for('block_images.block_image_file', block_id=projects_block.id) }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
-      {% elif projects_block.image_url %}
-      <img src="{{ projects_block.image_url }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
       {% endif %}
       <h3>{{ projects_block.translated_title or projects_block.title }}</h3>
       <div class="block-short">{{ (projects_block.translated_content or projects_block.content)[:80] }}...</div>
@@ -47,10 +41,8 @@
     {% for block in additional_blocks %}
     {% if block.is_active %}
     <div class="main-card {{ block.type }}-block" onclick="openModal('additional-{{ block.id }}')">
-      {% if block.image_data %}
+      {% if block.image_data or block.image_url %}
       <img src="{{ url_for('block_images.block_image_file', block_id=block.id) }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
-      {% elif block.image_url %}
-      <img src="{{ block.image_url }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
       {% endif %}
       <h3>{{ block.translated_title or block.title }}</h3>
       <div class="block-short">{{ (block.translated_content or block.content)[:80] }}...</div>
@@ -71,13 +63,9 @@
     {% if info_block %}
     <div id="modal-details-info" class="modal-details" style="display: none;">
       <h2>{{ info_block.translated_title or info_block.title }}</h2>
-      {% if info_block.image_data %}
+      {% if info_block.image_data or info_block.image_url %}
       <div class="modal-image-container">
         <img src="{{ url_for('block_images.block_image_file', block_id=info_block.id) }}" alt="" class="modal-image" loading="lazy" decoding="async">
-      </div>
-      {% elif info_block.image_url %}
-      <div class="modal-image-container">
-        <img src="{{ info_block.image_url }}" alt="" class="modal-image" loading="lazy" decoding="async">
       </div>
       {% endif %}
       <div>{{ (info_block.translated_content or info_block.content)|safe }}</div>
@@ -88,13 +76,9 @@
     <div id="modal-details-gallery" class="modal-details" style="display: none;">
       <h2>{{ gallery_block.translated_title or gallery_block.title }}</h2>
       
-      {% if gallery_block.image_data %}
+      {% if gallery_block.image_data or gallery_block.image_url %}
       <div class="modal-image-container">
         <img src="{{ url_for('block_images.block_image_file', block_id=gallery_block.id) }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low">
-      </div>
-      {% elif gallery_block.image_url %}
-      <div class="modal-image-container">
-        <img src="{{ gallery_block.image_url }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low">
       </div>
       {% endif %}
       
@@ -136,13 +120,9 @@
     {% if projects_block %}
     <div id="modal-details-projects" class="modal-details" style="display: none;">
       <h2>{{ projects_block.translated_title or projects_block.title }}</h2>
-      {% if projects_block.image_data %}
+      {% if projects_block.image_data or projects_block.image_url %}
       <div class="modal-image-container">
         <img src="{{ url_for('block_images.block_image_file', block_id=projects_block.id) }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low">
-      </div>
-      {% elif projects_block.image_url %}
-      <div class="modal-image-container">
-        <img src="{{ projects_block.image_url }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low">
       </div>
       {% endif %}
       <div>{{ (projects_block.translated_content or projects_block.content)|safe }}</div>
@@ -174,13 +154,9 @@
     {% if block.is_active %}
     <div id="modal-details-additional-{{ block.id }}" class="modal-details" style="display: none;">
       <h2>{{ block.translated_title or block.title }}</h2>
-      {% if block.image_data %}
+      {% if block.image_data or block.image_url %}
       <div class="modal-image-container">
         <img src="{{ url_for('block_images.block_image_file', block_id=block.id) }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low">
-      </div>
-      {% elif block.image_url %}
-      <div class="modal-image-container">
-        <img src="{{ block.image_url }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low">
       </div>
       {% endif %}
       <div>{{ (block.translated_content or block.content)|safe }}</div>
