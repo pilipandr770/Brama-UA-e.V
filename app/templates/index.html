@@ -10,9 +10,9 @@
     {% if info_block %}
     <div class="main-card info-block" onclick="openModal('info')">
       {% if info_block.image_data %}
-      <img src="{{ url_for('block_images.block_image_file', block_id=info_block.id) }}" alt="" class="block-cover">
+      <img src="{{ url_for('block_images.block_image_file', block_id=info_block.id) }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
       {% elif info_block.image_url %}
-      <img src="{{ info_block.image_url }}" alt="" class="block-cover">
+      <img src="{{ info_block.image_url }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
       {% endif %}
       <h3>{{ info_block.translated_title or info_block.title }}</h3>
       <div class="block-short">{{ (info_block.translated_content or info_block.content)[:80] }}...</div>
@@ -22,9 +22,9 @@
     {% if gallery_block %}
     <div class="main-card gallery-block" onclick="openModal('gallery')">
       {% if gallery_block.image_data %}
-      <img src="{{ url_for('block_images.block_image_file', block_id=gallery_block.id) }}" alt="" class="block-cover">
+      <img src="{{ url_for('block_images.block_image_file', block_id=gallery_block.id) }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
       {% elif gallery_block.image_url %}
-      <img src="{{ gallery_block.image_url }}" alt="" class="block-cover">
+      <img src="{{ gallery_block.image_url }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
       {% endif %}
       <h3>{{ gallery_block.translated_title or gallery_block.title }}</h3>
       <div class="block-short">{{ (gallery_block.translated_content or gallery_block.content)[:80] }}...</div>
@@ -34,9 +34,9 @@
     {% if projects_block %}
     <div class="main-card projects-block" onclick="openModal('projects')">
       {% if projects_block.image_data %}
-      <img src="{{ url_for('block_images.block_image_file', block_id=projects_block.id) }}" alt="" class="block-cover">
+      <img src="{{ url_for('block_images.block_image_file', block_id=projects_block.id) }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
       {% elif projects_block.image_url %}
-      <img src="{{ projects_block.image_url }}" alt="" class="block-cover">
+      <img src="{{ projects_block.image_url }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
       {% endif %}
       <h3>{{ projects_block.translated_title or projects_block.title }}</h3>
       <div class="block-short">{{ (projects_block.translated_content or projects_block.content)[:80] }}...</div>
@@ -48,9 +48,9 @@
     {% if block.is_active %}
     <div class="main-card {{ block.type }}-block" onclick="openModal('additional-{{ block.id }}')">
       {% if block.image_data %}
-      <img src="{{ url_for('block_images.block_image_file', block_id=block.id) }}" alt="" class="block-cover">
+      <img src="{{ url_for('block_images.block_image_file', block_id=block.id) }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
       {% elif block.image_url %}
-      <img src="{{ block.image_url }}" alt="" class="block-cover">
+      <img src="{{ block.image_url }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
       {% endif %}
       <h3>{{ block.translated_title or block.title }}</h3>
       <div class="block-short">{{ (block.translated_content or block.content)[:80] }}...</div>
@@ -90,11 +90,11 @@
       
       {% if gallery_block.image_data %}
       <div class="modal-image-container">
-        <img src="{{ url_for('block_images.block_image_file', block_id=gallery_block.id) }}" alt="" class="modal-image">
+        <img src="{{ url_for('block_images.block_image_file', block_id=gallery_block.id) }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low">
       </div>
       {% elif gallery_block.image_url %}
       <div class="modal-image-container">
-        <img src="{{ gallery_block.image_url }}" alt="" class="modal-image">
+        <img src="{{ gallery_block.image_url }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low">
       </div>
       {% endif %}
       
@@ -109,17 +109,17 @@
             <img src="{{ url_for('main.gallery_image_file', image_id=img.id) }}" 
                  alt="{{ img.description or 'Галерея' }}" 
                  class="gallery-img"
-                 loading="lazy">
+                 loading="lazy" decoding="async" fetchpriority="low">
             {% elif img.image_url %}
             <img src="{{ img.image_url }}" 
                  alt="{{ img.description or 'Галерея' }}" 
                  class="gallery-img"
-                 loading="lazy">
+                 loading="lazy" decoding="async" fetchpriority="low">
             {% else %}
             <img src="{{ url_for('static', filename='placeholder.png') }}" 
                  alt="Placeholder" 
                  class="gallery-img"
-                 loading="lazy">
+                 loading="lazy" decoding="async" fetchpriority="low">
             {% endif %}
             <div class="gallery-desc">{{ img.description }}</div>
           </div>
@@ -138,11 +138,11 @@
       <h2>{{ projects_block.translated_title or projects_block.title }}</h2>
       {% if projects_block.image_data %}
       <div class="modal-image-container">
-        <img src="{{ url_for('block_images.block_image_file', block_id=projects_block.id) }}" alt="" class="modal-image">
+        <img src="{{ url_for('block_images.block_image_file', block_id=projects_block.id) }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low">
       </div>
       {% elif projects_block.image_url %}
       <div class="modal-image-container">
-        <img src="{{ projects_block.image_url }}" alt="" class="modal-image">
+        <img src="{{ projects_block.image_url }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low">
       </div>
       {% endif %}
       <div>{{ (projects_block.translated_content or projects_block.content)|safe }}</div>
@@ -154,7 +154,7 @@
         <div class="project-card">
           <h4>{{ project.title }}</h4>
           {% if project.image_data or project.image_url %}
-          <img src="{{ url_for('main.project_image_file', project_id=project.id) }}" alt="фото проєкту" class="project-img" style="max-width:180px; margin-bottom:10px;">
+          <img src="{{ url_for('main.project_image_file', project_id=project.id) }}" alt="фото проєкту" class="project-img" style="max-width:180px; margin-bottom:10px;" loading="lazy" decoding="async" fetchpriority="low">
           {% endif %}
           <div><strong>Мета:</strong> {{ project.goal[:60] }}...</div>
           <div><strong>Виконавець:</strong> {{ project.executor_info }}</div>
@@ -176,11 +176,11 @@
       <h2>{{ block.translated_title or block.title }}</h2>
       {% if block.image_data %}
       <div class="modal-image-container">
-        <img src="{{ url_for('block_images.block_image_file', block_id=block.id) }}" alt="" class="modal-image">
+        <img src="{{ url_for('block_images.block_image_file', block_id=block.id) }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low">
       </div>
       {% elif block.image_url %}
       <div class="modal-image-container">
-        <img src="{{ block.image_url }}" alt="" class="modal-image">
+        <img src="{{ block.image_url }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low">
       </div>
       {% endif %}
       <div>{{ (block.translated_content or block.content)|safe }}</div>
@@ -201,7 +201,7 @@
       <h2>{{ project.title }}</h2>
       {% if project.image_data or project.image_url %}
       <img src="{{ url_for('main.project_image_file', project_id=project.id) }}" alt="фото проєкту"
-        class="project-img" style="max-width:300px; margin-bottom:18px;">
+        class="project-img" style="max-width:300px; margin-bottom:18px;" loading="lazy" decoding="async" fetchpriority="low">
       {% endif %}
       <p><strong>Мета:</strong> {{ project.goal }}</p>
       <p><strong>Проблема:</strong> {{ project.problem_description }}</p>

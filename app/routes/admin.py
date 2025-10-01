@@ -26,12 +26,12 @@ def admin_required(f):
 @admin_bp.route('/')
 @admin_required
 def dashboard():
-    users = User.query.all()
-    blocks = Block.query.all()
-    gallery = GalleryImage.query.all()
-    projects = Project.query.all()
+    users = User.query.order_by(User.id.desc()).limit(50).all()
+    blocks = Block.query.order_by(Block.id.desc()).limit(50).all()
+    gallery = GalleryImage.query.order_by(GalleryImage.id.desc()).limit(50).all()
+    projects = Project.query.order_by(Project.created_at.desc()).limit(50).all()
     settings = Settings.query.first()
-    reports = Report.query.order_by(Report.created_at.desc()).all()
+    reports = Report.query.order_by(Report.created_at.desc()).limit(100).all()
     return render_template('admin/dashboard.html', users=users, blocks=blocks, gallery=gallery, projects=projects, settings=settings, reports=reports)
 
 @admin_bp.route('/toggle-block-user/<int:user_id>')

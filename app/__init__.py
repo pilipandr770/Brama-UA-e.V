@@ -6,12 +6,41 @@ from flask_login import LoginManager
 from flask_compress import Compress  # +++
 from dotenv import load_dotenv
 import os
+import traceback
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
 
 db = SQLAlchemy()
 migrate = Migrate()
 socketio = SocketIO()
 login_manager = LoginManager()
 compress = Compress()  # +++
+
+# Import our babel setup (needs to be after initializing the other extensions)
+from app.babel import init_babel
+from app.cache import init_cache, cache
+
+def _enable_sqlite_pragmas(app: Flask):
+    """Вмикаємо WAL/синхронізацію/тимчасове в памʼяті для SQLite."""
+    uri = app.config.get('SQLALCHEMY_DATABASE_URI', '')
+    if uri.startswith('sqlite:///'):
+        @event.listens_for(Engine, "connect")
+        def set_sqlite_pragma(dbapi_connection, connection_record):
+            try:
+                cur = dbapi_connection.cursor()
+                # Журнал у write-ahead log для кращої паралельності
+                cur.execute("PRAGMA journal_mode=WAL;")
+                # Баланс швидкість/надійність
+                cur.execute("PRAGMA synchronous=NORMAL;")
+                # Швидше тимчасові структури
+                cur.execute("PRAGMA temp_store=MEMORY;")
+                # Сторінка 4096 байт (часто дає приріст на хмарному диску)
+                cur.execute("PRAGMA page_size=4096;")
+                # Кеш SQLite побільше (можеш підкрутити)
+                cur.execute("PRAGMA cache_size=-20000;")  # ~20MB
+                cur.close()
+            except Exception:
+                pass
 
 # Import our babel setup (needs to be after initializing the other extensions)
 from app.babel import init_babel
@@ -42,6 +71,8 @@ def create_app():
     socketio.init_app(app, cors_allowed_origins="*")
     init_cache(app)  # Initialize caching
     compress.init_app(app)  # +++ enable gzip/br compression
+    
+    _enable_sqlite_pragmas(app)
     
     # Настраиваем Flask-Login
     login_manager.init_app(app)
