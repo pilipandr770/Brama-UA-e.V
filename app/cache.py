@@ -32,7 +32,12 @@ def init_cache(app: Flask):
 def get_active_blocks():
     """Кэшированная функция для получения всех активных блоков"""
     from app.models.block import Block
-    return Block.query.filter_by(is_active=True).all()
+    from sqlalchemy.orm import undefer
+    # Загружаем image_data сразу, чтобы избежать DetachedInstanceError при кэшировании
+    return Block.query.filter_by(is_active=True).options(
+        undefer(Block.image_data), 
+        undefer(Block.image_mimetype)
+    ).all()
 
 @cache.memoize(timeout=300)  # Кэш на 5 минут
 def get_block_by_type(block_type):

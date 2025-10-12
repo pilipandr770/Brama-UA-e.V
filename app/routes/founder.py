@@ -34,7 +34,7 @@ def dashboard():
     active_meetings = Meeting.query.filter(Meeting.status == MeetingStatus.active.value).order_by(Meeting.date.asc()).all()
     past_meetings = Meeting.query.filter(Meeting.status == MeetingStatus.completed.value).order_by(Meeting.date.desc()).all()
     
-    founders = User.query.filter_by(role=UserRole.founder).all()
+    founders = User.query.filter_by(role=UserRole.founder.value).all()
     
     return render_template(
         'founder/dashboard.html',
