@@ -81,8 +81,8 @@ def upload_document(meeting_id):
             db.session.commit()
             
             # Notify founders about the new document
-            from app.websockets import notify_about_new_document
-            notify_about_new_document(meeting_id, document)
+            # from app.websockets import notify_about_new_document  # DISABLED: Socket.IO removed
+            # notify_about_new_document(meeting_id, document)
             
             flash(_('Document uploaded successfully'), 'success')
             return redirect(url_for('meeting_document.list_documents', meeting_id=meeting_id))

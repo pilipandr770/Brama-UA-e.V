@@ -10,8 +10,8 @@ Werkzeug
 openai
 gunicorn
 fpdf2
-flask-socketio
-eventlet
+# flask-socketio  # DISABLED: Causes WORKER TIMEOUT with sync workers
+# eventlet  # DISABLED: Not needed without Socket.IO
 flask-login
 email_validator
 Flask-Caching

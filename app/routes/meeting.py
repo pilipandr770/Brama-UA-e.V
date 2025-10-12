@@ -160,8 +160,8 @@ def manage_agenda(meeting_id):
         db.session.commit()
         
         # Send notification to all founders
-        from app.websockets import notify_founders_about_agenda_item
-        notify_founders_about_agenda_item(meeting_id, new_item)
+        # from app.websockets import notify_founders_about_agenda_item  # DISABLED: Socket.IO removed
+        # notify_founders_about_agenda_item(meeting_id, new_item)
         
         flash(_('Agenda item added successfully'), 'success')
         return redirect(url_for('meeting.manage_agenda', meeting_id=meeting_id))

@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_socketio import SocketIO
+# from flask_socketio import SocketIO  # DISABLED: Causes WORKER TIMEOUT with sync workers
 from flask_login import LoginManager
 from flask_compress import Compress  # +++
 from dotenv import load_dotenv
@@ -12,7 +12,7 @@ from sqlalchemy.engine import Engine
 
 db = SQLAlchemy()
 migrate = Migrate()
-socketio = SocketIO()
+# socketio = SocketIO()  # DISABLED: Causes WORKER TIMEOUT with sync workers
 login_manager = LoginManager()
 compress = Compress()  # +++
 
@@ -68,7 +68,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     init_babel(app)  # Initialize Babel with our custom locale selector
-    socketio.init_app(app, cors_allowed_origins="*")
+    # socketio.init_app(app, cors_allowed_origins="*")  # DISABLED: Causes WORKER TIMEOUT with sync workers
     init_cache(app)  # Initialize caching
     compress.init_app(app)  # +++ enable gzip/br compression
     
@@ -152,8 +152,8 @@ def create_app():
         return dict(settings=settings, user=user)
     
     # Import WebSocket handlers
-    with app.app_context():
-        from app import websockets
+    # with app.app_context():
+    #     from app import websockets  # DISABLED: Causes WORKER TIMEOUT with sync workers
 
     # Добавляем простую обработку ошибок
     from flask import render_template, request
