@@ -9,9 +9,7 @@
     <!-- Отображение стандартных блоков -->
     {% if info_block %}
     <div class="main-card info-block" onclick="openModal('info')">
-      {% if info_block.image_data or info_block.image_url %}
-      <img src="{{ url_for('block_images.block_image_file', block_id=info_block.id) }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
-      {% endif %}
+      <img src="{{ url_for('block_images.block_image_file', block_id=info_block.id) }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.display='none'">
       <h3>{{ info_block.translated_title or info_block.title }}</h3>
       <div class="block-short">{{ (info_block.translated_content or info_block.content)[:80] }}...</div>
     </div>
@@ -19,9 +17,7 @@
 
     {% if gallery_block %}
     <div class="main-card gallery-block" onclick="openModal('gallery')">
-      {% if gallery_block.image_data or gallery_block.image_url %}
-      <img src="{{ url_for('block_images.block_image_file', block_id=gallery_block.id) }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
-      {% endif %}
+      <img src="{{ url_for('block_images.block_image_file', block_id=gallery_block.id) }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.display='none'">
       <h3>{{ gallery_block.translated_title or gallery_block.title }}</h3>
       <div class="block-short">{{ (gallery_block.translated_content or gallery_block.content)[:80] }}...</div>
     </div>
@@ -29,9 +25,7 @@
 
     {% if projects_block %}
     <div class="main-card projects-block" onclick="openModal('projects')">
-      {% if projects_block.image_data or projects_block.image_url %}
-      <img src="{{ url_for('block_images.block_image_file', block_id=projects_block.id) }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
-      {% endif %}
+      <img src="{{ url_for('block_images.block_image_file', block_id=projects_block.id) }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.display='none'">
       <h3>{{ projects_block.translated_title or projects_block.title }}</h3>
       <div class="block-short">{{ (projects_block.translated_content or projects_block.content)[:80] }}...</div>
     </div>
@@ -41,9 +35,7 @@
     {% for block in additional_blocks %}
     {% if block.is_active %}
     <div class="main-card {{ block.type }}-block" onclick="openModal('additional-{{ block.id }}')">
-      {% if block.image_data or block.image_url %}
-      <img src="{{ url_for('block_images.block_image_file', block_id=block.id) }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low">
-      {% endif %}
+      <img src="{{ url_for('block_images.block_image_file', block_id=block.id) }}" alt="" class="block-cover" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.display='none'">
       <h3>{{ block.translated_title or block.title }}</h3>
       <div class="block-short">{{ (block.translated_content or block.content)[:80] }}...</div>
     </div>
@@ -63,11 +55,9 @@
     {% if info_block %}
     <div id="modal-details-info" class="modal-details" style="display: none;">
       <h2>{{ info_block.translated_title or info_block.title }}</h2>
-      {% if info_block.image_data or info_block.image_url %}
       <div class="modal-image-container">
-        <img src="{{ url_for('block_images.block_image_file', block_id=info_block.id) }}" alt="" class="modal-image" loading="lazy" decoding="async">
+        <img src="{{ url_for('block_images.block_image_file', block_id=info_block.id) }}" alt="" class="modal-image" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none'">
       </div>
-      {% endif %}
       <div>{{ (info_block.translated_content or info_block.content)|safe }}</div>
     </div>
     {% endif %}
@@ -76,11 +66,9 @@
     <div id="modal-details-gallery" class="modal-details" style="display: none;">
       <h2>{{ gallery_block.translated_title or gallery_block.title }}</h2>
       
-      {% if gallery_block.image_data or gallery_block.image_url %}
       <div class="modal-image-container">
-        <img src="{{ url_for('block_images.block_image_file', block_id=gallery_block.id) }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low">
+        <img src="{{ url_for('block_images.block_image_file', block_id=gallery_block.id) }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low" onerror="this.parentElement.style.display='none'">
       </div>
-      {% endif %}
       
       <div>{{ (gallery_block.translated_content or gallery_block.content)|safe }}</div>
 
@@ -120,11 +108,9 @@
     {% if projects_block %}
     <div id="modal-details-projects" class="modal-details" style="display: none;">
       <h2>{{ projects_block.translated_title or projects_block.title }}</h2>
-      {% if projects_block.image_data or projects_block.image_url %}
       <div class="modal-image-container">
-        <img src="{{ url_for('block_images.block_image_file', block_id=projects_block.id) }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low">
+        <img src="{{ url_for('block_images.block_image_file', block_id=projects_block.id) }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low" onerror="this.parentElement.style.display='none'">
       </div>
-      {% endif %}
       <div>{{ (projects_block.translated_content or projects_block.content)|safe }}</div>
 
       <!-- Проекти як картки в модальному вікні -->
@@ -133,9 +119,7 @@
         {% for project in projects %}
         <div class="project-card">
           <h4>{{ project.title }}</h4>
-          {% if project.image_data or project.image_url %}
-          <img src="{{ url_for('main.project_image_file', project_id=project.id) }}" alt="фото проєкту" class="project-img" style="max-width:180px; margin-bottom:10px;" loading="lazy" decoding="async" fetchpriority="low">
-          {% endif %}
+          <img src="{{ url_for('main.project_image_file', project_id=project.id) }}" alt="фото проєкту" class="project-img" style="max-width:180px; margin-bottom:10px;" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.display='none'">
           <div><strong>Мета:</strong> {{ project.goal[:60] }}...</div>
           <div><strong>Виконавець:</strong> {{ project.executor_info }}</div>
           <div><strong>Бюджет:</strong> &euro;{{ project.total_budget }}</div>
@@ -154,11 +138,9 @@
     {% if block.is_active %}
     <div id="modal-details-additional-{{ block.id }}" class="modal-details" style="display: none;">
       <h2>{{ block.translated_title or block.title }}</h2>
-      {% if block.image_data or block.image_url %}
       <div class="modal-image-container">
-        <img src="{{ url_for('block_images.block_image_file', block_id=block.id) }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low">
+        <img src="{{ url_for('block_images.block_image_file', block_id=block.id) }}" alt="" class="modal-image" loading="lazy" decoding="async" fetchpriority="low" onerror="this.parentElement.style.display='none'">
       </div>
-      {% endif %}
       <div>{{ (block.translated_content or block.content)|safe }}</div>
     </div>
     {% endif %}
@@ -175,10 +157,8 @@
     <div class="project-details-modal-content">
       <span class="project-details-modal-close" onclick="closeProjectModal('{{ project.id }}')">&times;</span>
       <h2>{{ project.title }}</h2>
-      {% if project.image_data or project.image_url %}
       <img src="{{ url_for('main.project_image_file', project_id=project.id) }}" alt="фото проєкту"
-        class="project-img" style="max-width:300px; margin-bottom:18px;" loading="lazy" decoding="async" fetchpriority="low">
-      {% endif %}
+        class="project-img" style="max-width:300px; margin-bottom:18px;" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.display='none'">
       <p><strong>Мета:</strong> {{ project.goal }}</p>
       <p><strong>Проблема:</strong> {{ project.problem_description }}</p>
       <p><strong>Очікуваний результат:</strong> {{ project.expected_result }}</p>
