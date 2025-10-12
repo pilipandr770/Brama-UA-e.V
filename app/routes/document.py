@@ -7,7 +7,7 @@ from app.models.meeting import Meeting
 from app.models.meeting_document import MeetingDocument
 from app.models.user import UserRole, User
 from app.routes.meeting import founder_required, admin_required
-from app import db, socketio
+from app import db  # REMOVED: socketio import (Socket.IO disabled)
 import io
 import os
 from flask_babel import _
