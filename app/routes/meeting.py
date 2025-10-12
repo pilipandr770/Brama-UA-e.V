@@ -410,6 +410,9 @@ def delete_meeting(meeting_id):
     meeting = Meeting.query.get_or_404(meeting_id)
     
     try:
+        from app.models.meeting import Message
+        from app.models.meeting_document import MeetingDocument
+        
         # Delete all related agenda items first (this will also delete related votes)
         agenda_items = AgendaItem.query.filter_by(meeting_id=meeting_id).all()
         for item in agenda_items:
@@ -417,8 +420,14 @@ def delete_meeting(meeting_id):
             MeetingVote.query.filter_by(agenda_item_id=item.id).delete()
             db.session.delete(item)
         
+        # Delete all chat messages
+        Message.query.filter_by(meeting_id=meeting_id).delete()
+        
         # Delete all attendance records
         MeetingAttendee.query.filter_by(meeting_id=meeting_id).delete()
+        
+        # Delete all meeting documents
+        MeetingDocument.query.filter_by(meeting_id=meeting_id).delete()
         
         # Now delete the meeting
         db.session.delete(meeting)
