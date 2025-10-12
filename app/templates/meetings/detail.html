@@ -232,6 +232,64 @@
             {% endif %}
         </div>
     </div>
+
+    <!-- Meeting Chat Section -->
+    {% if meeting.status.value in ['active', 'completed'] %}
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">{{ _('Meeting Chat') }}</h3>
+            <span class="badge bg-info" id="message-count">0</span>
+        </div>
+        <div class="card-body">
+            <div id="chat-messages" style="height: 400px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 15px; margin-bottom: 15px; background-color: #f8f9fa;">
+                <div class="text-center text-muted">
+                    <p>{{ _('Loading messages...') }}</p>
+                </div>
+            </div>
+            
+            {% if meeting.status.value == 'active' %}
+            <form id="chat-form">
+                <div class="input-group">
+                    <input type="text" id="message-input" class="form-control" placeholder="{{ _('Type your message...') }}" maxlength="1000" required>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-paper-plane"></i> {{ _('Send') }}
+                    </button>
+                </div>
+            </form>
+            {% else %}
+            <div class="alert alert-info mb-0">
+                <i class="fa fa-info-circle"></i> {{ _('Chat is closed. Meeting has been completed.') }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Protocol Generation Button -->
+    {% if meeting.status.value == 'completed' and current_user.is_founder %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="mb-0">{{ _('Meeting Protocol') }}</h3>
+        </div>
+        <div class="card-body">
+            {% if meeting.protocol_url %}
+            <div class="alert alert-success">
+                <i class="fa fa-check-circle"></i> {{ _('Protocol has been generated') }}
+                <a href="{{ meeting.protocol_url }}" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
+                    <i class="fa fa-download"></i> {{ _('Download Protocol') }}
+                </a>
+            </div>
+            {% else %}
+            <p>{{ _('Generate an automatic protocol based on the meeting chat, agenda, and voting results.') }}</p>
+            <form method="post" action="{{ url_for('meeting.generate_protocol', meeting_id=meeting.id) }}">
+                <button type="submit" class="btn btn-success btn-lg">
+                    <i class="fa fa-robot"></i> {{ _('Generate Protocol with AI') }}
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 <!-- Protocol Upload Modal -->
@@ -315,5 +373,113 @@ document.addEventListener('DOMContentLoaded', function() {
         bar.style.width = width + '%';
     });
 });
+
+// ============= CHAT FUNCTIONALITY =============
+{% if meeting.status.value in ['active', 'completed'] %}
+(function() {
+    const meetingId = {{ meeting.id }};
+    const chatMessages = document.getElementById('chat-messages');
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message-input');
+    const messageCount = document.getElementById('message-count');
+    let lastMessageId = 0;
+    let pollingInterval;
+
+    // Format message HTML
+    function formatMessage(msg) {
+        const isOwn = msg.is_own;
+        const alignClass = isOwn ? 'text-end' : 'text-start';
+        const bgClass = isOwn ? 'bg-primary text-white' : 'bg-white';
+        const marginClass = isOwn ? 'ms-auto' : 'me-auto';
+        
+        return `
+            <div class="${alignClass} mb-3">
+                <div class="d-inline-block ${bgClass} ${marginClass} px-3 py-2 rounded shadow-sm" style="max-width: 70%;">
+                    <div><strong>${msg.user_name}</strong></div>
+                    <div>${msg.content}</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">${msg.created_at}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Load messages
+    function loadMessages() {
+        fetch(`/meetings/${meetingId}/messages`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.messages && data.messages.length > 0) {
+                    chatMessages.innerHTML = data.messages.map(formatMessage).join('');
+                    messageCount.textContent = data.messages.length;
+                    
+                    // Auto-scroll to bottom
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    
+                    // Update last message ID
+                    lastMessageId = data.messages[data.messages.length - 1].id;
+                } else {
+                    chatMessages.innerHTML = '<div class="text-center text-muted"><p>{{ _("No messages yet. Start the conversation!") }}</p></div>';
+                    messageCount.textContent = '0';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading messages:', error);
+            });
+    }
+
+    // Send message
+    if (chatForm) {
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const content = messageInput.value.trim();
+            if (!content) return;
+            
+            // Disable input while sending
+            messageInput.disabled = true;
+            
+            fetch(`/meetings/${meetingId}/messages`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content: content })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    messageInput.value = '';
+                    loadMessages(); // Reload to show new message
+                } else {
+                    alert(data.error || '{{ _("Error sending message") }}');
+                }
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);
+                alert('{{ _("Error sending message") }}');
+            })
+            .finally(() => {
+                messageInput.disabled = false;
+                messageInput.focus();
+            });
+        });
+    }
+
+    // Initial load
+    loadMessages();
+
+    // Polling for new messages (every 5 seconds for active meetings)
+    {% if meeting.status.value == 'active' %}
+    pollingInterval = setInterval(loadMessages, 5000);
+    {% endif %}
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', function() {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+        }
+    });
+})();
+{% endif %}
 </script>
 {% endblock %}

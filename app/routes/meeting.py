@@ -371,6 +371,37 @@ def upload_protocol(meeting_id):
     
     return redirect(url_for('meeting.meeting_detail', meeting_id=meeting_id))
 
+@meeting_bp.route('/meetings/<int:meeting_id>/generate-protocol', methods=['POST'])
+@login_required
+@founder_required
+def generate_protocol(meeting_id):
+    """Генерирует протокол автоматически с помощью OpenAI"""
+    meeting = Meeting.query.get_or_404(meeting_id)
+    
+    try:
+        from app.protocol_generator import generate_and_save_protocol
+        from flask import send_file
+        import io
+        
+        # Генерируем протокол
+        pdf_bytes, filename = generate_and_save_protocol(meeting_id)
+        
+        # Сохраняем информацию о протоколе в БД
+        meeting.protocol_url = filename
+        db.session.commit()
+        
+        # Отправляем PDF файл пользователю
+        return send_file(
+            io.BytesIO(pdf_bytes),
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=filename
+        )
+        
+    except Exception as e:
+        flash(_('Error generating protocol: {}').format(str(e)), 'error')
+        return redirect(url_for('meeting.meeting_detail', meeting_id=meeting_id))
+
 # Delete a meeting - only for admins
 @meeting_bp.route('/meetings/<int:meeting_id>/delete', methods=['POST'])
 @login_required
@@ -398,3 +429,69 @@ def delete_meeting(meeting_id):
         flash(_('Error deleting meeting: {}').format(str(e)), 'error')
     
     return redirect(url_for('meeting.meetings_list'))
+
+# ============= CHAT ROUTES =============
+
+@meeting_bp.route('/meetings/<int:meeting_id>/messages', methods=['GET'])
+@login_required
+def get_messages(meeting_id):
+    """Get all messages for a meeting (AJAX polling)"""
+    meeting = Meeting.query.get_or_404(meeting_id)
+    
+    # Check access rights
+    if meeting.status == MeetingStatus.planned and current_user.role not in [UserRole.admin, UserRole.founder]:
+        return jsonify({'error': 'Access denied'}), 403
+    
+    from app.models.meeting import Message
+    messages = Message.query.filter_by(meeting_id=meeting_id).order_by(Message.created_at.asc()).all()
+    
+    messages_data = []
+    for msg in messages:
+        from app.models.user import User
+        user = User.query.get(msg.user_id)
+        messages_data.append({
+            'id': msg.id,
+            'user_name': f"{user.first_name} {user.last_name}" if user.first_name else user.email,
+            'user_id': msg.user_id,
+            'content': msg.content,
+            'created_at': msg.created_at.strftime('%H:%M:%S'),
+            'is_own': msg.user_id == current_user.id
+        })
+    
+    return jsonify({'messages': messages_data})
+
+@meeting_bp.route('/meetings/<int:meeting_id>/messages', methods=['POST'])
+@login_required
+def send_message(meeting_id):
+    """Send a message to meeting chat"""
+    meeting = Meeting.query.get_or_404(meeting_id)
+    
+    # Check access rights
+    if meeting.status == MeetingStatus.planned and current_user.role not in [UserRole.admin, UserRole.founder]:
+        return jsonify({'error': 'Access denied'}), 403
+    
+    content = request.json.get('content', '').strip()
+    if not content:
+        return jsonify({'error': 'Message cannot be empty'}), 400
+    
+    from app.models.meeting import Message
+    message = Message(
+        meeting_id=meeting_id,
+        user_id=current_user.id,
+        content=content
+    )
+    
+    db.session.add(message)
+    db.session.commit()
+    
+    return jsonify({
+        'success': True,
+        'message': {
+            'id': message.id,
+            'user_name': f"{current_user.first_name} {current_user.last_name}" if current_user.first_name else current_user.email,
+            'user_id': message.user_id,
+            'content': message.content,
+            'created_at': message.created_at.strftime('%H:%M:%S'),
+            'is_own': True
+        }
+    })
