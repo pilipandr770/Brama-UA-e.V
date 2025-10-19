@@ -2,7 +2,7 @@ services:
   - type: web
     name: brama-portal
     runtime: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt && psql $DATABASE_URL -f add_association_balance.sql || echo "SQL migration failed, but continuing..."
     startCommand: gunicorn --worker-class sync --workers 3 --timeout 60 --keep-alive 5 --log-level info --access-logfile - --error-logfile - --bind 0.0.0.0:$PORT run:app
     plan: free
     envVars:

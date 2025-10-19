@@ -1,4 +1,4 @@
-from flask import Flask
+не вижу в кабинете админа функционалfrom flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 # from flask_socketio import SocketIO  # DISABLED: Causes WORKER TIMEOUT with sync workers

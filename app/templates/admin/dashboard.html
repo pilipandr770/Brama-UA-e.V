@@ -318,7 +318,18 @@
                         <span class="social-name">Email:</span>
                         <span class="social-value">{{ settings.email if settings else 'Не налаштовано' }}</span>
                     </div>
-                </div>
+                    <div class="social-link" style="border-top: 2px solid #e0e0e0; margin-top: 10px; padding-top: 10px;">
+                        <span class="social-icon" style="color: #28a745;"><i class="fas fa-euro-sign"></i></span>
+                        <span class="social-name"><strong>Баланс ферайну:</strong></span>
+                        <span class="social-value" style="color: #28a745; font-weight: bold;">
+                            {% if settings and settings.association_balance is not none %}
+                                €{{ settings.association_balance|float|round(2) }}
+                            {% else %}
+                                €0.00
+                            {% endif %}
+                        </span>
+                    </div>
+                    </div>
             </div>
         </div>
     </div>
