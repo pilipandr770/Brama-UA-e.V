@@ -34,15 +34,25 @@
     </div>
     <div class="d-flex align-items-center gap-3">
       {% if current_user.is_authenticated %}
-        <a class="nav-link" href="{{ url_for('main.dashboard') }}" title="{{ _('Особистий кабінет') }}"><i class="fas fa-user"></i></a>
+        {# Кнопка личного кабинета - только для обычных пользователей #}
+        {% if not current_user.is_founder and not current_user.is_admin %}
+          <a class="nav-link" href="{{ url_for('main.dashboard') }}" title="{{ _('Особистий кабінет') }}"><i class="fas fa-user"></i></a>
+        {% endif %}
+        
+        {# Профиль доступен всем #}
         <a class="nav-link" href="{{ url_for('main.profile') }}" title="{{ _('Мій профіль') }}"><i class="fas fa-id-card"></i></a>
+        
+        {# Панель администратора #}
         {% if current_user.is_admin %}
           <a class="nav-link" href="{{ url_for('admin.dashboard') }}" title="{{ _('Панель адміністратора') }}"><i class="fas fa-cogs"></i></a>
         {% endif %}
+        
+        {# Панель основателя и собрания #}
         {% if current_user.is_founder %}
           <a class="nav-link" href="{{ url_for('founder.dashboard') }}" title="{{ _('Панель засновника') }}"><i class="fas fa-landmark"></i></a>
           <a class="nav-link" href="{{ url_for('meeting.meetings_list') }}" title="{{ _('Збори фаундерів') }}"><i class="fas fa-users-gear"></i></a>
         {% endif %}
+        
         <a class="nav-link" href="{{ url_for('main.logout') }}" title="{{ _('Вийти') }}"><i class="fas fa-sign-out-alt"></i></a>
       {% else %}
         <a class="nav-link" href="{{ url_for('main.login') }}" title="{{ _('Вхід') }}"><i class="fas fa-lock"></i></a>

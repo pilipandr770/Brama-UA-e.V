@@ -228,10 +228,6 @@ def logout():
 @main_bp.route('/dashboard')
 @login_required
 def dashboard():
-    # If user is a founder, redirect to founder dashboard
-    if current_user.is_founder:
-        return redirect(url_for('founder.dashboard'))
-    
     # Получаем баланс ферайна из настроек
     from app.models.settings import Settings
     settings = Settings.query.first()
