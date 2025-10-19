@@ -37,6 +37,10 @@ psql "$DATABASE_URL" -c "ALTER TABLE brama.blocks ADD COLUMN IF NOT EXISTS name 
 psql "$DATABASE_URL" -c "ALTER TABLE brama.blocks ADD COLUMN IF NOT EXISTS slug VARCHAR(50);" || echo "[start.sh] Couldn't add slug column, may already exist"
 psql "$DATABASE_URL" -c "UPDATE brama.blocks SET name = 'legacy' WHERE name IS NULL;" || echo "[start.sh] Couldn't update NULL names"
 
+# Добавляем колонку association_balance в таблицу settings
+echo "[start.sh] Добавляем поле association_balance в таблицу settings..."
+psql "$DATABASE_URL" -c "ALTER TABLE brama.settings ADD COLUMN IF NOT EXISTS association_balance NUMERIC(10, 2) DEFAULT 0.00;" || echo "[start.sh] Couldn't add association_balance column, may already exist"
+
 # 3) Start the app with sync workers (no Socket.IO)
 echo "[start.sh] Starting Gunicorn with sync workers"
 
