@@ -322,7 +322,7 @@
                         <span class="social-icon" style="color: #28a745;"><i class="fas fa-euro-sign"></i></span>
                         <span class="social-name"><strong>Баланс ферайну:</strong></span>
                         <span class="social-value" style="color: #28a745; font-weight: bold;">
-                            {% if settings and settings.association_balance is not none %}
+                            {% if settings and settings.association_balance is defined and settings.association_balance is not none %}
                                 €{{ settings.association_balance|float|round(2) }}
                             {% else %}
                                 €0.00
