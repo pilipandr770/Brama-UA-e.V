@@ -299,6 +299,16 @@ def edit_social_settings():
         settings.instagram = request.form.get('instagram')
         settings.telegram = request.form.get('telegram')
         settings.email = request.form.get('email')
+        
+        # Обновляем баланс ферайна
+        association_balance = request.form.get('association_balance')
+        if association_balance:
+            try:
+                settings.association_balance = float(association_balance)
+            except ValueError:
+                flash('Некорректное значение баланса', 'danger')
+                return redirect(url_for('admin.edit_social_settings'))
+        
         db.session.commit()
         flash('Соцмережі оновлено!', 'success')
         return redirect(url_for('admin.dashboard'))

@@ -8,4 +8,5 @@ class Settings(db.Model):
     facebook = db.Column(db.String(256))
     instagram = db.Column(db.String(256))
     telegram = db.Column(db.String(256))
-    email = db.Column(db.String(256)) 
+    email = db.Column(db.String(256))
+    association_balance = db.Column(db.Numeric(10, 2), default=0.00)  # Баланс ферайна 

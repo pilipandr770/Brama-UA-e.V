@@ -1374,3 +1374,8 @@ msgstr "Phone: +49 160 95030120"
 msgid "Stand: September 2025"
 msgstr "As of: September 2025"
 
+msgid "Баланс ферайну"
+msgstr "Association Balance"
+
+msgid "Введіть поточний баланс ферайну, який буде відображатися в кабінетах членів"
+msgstr "Enter the current association balance that will be displayed in member dashboards"

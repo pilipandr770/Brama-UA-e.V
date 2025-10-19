@@ -1310,3 +1310,8 @@ msgstr "Es gilt deutsches Recht. Gerichtsstand ist Berlin."
 msgid "Stand: September 2025"
 msgstr "Stand: September 2025"
 
+msgid "Баланс ферайну"
+msgstr "Vereinskonto"
+
+msgid "Введіть поточний баланс ферайну, який буде відображатися в кабінетах членів"
+msgstr "Geben Sie den aktuellen Kontostand ein, der in den Mitgliederbereichen angezeigt wird"
