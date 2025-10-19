@@ -24,6 +24,8 @@
             <input type="email" class="form-control" name="email" value="{{ settings.email or '' }}" placeholder="your@email.com">
         </div>
         
+        <!-- TODO: Временно отключено до создания колонки association_balance через Render Shell -->
+        <!--
         <div class="mb-3">
             <label class="form-label"><i class="fas fa-euro-sign"></i> {{ _('Баланс ферайну') }} (€):</label>
             <input type="number" step="0.01" class="form-control" name="association_balance" 
@@ -31,6 +33,7 @@
                    placeholder="0.00">
             <small class="form-text text-muted">{{ _('Введіть поточний баланс ферайну, який буде відображатися в кабінетах членів') }}</small>
         </div>
+        -->
         
         <div class="mt-4">
             <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ _('Зберегти') }}</button>

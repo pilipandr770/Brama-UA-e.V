@@ -3,7 +3,6 @@ services:
     name: brama-portal
     runtime: python
     buildCommand: pip install -r requirements.txt
-    preDeployCommand: psql $DATABASE_URL -c "ALTER TABLE brama.settings ADD COLUMN IF NOT EXISTS association_balance NUMERIC(10, 2) DEFAULT 0.00;"
     startCommand: gunicorn --worker-class sync --workers 3 --timeout 60 --keep-alive 5 --log-level info --access-logfile - --error-logfile - --bind 0.0.0.0:$PORT run:app
     plan: free
     envVars:

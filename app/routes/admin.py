@@ -300,14 +300,15 @@ def edit_social_settings():
         settings.telegram = request.form.get('telegram')
         settings.email = request.form.get('email')
         
+        # TODO: Временно отключено до создания колонки association_balance через Render Shell
         # Обновляем баланс ферайна
-        association_balance = request.form.get('association_balance')
-        if association_balance:
-            try:
-                settings.association_balance = float(association_balance)
-            except ValueError:
-                flash('Некорректное значение баланса', 'danger')
-                return redirect(url_for('admin.edit_social_settings'))
+        # association_balance = request.form.get('association_balance')
+        # if association_balance:
+        #     try:
+        #         settings.association_balance = float(association_balance)
+        #     except ValueError:
+        #         flash('Некорректное значение баланса', 'danger')
+        #         return redirect(url_for('admin.edit_social_settings'))
         
         db.session.commit()
         flash('Соцмережі оновлено!', 'success')

@@ -236,28 +236,30 @@ def dashboard():
     from app.models.settings import Settings
     settings = Settings.query.first()
     
+    # TODO: Временно отключено до создания колонки association_balance через Render Shell
     # Используем баланс из настроек, если он установлен, иначе считаем сумму взносов
-    if settings and settings.association_balance is not None:
-        total_contributions = float(settings.association_balance)
-    else:
-        # Calculate total contributions by processing each user's contribution value
-        from sqlalchemy import func, cast, Float
-        
-        try:
-            # Try the more efficient SQL approach first
-            total_contributions = db.session.query(func.sum(cast(User.contributions, Float))).scalar() or 0.0
-        except:
-            # Fall back to Python processing if SQL approach fails
-            users = User.query.all()
-            total = 0.0
-            for user in users:
-                if user.contributions:
-                    try:
-                        total += float(user.contributions)
-                    except (ValueError, TypeError):
-                        # Skip if contributions can't be converted to float
-                        pass
-            total_contributions = total
+    # if settings and hasattr(settings, 'association_balance') and settings.association_balance is not None:
+    #     total_contributions = float(settings.association_balance)
+    # else:
+    
+    # Calculate total contributions by processing each user's contribution value
+    from sqlalchemy import func, cast, Float
+    
+    try:
+        # Try the more efficient SQL approach first
+        total_contributions = db.session.query(func.sum(cast(User.contributions, Float))).scalar() or 0.0
+    except:
+        # Fall back to Python processing if SQL approach fails
+        users = User.query.all()
+        total = 0.0
+        for user in users:
+            if user.contributions:
+                try:
+                    total += float(user.contributions)
+                except (ValueError, TypeError):
+                    # Skip if contributions can't be converted to float
+                    pass
+        total_contributions = total
     
     # Find the user with the highest contribution
     try:
