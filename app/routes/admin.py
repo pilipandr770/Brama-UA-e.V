@@ -32,6 +32,11 @@ def dashboard():
     projects = Project.query.order_by(Project.created_at.desc()).limit(50).all()
     settings = Settings.query.first()
     reports = Report.query.order_by(Report.created_at.desc()).limit(100).all()
+    
+    # Debug: Print balance value
+    if settings:
+        print(f"DEBUG: Dashboard - association_balance = {settings.association_balance}")
+    
     return render_template('admin/dashboard.html', users=users, blocks=blocks, gallery=gallery, projects=projects, settings=settings, reports=reports)
 
 @admin_bp.route('/toggle-block-user/<int:user_id>')
@@ -302,12 +307,18 @@ def edit_social_settings():
         
         # Обновляем баланс ферайна
         association_balance = request.form.get('association_balance')
-        if association_balance:
+        if association_balance is not None and association_balance != '':
             try:
-                settings.association_balance = float(association_balance)
+                balance_value = float(association_balance)
+                settings.association_balance = balance_value
+                print(f"DEBUG: Balance updated to {balance_value}")
             except ValueError:
                 flash('Некорректное значение баланса', 'danger')
                 return redirect(url_for('admin.edit_social_settings'))
+        else:
+            # Если поле пустое, устанавливаем 0
+            settings.association_balance = 0.00
+            print("DEBUG: Balance set to 0.00 (empty field)")
         
         db.session.commit()
         flash('Соцмережі оновлено!', 'success')
