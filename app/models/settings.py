@@ -9,5 +9,4 @@ class Settings(db.Model):
     instagram = db.Column(db.String(256))
     telegram = db.Column(db.String(256))
     email = db.Column(db.String(256))
-    # Временно удалено до создания колонки вручную через Render Shell
-    # association_balance = db.Column(db.Numeric(10, 2), default=0.00)  # Баланс ферайна 
+    association_balance = db.Column(db.Numeric(10, 2), default=0.00)  # Баланс ферайна 

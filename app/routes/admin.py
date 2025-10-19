@@ -35,7 +35,10 @@ def dashboard():
     
     # Debug: Print balance value
     if settings:
-        print(f"DEBUG: Dashboard - association_balance = {settings.association_balance}")
+        if hasattr(settings, 'association_balance'):
+            print(f"DEBUG: Dashboard - association_balance = {settings.association_balance}")
+        else:
+            print("DEBUG: Settings object does NOT have association_balance attribute!")
     
     return render_template('admin/dashboard.html', users=users, blocks=blocks, gallery=gallery, projects=projects, settings=settings, reports=reports)
 
