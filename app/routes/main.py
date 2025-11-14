@@ -228,43 +228,9 @@ def dashboard():
     if settings and hasattr(settings, 'association_balance') and settings.association_balance is not None:
         total_contributions = float(settings.association_balance)
     else:
-        # Calculate total contributions by processing each user's contribution value
-        from sqlalchemy import func, cast, Float
-        
-        try:
-            # Try the more efficient SQL approach first
-            total_contributions = db.session.query(func.sum(cast(User.contributions, Float))).scalar() or 0.0
-        except:
-            # Fall back to Python processing if SQL approach fails
-            users = User.query.all()
-            total = 0.0
-            for user in users:
-                if user.contributions:
-                    try:
-                        total += float(user.contributions)
-                    except (ValueError, TypeError):
-                        # Skip if contributions can't be converted to float
-                        pass
-            total_contributions = total
-    
-    # Find the user with the highest contribution
-    try:
-        last_contributor = User.query.filter(User.contributions > 0).order_by(User.contributions.desc()).first()
-    except:
-        # Fall back to Python processing if SQL approach fails
-        users = User.query.all()
+        # Contributions field removed from User model
+        total_contributions = 0.0
         last_contributor = None
-        highest_contrib = 0.0
-        
-        for user in users:
-            if user.contributions:
-                try:
-                    contrib = float(user.contributions)
-                    if contrib > highest_contrib:
-                        highest_contrib = contrib
-                        last_contributor = user
-                except (ValueError, TypeError):
-                    pass
     
     return render_template('dashboard.html', total_contributions=total_contributions, last_contributor=last_contributor)
 
