@@ -110,8 +110,9 @@ class Project(db.Model):
     image_mimetype = db.deferred(db.Column(db.String(64), nullable=True))
     document_url = db.deferred(db.Column(db.String(300), nullable=True))
     
-    # Relationship fields
-    status = db.Column(db.String(20), default='pending')
+    # Relationship fields - using Text type to handle VARCHAR in PostgreSQL
+    from sqlalchemy import Text, Enum as SQLEnum
+    status = db.Column(Text, default='pending')
     user_id = db.Column(db.Integer, db.ForeignKey('users.id' if not get_table_args() else 'brama.users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     votes = db.relationship('Vote', backref='project', lazy='dynamic')
