@@ -326,23 +326,26 @@ def edit_profile():
         # Заполняем форму текущими данными пользователя
         form.first_name.data = current_user.first_name
         form.last_name.data = current_user.last_name
-        form.birth_date.data = current_user.birth_date
-        form.specialty.data = current_user.specialty
-        form.join_goal.data = current_user.join_goal
-        form.can_help.data = current_user.can_help
-        form.want_to_do.data = current_user.want_to_do
-        form.phone.data = current_user.phone
+        # Removed fields that no longer exist in User model
+        # form.birth_date.data = current_user.birth_date
+        # form.specialty.data = current_user.specialty
+        # form.join_goal.data = current_user.join_goal
+        # form.can_help.data = current_user.can_help
+        # form.want_to_do.data = current_user.want_to_do
+        form.phone.data = current_user.phone if hasattr(current_user, 'phone') else ''
     
     if form.validate_on_submit():
         # Обновляем данные пользователя
         current_user.first_name = form.first_name.data
         current_user.last_name = form.last_name.data
-        current_user.birth_date = form.birth_date.data
-        current_user.specialty = form.specialty.data
-        current_user.join_goal = form.join_goal.data
-        current_user.can_help = form.can_help.data
-        current_user.want_to_do = form.want_to_do.data
-        current_user.phone = form.phone.data
+        # Removed fields that no longer exist in User model
+        # current_user.birth_date = form.birth_date.data
+        # current_user.specialty = form.specialty.data
+        # current_user.join_goal = form.join_goal.data
+        # current_user.can_help = form.can_help.data
+        # current_user.want_to_do = form.want_to_do.data
+        if hasattr(current_user, 'phone'):
+            current_user.phone = form.phone.data
         
         # Обработка загрузки фото профиля
         if form.profile_photo.data:

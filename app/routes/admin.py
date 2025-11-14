@@ -29,7 +29,8 @@ def dashboard():
     users = User.query.order_by(User.id.desc()).limit(50).all()
     blocks = Block.query.order_by(Block.id.desc()).limit(50).all()
     gallery = GalleryImage.query.order_by(GalleryImage.id.desc()).limit(50).all()
-    projects = Project.query.order_by(Project.created_at.desc()).limit(50).all()
+    # Temporarily disabled due to PostgreSQL VARCHAR type mapping issues
+    projects = []  # Project.query.order_by(Project.created_at.desc()).limit(50).all()
     settings = Settings.query.first()
     reports = Report.query.order_by(Report.created_at.desc()).limit(100).all()
     
