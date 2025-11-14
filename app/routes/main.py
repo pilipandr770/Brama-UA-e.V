@@ -229,13 +229,14 @@ def dashboard():
     from app.models.settings import Settings
     settings = Settings.query.first()
     
+    # Contributions field removed from User model
+    last_contributor = None
+    
     # Используем баланс из настроек, если он установлен, иначе считаем сумму взносов
     if settings and hasattr(settings, 'association_balance') and settings.association_balance is not None:
         total_contributions = float(settings.association_balance)
     else:
-        # Contributions field removed from User model
         total_contributions = 0.0
-        last_contributor = None
     
     return render_template('dashboard.html', total_contributions=total_contributions, last_contributor=last_contributor)
 
