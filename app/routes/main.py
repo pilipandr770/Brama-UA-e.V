@@ -51,7 +51,12 @@ def index():
     # Получаем проекты только если есть блок проектов
     projects = []
     if projects_block:
-        projects = get_approved_projects(projects_block.id)
+        try:
+            projects = get_approved_projects(projects_block.id)
+        except Exception as e:
+            # Временный обходной путь для проблемы PostgreSQL VARCHAR type 1043
+            current_app.logger.error(f"Error loading projects: {e}")
+            projects = []
 
     # Получаем настройки
     settings = get_settings()
