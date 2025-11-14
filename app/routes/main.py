@@ -85,40 +85,49 @@ def submit_project():
     if request.method == 'POST':
         try:
             image_file = request.files.get('image_file')
-            image_data = image_file.read() if image_file and image_file.filename else None
-            image_mimetype = image_file.mimetype if image_file and image_file.filename else None
             # Встановлюємо block_id для активного блоку проектів
             projects_block = Block.query.filter_by(type='projects', is_active=True).first()
             block_id = projects_block.id if projects_block else None
-            project = Project(
-                title=request.form['title'],
-                problem_description=request.form['problem_description'],
-                goal=request.form['goal'],
-                target_audience=request.form['target_audience'],
-                implementation_plan=request.form['implementation_plan'],
-                executor_info=request.form['executor_info'],
-                total_budget=request.form['total_budget'],
-                budget_breakdown=request.form['budget_breakdown'],
-                expected_result=request.form['expected_result'],
-                risks=request.form['risks'],
-                duration=request.form['duration'],
-                reporting_plan=request.form['reporting_plan'],
-                category=request.form.get('category'),
-                location=request.form.get('location'),
-                website=request.form.get('website'),
-                social_links=request.form.get('social_links'),
-                document_url=request.form.get('document_url'),
-                user_id=current_user.id if current_user.is_authenticated else None,
-                image_data=image_data,
-                image_mimetype=image_mimetype,
-                status='pending',
-                block_id=block_id
-            )
+            
+            # Base project data without optional fields
+            project_data = {
+                'title': request.form['title'],
+                'problem_description': request.form['problem_description'],
+                'goal': request.form['goal'],
+                'target_audience': request.form['target_audience'],
+                'implementation_plan': request.form['implementation_plan'],
+                'executor_info': request.form['executor_info'],
+                'total_budget': request.form['total_budget'],
+                'budget_breakdown': request.form['budget_breakdown'],
+                'expected_result': request.form['expected_result'],
+                'risks': request.form['risks'],
+                'duration': request.form['duration'],
+                'reporting_plan': request.form['reporting_plan'],
+                'category': request.form.get('category'),
+                'location': request.form.get('location'),
+                'website': request.form.get('website'),
+                'social_links': request.form.get('social_links'),
+                'user_id': current_user.id if current_user.is_authenticated else None,
+                'status': 'pending',
+                'block_id': block_id
+            }
+            
+            # Only add optional fields if they exist in database
+            if Project._existing_columns:
+                if 'image_data' in Project._existing_columns and image_file and image_file.filename:
+                    project_data['image_data'] = image_file.read()
+                if 'image_mimetype' in Project._existing_columns and image_file and image_file.filename:
+                    project_data['image_mimetype'] = image_file.mimetype
+                if 'document_url' in Project._existing_columns:
+                    project_data['document_url'] = request.form.get('document_url')
+            
+            project = Project(**project_data)
             db.session.add(project)
             db.session.commit()
             flash(_("Проєкт успішно подано! Очікує модерації."), "success")
             return redirect(url_for('main.index'))
         except Exception as e:
+            db.session.rollback()
             flash(_("Помилка при збереженні: {}").format(e), "danger")
 
     return render_template('submit_project.html')
