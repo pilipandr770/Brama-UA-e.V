@@ -24,7 +24,7 @@ def main():
                 print('Користувача не знайдено і пароль не передано. Використайте --password для створення нового користувача.')
                 return
             # Create user
-            user = User(email=email, is_member=True, is_admin=True, role='admin')
+            user = User(email=email, first_name='Admin', last_name='User', role='admin')
             try:
                 user.set_password(args.password)
             except Exception:
@@ -33,17 +33,16 @@ def main():
                 return
             db.session.add(user)
             created = True
-        # Promote/update flags
-        user.is_admin = True
+        # Promote/update role
         if args.make_founder:
             user.role = 'founder'
-        elif not user.role:
+        else:
             user.role = 'admin'
         db.session.commit()
         if created:
             print(f'Створено і призначено адміністратора: {email}')
         else:
-            print(f'Користувача {email} призначено адміністратором')
+            print(f'Користувача {email} призначено адміністратором (роль: {user.role})')
 
 if __name__ == '__main__':
     main()
