@@ -103,14 +103,8 @@ def create_block():
                 # продолжаем работу, так как изображение уже есть в памяти
                 print(f"Warning: Could not save image to disk: {e}")
         
-        from datetime import datetime
-        # Генерируем уникальное имя и slug
-        block_name = f"block_{type_}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
-        block_slug = block_name.lower().replace(" ", "_")
-        
+        # Создаем блок только с существующими полями
         block = Block(
-            name=block_name,
-            slug=block_slug,
             title=title, 
             content=content, 
             type=type_, 
