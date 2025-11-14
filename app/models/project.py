@@ -1,6 +1,7 @@
 from app import db
 from datetime import datetime
 from app.models.helpers import get_table_args
+from sqlalchemy import Text
 
 class Vote(db.Model):
     __tablename__ = 'votes'
@@ -111,7 +112,6 @@ class Project(db.Model):
     document_url = db.deferred(db.Column(db.String(300), nullable=True))
     
     # Relationship fields - using Text type to handle VARCHAR in PostgreSQL
-    from sqlalchemy import Text, Enum as SQLEnum
     status = db.Column(Text, default='pending')
     user_id = db.Column(db.Integer, db.ForeignKey('users.id' if not get_table_args() else 'brama.users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
