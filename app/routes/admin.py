@@ -114,6 +114,10 @@ def create_block():
         )
         db.session.add(block)
         db.session.commit()
+        
+        # Очищаем кеш для обновления контента на главной странице
+        cache.clear()
+        
         flash('Блок створено!', 'success')
         return redirect(url_for('admin.dashboard'))
     return render_template('admin/edit_block.html', block=None)
@@ -180,6 +184,10 @@ def edit_block(block_id):
                     block.image_mimetype = None
                 
         db.session.commit()
+        
+        # Очищаем кеш для обновления контента на главной странице
+        cache.clear()
+        
         flash('Блок оновлено!', 'success')
         return redirect(url_for('admin.dashboard'))
     return render_template('admin/edit_block.html', block=block)
@@ -190,6 +198,10 @@ def delete_block(block_id):
     block = Block.query.get_or_404(block_id)
     db.session.delete(block)
     db.session.commit()
+    
+    # Очищаем кеш для обновления контента на главной странице
+    cache.clear()
+    
     flash('Блок видалено!', 'success')
     return redirect(url_for('admin.dashboard'))
 
