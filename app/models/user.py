@@ -17,8 +17,6 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    is_admin = db.Column(db.Boolean, default=False)
-    is_blocked = db.Column(db.Boolean, default=False)
     first_name = db.Column(db.String(255))
     last_name = db.Column(db.String(255))
     birth_date = db.Column(db.Date)
@@ -32,6 +30,7 @@ class User(db.Model, UserMixin):
     contributions = db.Column(db.Float)
     profile_photo_url = db.Column(db.String(255), nullable=True)
     role = db.Column(db.String(50), default='member')
+    is_blocked = db.Column(db.Boolean, default=False)
 
     # Relationship with meetings
     created_meetings = db.relationship('Meeting', backref='creator', lazy='dynamic', foreign_keys='Meeting.creator_id')
@@ -55,6 +54,14 @@ class User(db.Model, UserMixin):
                 return False
             raise
             
+    @property
+    def is_admin(self):
+        """Check if user has admin role"""
+        try:
+            return (self.role == 'admin') or (isinstance(self.role, UserRole) and self.role == UserRole.admin)
+        except Exception:
+            return False
+    
     @property
     def is_founder(self):
         # role stored as string; support old enum-based comparisons gracefully
