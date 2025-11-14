@@ -85,7 +85,7 @@ class Project(db.Model):
             # If any error occurs, continue without modifying mapper
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200), nullable=False)
+    title = db.Column(Text, nullable=False)
     problem_description = db.Column(db.Text, nullable=False)
     goal = db.Column(db.Text, nullable=False)
     target_audience = db.Column(db.Text, nullable=False)
@@ -95,21 +95,21 @@ class Project(db.Model):
     budget_breakdown = db.Column(db.Text, nullable=False)
     expected_result = db.Column(db.Text, nullable=False)
     risks = db.Column(db.Text, nullable=False)
-    duration = db.Column(db.String(100), nullable=False)
+    duration = db.Column(Text, nullable=False)
     reporting_plan = db.Column(db.Text, nullable=False)
     
     # Additional fields
-    category = db.Column(db.String(100))
-    location = db.Column(db.String(100))
-    website = db.Column(db.String(200))
+    category = db.Column(Text)
+    location = db.Column(Text)
+    website = db.Column(Text)
     social_links = db.Column(db.Text)  # JSON string or comma-separated list
-    image_url = db.Column(db.String(300), nullable=True)
+    image_url = db.Column(Text, nullable=True)
     
     # Optional fields that might not exist in older database versions
     # Using deferred loading to avoid errors when querying
     image_data = db.deferred(db.Column(db.LargeBinary, nullable=True))
-    image_mimetype = db.deferred(db.Column(db.String(64), nullable=True))
-    document_url = db.deferred(db.Column(db.String(300), nullable=True))
+    image_mimetype = db.deferred(db.Column(Text, nullable=True))
+    document_url = db.deferred(db.Column(Text, nullable=True))
     
     # Relationship fields - using Text type to handle VARCHAR in PostgreSQL
     status = db.Column(Text, default='pending')
