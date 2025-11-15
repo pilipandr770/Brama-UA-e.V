@@ -3,13 +3,15 @@ from datetime import datetime
 from app.models.helpers import get_table_args
 from sqlalchemy import Text
 
-class Vote(db.Model):
-    __tablename__ = 'votes'
-    __table_args__ = get_table_args()
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id' if not get_table_args() else 'brama.users.id'), nullable=False)
-    project_id = db.Column(db.Integer, db.ForeignKey('projects.id' if not get_table_args() else 'brama.projects.id'), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+# Vote model commented out because brama.votes table doesn't exist in database
+# If needed in future, first create table in database, then uncomment this:
+# class Vote(db.Model):
+#     __tablename__ = 'votes'
+#     __table_args__ = get_table_args()
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey('users.id' if not get_table_args() else 'brama.users.id'), nullable=False)
+#     project_id = db.Column(db.Integer, db.ForeignKey('projects.id' if not get_table_args() else 'brama.projects.id'), nullable=False)
+#     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Project(db.Model):
     """
@@ -129,7 +131,8 @@ class Project(db.Model):
     status = db.Column(Text, default='pending')
     user_id = db.Column(db.Integer, db.ForeignKey('users.id' if not get_table_args() else 'brama.users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    votes = db.relationship('Vote', backref='project', lazy='dynamic')
+    # votes relationship commented out because brama.votes table doesn't exist
+    # votes = db.relationship('Vote', backref='project', lazy='dynamic')
     block_id = db.Column(db.Integer, db.ForeignKey('blocks.id' if not get_table_args() else 'brama.blocks.id'), nullable=True)
     block = db.relationship('Block', backref=db.backref('projects', lazy='dynamic'))
 

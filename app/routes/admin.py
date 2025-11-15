@@ -311,6 +311,7 @@ def approve_project(project_id):
     # Clear cache so approved project appears on homepage immediately
     from app.cache import get_approved_projects
     cache.delete_memoized(get_approved_projects, project.block_id)
+    cache.delete('view//')  # Clear cached homepage view
     
     flash('Проєкт підтверджено!', 'success')
     return redirect(url_for('admin.dashboard'))
@@ -325,6 +326,7 @@ def reject_project(project_id):
     # Clear cache in case project was previously approved
     from app.cache import get_approved_projects
     cache.delete_memoized(get_approved_projects, project.block_id)
+    cache.delete('view//')  # Clear cached homepage view
     
     flash('Проєкт відхилено.', 'info')
     return redirect(url_for('admin.dashboard'))
