@@ -39,6 +39,12 @@ class Project(db.Model):
         
         try:
             engine = db.engine
+            
+            # CRITICAL: Clear reflection cache to force fresh metadata
+            # This ensures we get current column types from database
+            engine.dialect._get_server_version_info.cache_clear() if hasattr(engine.dialect._get_server_version_info, 'cache_clear') else None
+            
+            # Create a fresh inspector without cached metadata
             insp = inspect(engine)
             
             # Store existing columns at class level for later checks
@@ -49,6 +55,10 @@ class Project(db.Model):
             
             for schema in schemas_to_check:
                 try:
+                    # Force reflection by clearing any cached metadata
+                    if hasattr(insp, '_cache'):
+                        insp._cache.clear()
+                    
                     cols = insp.get_columns(cls.__tablename__, schema=schema)
                     if cols:  # If we found columns, store them and break
                         cls._existing_columns = {col['name'] for col in cols}

@@ -104,6 +104,19 @@ def create_app():
         register_debug_routes(app)
     except ImportError:
         app.logger.warning("Модуль debug_routes не найден, отладочные маршруты не зарегистрированы")
+    
+    # CRITICAL FIX: Clear SQLAlchemy metadata cache to ensure fresh schema reflection
+    # This prevents "Unknown PG numeric type: 25" errors after ALTER TABLE operations
+    with app.app_context():
+        try:
+            # Clear any cached type maps
+            if hasattr(db.engine.dialect, '_type_memos'):
+                db.engine.dialect._type_memos.clear()
+            # Force metadata to be reloaded from database
+            db.metadata.clear()
+            app.logger.info("Cleared SQLAlchemy metadata cache for fresh schema reflection")
+        except Exception as e:
+            app.logger.warning(f"Could not clear SQLAlchemy cache: {e}")
         
     # Тестовые маршруты для отладки отключены в продакшн режиме
     if app.debug and os.environ.get('RENDER') != 'true':
