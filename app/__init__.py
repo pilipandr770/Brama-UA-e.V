@@ -109,12 +109,26 @@ def create_app():
     # This prevents "Unknown PG numeric type: 25" errors after ALTER TABLE operations
     with app.app_context():
         try:
+            from sqlalchemy.dialects.postgresql import base as pg_base
+            
+            # Force TEXT type (oid 25) to be recognized properly
+            # This fixes "Unknown PG numeric type: 25" error
+            if hasattr(db.engine.dialect, 'ischema_names'):
+                # Ensure TEXT type is properly mapped
+                if 25 not in db.engine.dialect._type_memos:
+                    db.engine.dialect._type_memos.clear()
+            
             # Clear any cached type maps
             if hasattr(db.engine.dialect, '_type_memos'):
                 db.engine.dialect._type_memos.clear()
+            
             # Force metadata to be reloaded from database
             db.metadata.clear()
-            app.logger.info("Cleared SQLAlchemy metadata cache for fresh schema reflection")
+            
+            # Clear connection pool to force new connections with fresh type mappings
+            db.engine.dispose()
+            
+            app.logger.info("Cleared SQLAlchemy metadata cache and connection pool for fresh schema reflection")
         except Exception as e:
             app.logger.warning(f"Could not clear SQLAlchemy cache: {e}")
         

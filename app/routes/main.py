@@ -129,7 +129,9 @@ def submit_project():
             db.session.add(project)
             db.session.commit()
             
-            current_app.logger.info(f"Project #{project.id} successfully created by user #{user_id}")
+            # Don't access project.id immediately after commit as it may trigger a refresh
+            # which can cause "Unknown PG numeric type: 25" errors
+            current_app.logger.info(f"Project successfully created by user #{user_id}")
             flash(_("Проєкт успішно подано! Очікує модерації."), "success")
             return redirect(url_for('main.dashboard'))
         except Exception as e:
