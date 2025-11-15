@@ -29,8 +29,15 @@ def dashboard():
     users = User.query.order_by(User.id.desc()).limit(50).all()
     blocks = Block.query.order_by(Block.id.desc()).limit(50).all()
     gallery = GalleryImage.query.order_by(GalleryImage.id.desc()).limit(50).all()
-    # Temporarily disabled due to PostgreSQL VARCHAR type mapping issues
-    projects = []  # Project.query.order_by(Project.created_at.desc()).limit(50).all()
+    
+    # Try to load projects with error handling for VARCHAR/TEXT type mismatch
+    projects = []
+    try:
+        projects = Project.query.order_by(Project.created_at.desc()).limit(50).all()
+    except Exception as e:
+        current_app.logger.error(f"Cannot load projects in admin dashboard: {type(e).__name__}: {e}")
+        current_app.logger.error("Fix: ALTER TABLE brama.projects ALTER COLUMN total_budget TYPE TEXT;")
+    
     settings = Settings.query.first()
     reports = Report.query.order_by(Report.created_at.desc()).limit(100).all()
     

@@ -54,8 +54,10 @@ def index():
         try:
             projects = get_approved_projects(projects_block.id)
         except Exception as e:
-            # Временный обходной путь для проблемы PostgreSQL VARCHAR type 1043
-            current_app.logger.error(f"Error loading projects: {e}")
+            # Временный обходной путь для проблемы PostgreSQL VARCHAR/TEXT type mismatch
+            current_app.logger.error(f"Error loading projects: {type(e).__name__}: {e}")
+            current_app.logger.error("This usually means total_budget column is still VARCHAR(100) instead of TEXT")
+            current_app.logger.error("Run: ALTER TABLE brama.projects ALTER COLUMN total_budget TYPE TEXT;")
             projects = []
 
     # Получаем настройки
