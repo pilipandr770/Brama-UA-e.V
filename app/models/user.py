@@ -27,7 +27,8 @@ class User(db.Model, UserMixin):
     created_meetings = db.relationship('Meeting', backref='creator', lazy='dynamic', foreign_keys='Meeting.creator_id')
     attended_meetings = db.relationship('MeetingAttendee', backref='user', lazy='dynamic', 
                                       primaryjoin="User.id==MeetingAttendee.user_id")
-    project_votes = db.relationship('Vote', backref='user', lazy='dynamic')
+    # project_votes relationship commented out because Vote model doesn't exist (brama.votes table missing)
+    # project_votes = db.relationship('Vote', backref='user', lazy='dynamic')
     meeting_votes = db.relationship('MeetingVote', backref='user', lazy='dynamic')
     messages = db.relationship('Message', backref='user', lazy='dynamic')
 
