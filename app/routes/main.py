@@ -112,14 +112,12 @@ def submit_project():
                 'block_id': block_id
             }
             
-            # Only add optional fields if they exist in database
-            if Project._existing_columns:
-                if 'image_data' in Project._existing_columns and image_file and image_file.filename:
-                    project_data['image_data'] = image_file.read()
-                if 'image_mimetype' in Project._existing_columns and image_file and image_file.filename:
-                    project_data['image_mimetype'] = image_file.mimetype
-                if 'document_url' in Project._existing_columns:
-                    project_data['document_url'] = request.form.get('document_url')
+            # Log what columns exist for debugging
+            current_app.logger.info(f"Project._existing_columns: {Project._existing_columns}")
+            
+            # DO NOT add image_data, image_mimetype, or document_url at all
+            # These columns don't exist in the database
+            # Image handling will need to be implemented separately when columns are added
             
             project = Project(**project_data)
             db.session.add(project)
@@ -129,9 +127,8 @@ def submit_project():
         except Exception as e:
             db.session.rollback()
             current_app.logger.error(f"Project submission error: {type(e).__name__}: {str(e)}")
-            # Use simple string concatenation to avoid Flask-Babel format issues
-            error_msg = _("Помилка при збереженні") + f": {str(e)}"
-            flash(error_msg, "danger")
+            # Flash a simple untranslated error to avoid Flask-Babel parsing issues
+            flash("Помилка при збереженні проєкту. Спробуйте ще раз або зверніться до адміністратора.", "danger")
 
     return render_template('submit_project.html')
 
