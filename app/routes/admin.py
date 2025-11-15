@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, session, flash, request, send_file
+from flask import Blueprint, render_template, redirect, url_for, session, flash, request, send_file, current_app
 from app import db
 from app.models.user import User, UserRole
 from app.models.block import Block

@@ -105,11 +105,13 @@ class Project(db.Model):
     social_links = db.Column(db.Text)  # JSON string or comma-separated list
     image_url = db.Column(Text, nullable=True)
     
-    # Optional fields that might not exist in older database versions
-    # Using deferred loading to avoid errors when querying
-    image_data = db.deferred(db.Column(db.LargeBinary, nullable=True))
-    image_mimetype = db.deferred(db.Column(Text, nullable=True))
-    document_url = db.deferred(db.Column(Text, nullable=True))
+    # NOTE: image_data, image_mimetype, document_url columns are NOT defined here
+    # because they don't exist in the database. If you need to add them in the future,
+    # first create them with: ALTER TABLE brama.projects ADD COLUMN image_data BYTEA;
+    # Then uncomment these lines:
+    # image_data = db.Column(db.LargeBinary, nullable=True)
+    # image_mimetype = db.Column(Text, nullable=True)
+    # document_url = db.Column(Text, nullable=True)
     
     # Relationship fields - using Text type to handle VARCHAR in PostgreSQL
     status = db.Column(Text, default='pending')
@@ -118,46 +120,5 @@ class Project(db.Model):
     votes = db.relationship('Vote', backref='project', lazy='dynamic')
     block_id = db.Column(db.Integer, db.ForeignKey('blocks.id' if not get_table_args() else 'brama.blocks.id'), nullable=True)
     block = db.relationship('Block', backref=db.backref('projects', lazy='dynamic'))
-    
-    def get_image_data(self):
-        """
-        Safely get image data if the column exists in the database.
-        """
-        if self._existing_columns is not None and 'image_data' not in self._existing_columns:
-            return None
-            
-        try:
-            return self.image_data
-        except Exception as e:
-            logger = logging.getLogger('app.models.project')
-            logger.debug(f"Error getting image_data: {e}")
-            return None
-            
-    def get_image_mimetype(self):
-        """
-        Safely get image mimetype if the column exists in the database.
-        """
-        if self._existing_columns is not None and 'image_mimetype' not in self._existing_columns:
-            return None
-            
-        try:
-            return self.image_mimetype
-        except Exception as e:
-            logger = logging.getLogger('app.models.project')
-            logger.debug(f"Error getting image_mimetype: {e}")
-            return None
-    
-    def get_document_url(self):
-        """
-        Safely get document URL if the column exists in the database.
-        """
-        if self._existing_columns is not None and 'document_url' not in self._existing_columns:
-            return None
-            
-        try:
-            return self.document_url
-        except Exception as e:
-            logger = logging.getLogger('app.models.project')
-            logger.debug(f"Error getting document_url: {e}")
-            return None
+
 
