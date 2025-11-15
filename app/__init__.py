@@ -105,18 +105,31 @@ def create_app():
     except ImportError:
         app.logger.warning("Модуль debug_routes не найден, отладочные маршруты не зарегистрированы")
     
-    # CRITICAL FIX: Clear SQLAlchemy metadata cache to ensure fresh schema reflection
-    # This prevents "Unknown PG numeric type: 25" errors after ALTER TABLE operations
+    # CRITICAL FIX: Force PostgreSQL TEXT type (oid 25) recognition
+    # This prevents "Unknown PG numeric type: 25" errors permanently
     with app.app_context():
         try:
             from sqlalchemy.dialects.postgresql import base as pg_base
+            from sqlalchemy import String
             
-            # Force TEXT type (oid 25) to be recognized properly
-            # This fixes "Unknown PG numeric type: 25" error
-            if hasattr(db.engine.dialect, 'ischema_names'):
-                # Ensure TEXT type is properly mapped
-                if 25 not in db.engine.dialect._type_memos:
-                    db.engine.dialect._type_memos.clear()
+            # HACK: Monkey-patch the psycopg2 dialect to always recognize type 25 as TEXT
+            # This is necessary because PostgreSQL may return TEXT type for columns that
+            # were converted from VARCHAR, and psycopg2 doesn't always handle this correctly
+            original_get_result_processor = None
+            
+            if hasattr(db.engine.dialect, 'get_result_processor'):
+                original_get_result_processor = db.engine.dialect.get_result_processor
+                
+                def patched_get_result_processor(self, coltype, colname, coltype_code):
+                    # Force type 25 (TEXT) to be treated as String
+                    if coltype_code == 25:
+                        # Return String type processor instead of throwing error
+                        return String().result_processor(self, coltype_code)
+                    # For all other types, use original processor
+                    return original_get_result_processor(coltype, colname, coltype_code)
+                
+                # Replace the method
+                db.engine.dialect.get_result_processor = patched_get_result_processor.__get__(db.engine.dialect, type(db.engine.dialect))
             
             # Clear any cached type maps
             if hasattr(db.engine.dialect, '_type_memos'):
@@ -125,11 +138,13 @@ def create_app():
             # Force metadata to be reloaded from database
             db.metadata.clear()
             
-            # Clear connection pool to force new connections with fresh type mappings
+            # Clear connection pool to force new connections
             db.engine.dispose()
             
+            app.logger.info("CRITICAL FIX: Patched PostgreSQL dialect to handle TEXT type (oid 25)")
             app.logger.info("Cleared SQLAlchemy metadata cache and connection pool for fresh schema reflection")
         except Exception as e:
+            app.logger.error(f"Failed to patch PostgreSQL dialect: {e}")
             app.logger.warning(f"Could not clear SQLAlchemy cache: {e}")
         
     # Тестовые маршруты для отладки отключены в продакшн режиме
