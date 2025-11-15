@@ -10,6 +10,31 @@ import traceback
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
+# CRITICAL PATCH: Fix psycopg2 "Unknown PG numeric type: 25" error
+# Must be applied BEFORE any database connection is created
+try:
+    from sqlalchemy.dialects.postgresql.psycopg2 import PGDialect_psycopg2
+    from sqlalchemy import String
+    
+    # Save original method
+    _original_result_processor = PGDialect_psycopg2.result_processor
+    
+    def _patched_result_processor(self, typeobj, coltype):
+        """Patched result_processor that handles TEXT type (OID 25)"""
+        # If coltype is 25 (TEXT), force it to be treated as String
+        if coltype == 25:
+            # Return String type processor
+            return String().result_processor(self, coltype)
+        # For all other types, use original method
+        return _original_result_processor(self, typeobj, coltype)
+    
+    # Monkey-patch the class method
+    PGDialect_psycopg2.result_processor = _patched_result_processor
+    
+    print("✅ PATCHED: PostgreSQL dialect will now handle TEXT type (OID 25)")
+except Exception as e:
+    print(f"⚠️ WARNING: Could not patch PostgreSQL dialect: {e}")
+
 db = SQLAlchemy()
 migrate = Migrate()
 # socketio = SocketIO()  # DISABLED: Causes WORKER TIMEOUT with sync workers
@@ -105,32 +130,9 @@ def create_app():
     except ImportError:
         app.logger.warning("Модуль debug_routes не найден, отладочные маршруты не зарегистрированы")
     
-    # CRITICAL FIX: Force PostgreSQL TEXT type (oid 25) recognition
-    # This prevents "Unknown PG numeric type: 25" errors permanently
+    # Clear SQLAlchemy caches to ensure fresh schema reflection
     with app.app_context():
         try:
-            from sqlalchemy.dialects.postgresql import base as pg_base
-            from sqlalchemy import String
-            
-            # HACK: Monkey-patch the psycopg2 dialect to always recognize type 25 as TEXT
-            # This is necessary because PostgreSQL may return TEXT type for columns that
-            # were converted from VARCHAR, and psycopg2 doesn't always handle this correctly
-            original_get_result_processor = None
-            
-            if hasattr(db.engine.dialect, 'get_result_processor'):
-                original_get_result_processor = db.engine.dialect.get_result_processor
-                
-                def patched_get_result_processor(self, coltype, colname, coltype_code):
-                    # Force type 25 (TEXT) to be treated as String
-                    if coltype_code == 25:
-                        # Return String type processor instead of throwing error
-                        return String().result_processor(self, coltype_code)
-                    # For all other types, use original processor
-                    return original_get_result_processor(coltype, colname, coltype_code)
-                
-                # Replace the method
-                db.engine.dialect.get_result_processor = patched_get_result_processor.__get__(db.engine.dialect, type(db.engine.dialect))
-            
             # Clear any cached type maps
             if hasattr(db.engine.dialect, '_type_memos'):
                 db.engine.dialect._type_memos.clear()
@@ -141,10 +143,8 @@ def create_app():
             # Clear connection pool to force new connections
             db.engine.dispose()
             
-            app.logger.info("CRITICAL FIX: Patched PostgreSQL dialect to handle TEXT type (oid 25)")
-            app.logger.info("Cleared SQLAlchemy metadata cache and connection pool for fresh schema reflection")
+            app.logger.info("✅ Cleared SQLAlchemy caches and connection pool")
         except Exception as e:
-            app.logger.error(f"Failed to patch PostgreSQL dialect: {e}")
             app.logger.warning(f"Could not clear SQLAlchemy cache: {e}")
         
     # Тестовые маршруты для отладки отключены в продакшн режиме
