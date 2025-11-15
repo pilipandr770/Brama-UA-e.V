@@ -128,7 +128,10 @@ def submit_project():
             return redirect(url_for('main.index'))
         except Exception as e:
             db.session.rollback()
-            flash(_("Помилка при збереженні: %(error)s") % {'error': str(e)}, "danger")
+            current_app.logger.error(f"Project submission error: {type(e).__name__}: {str(e)}")
+            # Use simple string concatenation to avoid Flask-Babel format issues
+            error_msg = _("Помилка при збереженні") + f": {str(e)}"
+            flash(error_msg, "danger")
 
     return render_template('submit_project.html')
 
