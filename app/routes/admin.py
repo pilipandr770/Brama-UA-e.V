@@ -296,6 +296,11 @@ def approve_project(project_id):
     project = Project.query.get_or_404(project_id)
     project.status = 'approved'
     db.session.commit()
+    
+    # Clear cache so approved project appears on homepage immediately
+    from app.cache import get_approved_projects
+    cache.delete_memoized(get_approved_projects, project.block_id)
+    
     flash('Проєкт підтверджено!', 'success')
     return redirect(url_for('admin.dashboard'))
 
@@ -305,6 +310,11 @@ def reject_project(project_id):
     project = Project.query.get_or_404(project_id)
     project.status = 'rejected'
     db.session.commit()
+    
+    # Clear cache in case project was previously approved
+    from app.cache import get_approved_projects
+    cache.delete_memoized(get_approved_projects, project.block_id)
+    
     flash('Проєкт відхилено.', 'info')
     return redirect(url_for('admin.dashboard'))
 
