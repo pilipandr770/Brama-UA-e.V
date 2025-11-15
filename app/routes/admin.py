@@ -9,6 +9,7 @@ from app.models.report import Report
 from app.cache import cache
 from functools import wraps
 import io
+import traceback
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -30,13 +31,23 @@ def dashboard():
     blocks = Block.query.order_by(Block.id.desc()).limit(50).all()
     gallery = GalleryImage.query.order_by(GalleryImage.id.desc()).limit(50).all()
     
-    # Try to load projects with error handling for VARCHAR/TEXT type mismatch
+    # Try to load projects with detailed error handling
     projects = []
     try:
+        # Force schema refresh by checking table first
+        from sqlalchemy import inspect
+        inspector = inspect(db.engine)
+        columns = inspector.get_columns('projects', schema='brama')
+        current_app.logger.info(f"Projects table has {len(columns)} columns")
+        
+        # Now try to load projects
         projects = Project.query.order_by(Project.created_at.desc()).limit(50).all()
+        current_app.logger.info(f"Successfully loaded {len(projects)} projects")
     except Exception as e:
         current_app.logger.error(f"Cannot load projects in admin dashboard: {type(e).__name__}: {e}")
-        current_app.logger.error("Fix: ALTER TABLE brama.projects ALTER COLUMN total_budget TYPE TEXT;")
+        current_app.logger.error(f"Full error: {str(e)}")
+        import traceback
+        current_app.logger.error(f"Traceback: {traceback.format_exc()}")
     
     settings = Settings.query.first()
     reports = Report.query.order_by(Report.created_at.desc()).limit(100).all()

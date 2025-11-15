@@ -12,6 +12,7 @@ from werkzeug.utils import secure_filename
 from app.cache import cache, get_active_blocks, get_gallery_images, get_approved_projects, get_settings
 import io
 import os
+import traceback
 from datetime import datetime
 
 
@@ -85,6 +86,9 @@ def index():
 @login_required
 def submit_project():
     if request.method == 'POST':
+        # Сохраняем user_id до работы с БД, чтобы избежать проблем с сессией
+        user_id = current_user.id
+        
         try:
             image_file = request.files.get('image_file')
             # Встановлюємо block_id для активного блоку проектів
@@ -109,7 +113,7 @@ def submit_project():
                 'location': request.form.get('location'),
                 'website': request.form.get('website'),
                 'social_links': request.form.get('social_links'),
-                'user_id': current_user.id if current_user.is_authenticated else None,
+                'user_id': user_id,
                 'status': 'pending',
                 'block_id': block_id
             }
@@ -124,13 +128,17 @@ def submit_project():
             project = Project(**project_data)
             db.session.add(project)
             db.session.commit()
+            
+            current_app.logger.info(f"Project #{project.id} successfully created by user #{user_id}")
             flash(_("Проєкт успішно подано! Очікує модерації."), "success")
-            return redirect(url_for('main.index'))
+            return redirect(url_for('main.dashboard'))
         except Exception as e:
             db.session.rollback()
             current_app.logger.error(f"Project submission error: {type(e).__name__}: {str(e)}")
+            current_app.logger.error(f"Full traceback: {traceback.format_exc()}")
             # Flash a simple untranslated error to avoid Flask-Babel parsing issues
             flash("Помилка при збереженні проєкту. Спробуйте ще раз або зверніться до адміністратора.", "danger")
+            return redirect(url_for('main.submit_project'))
 
     return render_template('submit_project.html')
 
