@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, send_file, current_app, session
 from flask_babel import gettext as _
 from app import db
-from app.models.project import Project, Vote
+from app.models.project import Project
+# Vote model commented out because brama.votes table doesn't exist
+# from app.models.project import Vote
 from app.models.user import User
 from app.models.block import Block
 from app.models.gallery_image import GalleryImage
@@ -277,22 +279,23 @@ def agb():
 def contact():
     return render_template('contact.html')
 
-@main_bp.route('/vote/<int:project_id>', methods=['POST'])
-@login_required
-def vote(project_id):
-    project = Project.query.get_or_404(project_id)
-    existing_vote = Vote.query.filter_by(user_id=current_user.id, project_id=project_id).first()
-    
-    if existing_vote:
-        flash(_('Ви вже підтримали цей проєкт!'), 'info')
-        return redirect(url_for('main.index'))
-        
-    vote = Vote(user_id=current_user.id, project_id=project_id)
-    db.session.add(vote)
-    db.session.commit()
-    
-    flash(_('Ваш голос зараховано!'), 'success')
-    return redirect(url_for('main.index'))
+# Vote functionality commented out because brama.votes table doesn't exist
+# @main_bp.route('/vote/<int:project_id>', methods=['POST'])
+# @login_required
+# def vote(project_id):
+#     project = Project.query.get_or_404(project_id)
+#     existing_vote = Vote.query.filter_by(user_id=current_user.id, project_id=project_id).first()
+#     
+#     if existing_vote:
+#         flash(_('Ви вже підтримали цей проєкт!'), 'info')
+#         return redirect(url_for('main.index'))
+#         
+#     vote = Vote(user_id=current_user.id, project_id=project_id)
+#     db.session.add(vote)
+#     db.session.commit()
+#     
+#     flash(_('Ваш голос зараховано!'), 'success')
+#     return redirect(url_for('main.index'))
 
 @main_bp.route('/upload-profile-photo', methods=['POST'])
 @login_required
