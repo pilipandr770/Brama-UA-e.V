@@ -10,31 +10,6 @@ import traceback
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
-# CRITICAL PATCH: Fix psycopg2 "Unknown PG numeric type: 25" error
-# Must be applied BEFORE any database connection is created
-try:
-    from sqlalchemy.dialects.postgresql.psycopg2 import PGDialect_psycopg2
-    from sqlalchemy import String
-    
-    # Save original method
-    _original_result_processor = PGDialect_psycopg2.result_processor
-    
-    def _patched_result_processor(self, typeobj, coltype):
-        """Patched result_processor that handles TEXT type (OID 25)"""
-        # If coltype is 25 (TEXT), force it to be treated as String
-        if coltype == 25:
-            # Return String type processor
-            return String().result_processor(self, coltype)
-        # For all other types, use original method
-        return _original_result_processor(self, typeobj, coltype)
-    
-    # Monkey-patch the class method
-    PGDialect_psycopg2.result_processor = _patched_result_processor
-    
-    print("✅ PATCHED: PostgreSQL dialect will now handle TEXT type (OID 25)")
-except Exception as e:
-    print(f"⚠️ WARNING: Could not patch PostgreSQL dialect: {e}")
-
 db = SQLAlchemy()
 migrate = Migrate()
 # socketio = SocketIO()  # DISABLED: Causes WORKER TIMEOUT with sync workers

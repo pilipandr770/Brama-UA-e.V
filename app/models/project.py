@@ -101,7 +101,9 @@ class Project(db.Model):
     target_audience = db.Column(db.Text, nullable=False)
     implementation_plan = db.Column(db.Text, nullable=False)
     executor_info = db.Column(db.Text, nullable=False)
-    total_budget = db.Column(db.Float, nullable=False)
+    # CRITICAL: total_budget is TEXT in database (converted from VARCHAR)
+    # Using Text type instead of Float to match actual database type
+    total_budget = db.Column(Text, nullable=False)
     budget_breakdown = db.Column(db.Text, nullable=False)
     expected_result = db.Column(db.Text, nullable=False)
     risks = db.Column(db.Text, nullable=False)
