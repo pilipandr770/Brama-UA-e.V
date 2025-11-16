@@ -22,6 +22,16 @@ class User(db.Model, UserMixin):
     phone = db.Column(db.String(50))
     role = db.Column(db.String(50), default='member')
     is_blocked = db.Column(db.Boolean, default=False)
+    
+    # Додаткові поля для реєстрації членів ферайну
+    birth_date = db.Column(db.Date, nullable=True)
+    specialty = db.Column(db.String(128), nullable=True)
+    join_goal = db.Column(db.Text, nullable=True)
+    can_help = db.Column(db.Text, nullable=True)
+    want_to_do = db.Column(db.Text, nullable=True)
+    consent_given = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=db.func.now())
+    profile_photo_url = db.Column(db.String(255), nullable=True)
 
     # Relationship with meetings
     created_meetings = db.relationship('Meeting', backref='creator', lazy='dynamic', foreign_keys='Meeting.creator_id')

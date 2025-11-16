@@ -214,7 +214,13 @@ def register():
             email=form.email.data,
             first_name=form.first_name.data,
             last_name=form.last_name.data,
-            phone=form.phone.data
+            phone=form.phone.data,
+            birth_date=form.birth_date.data,
+            specialty=form.specialty.data,
+            join_goal=form.join_goal.data,
+            can_help=form.can_help.data,
+            want_to_do=form.want_to_do.data,
+            consent_given=form.consent_given.data
         )
         user.set_password(form.password.data)
         db.session.add(user)

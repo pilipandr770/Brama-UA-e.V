@@ -61,18 +61,6 @@ def dashboard():
     
     return render_template('admin/dashboard.html', users=users, blocks=blocks, gallery=gallery, projects=projects, settings=settings, reports=reports)
 
-@admin_bp.route('/toggle-block-user/<int:user_id>')
-@admin_required
-def toggle_block_user(user_id):
-    user = User.query.get_or_404(user_id)
-    if user.is_admin:
-        flash('Не можна блокувати адміністратора!', 'danger')
-        return redirect(url_for('admin.dashboard'))
-    user.is_blocked = not user.is_blocked
-    db.session.commit()
-    flash(f'Користувач {user.email} ' + ('заблокований.' if user.is_blocked else 'розблокований.'), 'success')
-    return redirect(url_for('admin.dashboard'))
-
 @admin_bp.route('/block/create', methods=['GET', 'POST'])
 @admin_required
 def create_block():
@@ -428,24 +416,135 @@ def delete_project(project_id):
 @admin_bp.route('/manage-founders', methods=['GET', 'POST'])
 @admin_required
 def manage_founders():
-    """Manage founder users as an admin"""
-    # Using string value for consistency since role is stored as string in DB
-    founders = User.query.filter_by(role='founder').all()
-    regular_members = User.query.filter_by(is_member=True).filter(User.role != 'founder').all()
+    """Manage founder users as an admin - DEPRECATED, redirects to manage_users"""
+    return redirect(url_for('admin.manage_users'))
+
+@admin_bp.route('/manage-users', methods=['GET'])
+@admin_required
+def manage_users():
+    """Manage all users - view, filter, and get statistics"""
+    # Отримуємо параметри фільтрації
+    search_query = request.args.get('search', '').strip()
+    role_filter = request.args.get('role', '').strip()
+    status_filter = request.args.get('status', '').strip()
     
-    if request.method == 'POST':
-        action = request.form.get('action')
-        user_id = int(request.form.get('user_id'))
-        user = User.query.get_or_404(user_id)
-        
-        if action == 'add':
-            user.role = 'founder'
-            flash(f'{user.email} успішно додано як засновника!', 'success')
-        elif action == 'remove':
-            user.role = 'member'
-            flash(f'{user.email} видалено з засновників!', 'success')
-        
+    # Базовий запит
+    query = User.query
+    
+    # Застосовуємо фільтри
+    if search_query:
+        query = query.filter(
+            db.or_(
+                User.email.ilike(f'%{search_query}%'),
+                User.first_name.ilike(f'%{search_query}%'),
+                User.last_name.ilike(f'%{search_query}%')
+            )
+        )
+    
+    if role_filter:
+        query = query.filter_by(role=role_filter)
+    
+    if status_filter == 'active':
+        query = query.filter_by(is_blocked=False)
+    elif status_filter == 'blocked':
+        query = query.filter_by(is_blocked=True)
+    
+    # Отримуємо користувачів
+    users = query.order_by(User.created_at.desc()).all()
+    
+    # Статистика
+    total_users = User.query.count()
+    admin_count = User.query.filter_by(role='admin').count()
+    founder_count = User.query.filter_by(role='founder').count()
+    member_count = User.query.filter_by(role='member').count()
+    blocked_count = User.query.filter_by(is_blocked=True).count()
+    
+    return render_template('admin/manage_users.html',
+                         users=users,
+                         total_users=total_users,
+                         admin_count=admin_count,
+                         founder_count=founder_count,
+                         member_count=member_count,
+                         blocked_count=blocked_count,
+                         search_query=search_query,
+                         role_filter=role_filter,
+                         status_filter=status_filter)
+
+@admin_bp.route('/user/<int:user_id>/change-role', methods=['POST'])
+@admin_required
+def change_user_role(user_id):
+    """Change user role"""
+    user = User.query.get_or_404(user_id)
+    new_role = request.form.get('role')
+    
+    if new_role not in ['admin', 'founder', 'member']:
+        flash('Невірна роль!', 'danger')
+        return redirect(url_for('admin.manage_users'))
+    
+    # Не дозволяємо змінювати власну роль
+    from flask_login import current_user
+    if user.id == current_user.id:
+        flash('Ви не можете змінити власну роль!', 'danger')
+        return redirect(url_for('admin.manage_users'))
+    
+    old_role = user.role
+    user.role = new_role
+    db.session.commit()
+    
+    role_names = {
+        'admin': 'Адміністратор',
+        'founder': 'Засновник',
+        'member': 'Член'
+    }
+    
+    flash(f'Роль користувача {user.email} змінено з "{role_names.get(old_role, old_role)}" на "{role_names[new_role]}"!', 'success')
+    return redirect(url_for('admin.manage_users'))
+
+@admin_bp.route('/user/<int:user_id>/toggle-block', methods=['POST'])
+@admin_required
+def toggle_block_user(user_id):
+    """Block or unblock user"""
+    user = User.query.get_or_404(user_id)
+    
+    # Не дозволяємо блокувати самого себе
+    from flask_login import current_user
+    if user.id == current_user.id:
+        flash('Ви не можете заблокувати самого себе!', 'danger')
+        return redirect(url_for('admin.manage_users'))
+    
+    user.is_blocked = not user.is_blocked
+    db.session.commit()
+    
+    if user.is_blocked:
+        flash(f'Користувача {user.email} заблоковано!', 'success')
+    else:
+        flash(f'Користувача {user.email} розблоковано!', 'success')
+    
+    return redirect(url_for('admin.manage_users'))
+
+@admin_bp.route('/user/<int:user_id>/delete', methods=['POST'])
+@admin_required
+def delete_user(user_id):
+    """Delete user permanently"""
+    user = User.query.get_or_404(user_id)
+    
+    # Не дозволяємо видаляти самого себе
+    from flask_login import current_user
+    if user.id == current_user.id:
+        flash('Ви не можете видалити самого себе!', 'danger')
+        return redirect(url_for('admin.manage_users'))
+    
+    user_email = user.email
+    
+    try:
+        # Видаляємо пов'язані дані (якщо потрібно)
+        # Залежить від того, як налаштовані relationships в моделях
+        db.session.delete(user)
         db.session.commit()
-        return redirect(url_for('admin.manage_founders'))
+        flash(f'Користувача {user_email} успішно видалено!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error deleting user {user_id}: {str(e)}")
+        flash('Помилка при видаленні користувача. Можливо, є пов\'язані дані.', 'danger')
     
-    return render_template('admin/manage_founders.html', founders=founders, regular_members=regular_members)
+    return redirect(url_for('admin.manage_users'))
