@@ -89,6 +89,9 @@
                 <div class="voting-project-info">
                     <h4>{{ project.title }}</h4>
                     <p>{{ project.goal }}</p>
+                    <div class="vote-info">
+                        <span class="vote-count">👍 {{ project.vote_count if project.vote_count else 0 }} голосів</span>
+                    </div>
                 </div>
                 <form method="POST" action="{{ url_for('main.vote', project_id=project.id) }}">
                     <button type="submit" class="button vote-button">Проголосувати</button>

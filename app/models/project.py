@@ -131,6 +131,7 @@ class Project(db.Model):
     status = db.Column(Text, default='pending')
     user_id = db.Column(db.Integer, db.ForeignKey('users.id' if not get_table_args() else 'brama.users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    vote_count = db.Column(db.Integer, default=0)  # Simple vote counter
     # votes relationship commented out because brama.votes table doesn't exist
     # votes = db.relationship('Vote', backref='project', lazy='dynamic')
     block_id = db.Column(db.Integer, db.ForeignKey('blocks.id' if not get_table_args() else 'brama.blocks.id'), nullable=True)

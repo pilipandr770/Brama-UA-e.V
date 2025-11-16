@@ -169,6 +169,7 @@
       <p><strong>Місце реалізації:</strong> {{ project.location }}</p>
       <p><strong>Соцмережі:</strong> {{ project.social_links }}</p>
       <p><strong>Статус:</strong> {{ project.status }}</p>
+      <p><strong>Підтримка:</strong> 👍 {{ project.vote_count if project.vote_count else 0 }} голосів</p>
     </div>
   </div>
   {% endfor %}

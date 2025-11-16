@@ -261,7 +261,17 @@ def dashboard():
     else:
         total_contributions = 0.0
     
-    return render_template('dashboard.html', total_contributions=total_contributions, last_contributor=last_contributor)
+    # Get user's projects
+    my_projects = Project.query.filter_by(user_id=current_user.id).order_by(Project.created_at.desc()).all()
+    
+    # Get approved projects for voting
+    active_projects = Project.query.filter_by(status='approved').order_by(Project.vote_count.desc(), Project.created_at.desc()).limit(10).all()
+    
+    return render_template('dashboard.html', 
+                         total_contributions=total_contributions, 
+                         last_contributor=last_contributor,
+                         my_projects=my_projects,
+                         active_projects=active_projects)
 
 @main_bp.route('/privacy')
 def privacy():
@@ -278,6 +288,26 @@ def agb():
 @main_bp.route('/contact')
 def contact():
     return render_template('contact.html')
+
+@main_bp.route('/vote/<int:project_id>', methods=['POST'])
+@login_required
+def vote(project_id):
+    """Simple voting mechanism - increments vote counter"""
+    project = Project.query.get_or_404(project_id)
+    
+    # Check if project is approved
+    if project.status != 'approved':
+        flash(_('Можна голосувати тільки за затверджені проєкти'), 'warning')
+        return redirect(url_for('main.dashboard'))
+    
+    # Increment vote count
+    if project.vote_count is None:
+        project.vote_count = 0
+    project.vote_count += 1
+    
+    db.session.commit()
+    flash(_('Ваш голос зараховано!'), 'success')
+    return redirect(url_for('main.dashboard'))
 
 # Vote functionality commented out because brama.votes table doesn't exist
 # @main_bp.route('/vote/<int:project_id>', methods=['POST'])
