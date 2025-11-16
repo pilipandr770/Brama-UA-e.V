@@ -120,6 +120,23 @@ def submit_project():
                 'block_id': block_id
             }
             
+            # Обробка завантаження зображення
+            if image_file and image_file.filename:
+                filename = secure_filename(image_file.filename)
+                # Генеруємо унікальне ім'я файлу з timestamp
+                timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+                unique_filename = f"{timestamp}_{filename}"
+                
+                # Зберігаємо у static/uploads
+                upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+                os.makedirs(upload_folder, exist_ok=True)
+                
+                file_path = os.path.join(upload_folder, unique_filename)
+                image_file.save(file_path)
+                
+                # Встановлюємо URL зображення
+                project_data['image_url'] = f'uploads/{unique_filename}'
+            
             # Log what columns exist for debugging
             current_app.logger.info(f"Project._existing_columns: {Project._existing_columns}")
             
@@ -149,10 +166,11 @@ def submit_project():
 @main_bp.route('/project/image/<int:project_id>')
 def project_image_file(project_id):
     project = Project.query.get_or_404(project_id)
-    if project.image_data:
+    if project.image_url:
+        # Якщо image_url - це відносний шлях, формуємо повний URL
+        return redirect(url_for('static', filename=project.image_url))
+    elif project.image_data:
         return send_file(io.BytesIO(project.image_data), mimetype=project.image_mimetype)
-    elif project.image_url:
-        return redirect(project.image_url)
     else:
         return '', 404
 
@@ -306,6 +324,12 @@ def vote(project_id):
     project.vote_count += 1
     
     db.session.commit()
+    
+    # Очищуємо кеш для відображення оновленої кількості голосів
+    from app.cache import get_approved_projects
+    cache.delete_memoized(get_approved_projects, project.block_id)
+    cache.delete('view//')  # Очищуємо кеш головної сторінки
+    
     flash(_('Ваш голос зараховано!'), 'success')
     return redirect(url_for('main.dashboard'))
 
