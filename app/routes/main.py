@@ -169,10 +169,9 @@ def project_image_file(project_id):
     if project.image_url:
         # Якщо image_url - це відносний шлях, формуємо повний URL
         return redirect(url_for('static', filename=project.image_url))
-    elif project.image_data:
-        return send_file(io.BytesIO(project.image_data), mimetype=project.image_mimetype)
     else:
-        return '', 404
+        # Повертаємо placeholder або 404
+        return redirect(url_for('static', filename='placeholder.png'))
 
 @main_bp.route('/gallery/image/<int:image_id>')
 @cache.cached(timeout=86400)  # Кэш на 24 часа для изображений галереи
